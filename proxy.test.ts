@@ -49,18 +49,21 @@ describe("proxy.ts (spec §3.3)", () => {
     expect(res.cookies.get("pe_market")?.value).toBe("bn-bd");
   });
 
-  it("refreshes an expired access token before rendering", async () => {
-    const tokens = {
-      accessToken: "a2",
-      accessTokenExpiresAt: new Date(Date.now() + 900_000).toISOString(),
-      refreshToken: "r2",
-      refreshTokenExpiresAt: new Date(Date.now() + 86_400_000).toISOString(),
-    };
+  it("refreshes an expired session through the API and passes its cookies on", async () => {
+    const setCookies = new Headers();
+    setCookies.append("set-cookie", "pe_at=a2; Path=/; HttpOnly; SameSite=Lax");
+    setCookies.append("set-cookie", "pe_rt=r2; Path=/; HttpOnly; SameSite=Lax");
     fetchMock.mockImplementation(async (url) =>
-      String(url).endsWith("/markets") ? json(200, markets) : json(200, tokens),
+      String(url).endsWith("/markets")
+        ? json(200, markets)
+        : new Response(JSON.stringify({ status: "authenticated" }), { status: 200, headers: setCookies }),
     );
     const res = await visit("/en-bd", { cookie: "pe_rt=r1; pe_market=en-bd" });
-    expect(res.cookies.get("pe_at")?.value).toBe("a2");
+    const refresh = fetchMock.mock.calls.find(([url]) => String(url).endsWith("/v1/store/session/refresh"))!;
+    expect(new Headers(refresh[1]!.headers).get("cookie")).toBe("pe_rt=r1");
+    expect(res.cookies.get("pe_at")).toMatchObject({ value: "a2", httpOnly: true });
+    expect(res.cookies.get("pe_rt")?.value).toBe("r2");
+    // this render already sees the new session
     expect(res.headers.get("x-middleware-request-cookie")).toContain("pe_at=a2");
   });
 

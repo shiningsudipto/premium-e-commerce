@@ -2,50 +2,72 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
+/* Premium Touch design system: tokens, base and one partial per storefront block */
+@import "../src/styles/premium-touch/tokens.css" layer(components);
+@import "../src/styles/premium-touch/base.css" layer(components);
+@import "../src/styles/premium-touch/header.css" layer(components);
+@import "../src/styles/premium-touch/hero.css" layer(components);
+@import "../src/styles/premium-touch/collections.css" layer(components);
+@import "../src/styles/premium-touch/products.css" layer(components);
+@import "../src/styles/premium-touch/promo-split.css" layer(components);
+@import "../src/styles/premium-touch/craft.css" layer(components);
+@import "../src/styles/premium-touch/story.css" layer(components);
+@import "../src/styles/premium-touch/spotlight.css" layer(components);
+@import "../src/styles/premium-touch/promo-cards.css" layer(components);
+@import "../src/styles/premium-touch/reviews.css" layer(components);
+@import "../src/styles/premium-touch/offer.css" layer(components);
+@import "../src/styles/premium-touch/faq.css" layer(components);
+@import "../src/styles/premium-touch/newsletter.css" layer(components);
+@import "../src/styles/premium-touch/footer.css" layer(components);
+
 /* The theme API emits prefers-color-scheme rules for its dark palette, so dark: follows the OS too. */
 @custom-variant dark (@media (prefers-color-scheme: dark));
 
 /*
- * Design tokens (spec §9.2). The names match the CSS variables the theme API generates
- * (premium-ec-backend themes.engine.ts cssVariables), and the root layout inlines the active
- * theme after this stylesheet, so a token edit in the admin applies without a rebuild.
- * The values here are the fallbacks used before a theme is activated. `static` keeps every
- * variable in the output, so merchants' custom CSS can use them too.
+ * Theme tokens (spec §9.2). The names match the CSS variables the theme API generates
+ * (premium-ec-backend themes.engine.ts cssVariables). The root layout inlines the active theme
+ * after this stylesheet, so a token edit in the admin applies without a rebuild. The values
+ * below are the Premium Touch defaults, used before a theme is activated. `static` keeps every
+ * variable in the output, so block CSS and merchants' custom CSS can rely on them.
  */
 @theme static {
-  --color-background: #ffffff;
-  --color-foreground: #171717;
-  --color-primary: #1f3a2e;
-  --color-primary-foreground: #ffffff;
-  --color-secondary: #f2ede4;
-  --color-secondary-foreground: #1f3a2e;
-  --color-muted: #f5f5f4;
-  --color-muted-foreground: #57534e;
-  --color-accent: #b45309;
-  --color-accent-foreground: #ffffff;
-  --color-border: #e7e5e4;
-  --color-destructive: #b91c1c;
+  --color-background: #fbf6ef; /* bone paper */
+  --color-foreground: #2a2522; /* soft charcoal */
+  --color-primary: #4a002a; /* oxblood: main actions */
+  --color-primary-foreground: #fbf6ef;
+  --color-secondary: #f6e1ce; /* cream */
+  --color-secondary-foreground: #2a2522;
+  --color-muted: #ecd5bf;
+  --color-muted-foreground: #62564e;
+  --color-accent: #006e65; /* deep teal: links and focus */
+  --color-accent-foreground: #fbf6ef;
+  --color-border: #e2d2c1;
+  --color-destructive: #9f1d1d;
 
   /* derived roles the theme doesn't set separately */
-  --color-card: var(--color-background);
+  --color-card: var(--color-surface, #ffffff);
   --color-card-foreground: var(--color-foreground);
   --color-popover: var(--color-background);
   --color-popover-foreground: var(--color-foreground);
   --color-input: var(--color-border);
-  --color-ring: var(--color-primary);
+  --color-ring: var(--color-accent);
 
-  --font-body: ui-sans-serif, system-ui, sans-serif;
-  --font-heading: ui-serif, Georgia, serif;
+  /* the root layout points these at the self-hosted fonts; a theme can name others */
+  --font-body: var(--font-figtree), "Segoe UI", system-ui, sans-serif;
+  --font-heading: var(--font-fraunces), "Iowan Old Style", Georgia, serif;
   --font-sans: var(--font-body);
   --font-serif: var(--font-heading);
 
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 16px;
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 10px;
   --radius-xl: calc(var(--radius-lg) * 1.4);
   --radius-2xl: calc(var(--radius-lg) * 1.8);
 
-  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.06);
+  --breakpoint-md: 48rem; /* 768 */
+  --breakpoint-lg: 64rem; /* 1024 */
+  --breakpoint-xl: 80rem; /* 1280 */
+  --breakpoint-2xl: 96rem; /* 1536 */
 }
 
 /* shadcn/ui components reference a few unprefixed variables */
@@ -64,21 +86,6 @@
   }
   html {
     font-size: var(--font-size-base);
-    @apply font-sans antialiased;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-  h1,
-  h2,
-  h3,
-  h4 {
-    font-family: var(--font-heading);
-    text-wrap: balance;
-  }
-  :focus-visible {
-    outline: 2px solid var(--color-ring);
-    outline-offset: 2px;
   }
   @media (prefers-reduced-motion: reduce) {
     *,

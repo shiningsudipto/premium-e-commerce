@@ -10,3 +10,4 @@ components/ui
 lib/utils.ts
 tsconfig.json
 AGENTS.md
+src/admin/store/api.generated.ts

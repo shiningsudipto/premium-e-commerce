@@ -1,0 +1,94 @@
+/* ---------- Ad B · promo_cards (two-up offers) ---------- */
+.promo-cards {
+  display: grid;
+  gap: var(--space-4);
+}
+.promo-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  overflow: hidden;
+  border: var(--hairline-strong);
+  background: var(--color-background);
+  text-decoration: none;
+  color: var(--color-foreground) !important;
+  transition:
+    transform var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base);
+}
+.promo-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lift);
+}
+.promo-card--dark {
+  background: var(--color-tobacco);
+  border-color: var(--color-tobacco);
+  color: var(--color-on-dark) !important;
+}
+.promo-card__media {
+  aspect-ratio: 16 / 9;
+}
+.promo-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5);
+}
+.promo-card__tag {
+  align-self: flex-start;
+  padding: 3px var(--space-2);
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border: 1px solid currentColor;
+  border-radius: var(--radius-sm);
+}
+.promo-card .h3 {
+  font-size: var(--text-2xl);
+}
+.promo-card__cta {
+  margin-top: var(--space-2);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid currentColor;
+  align-self: flex-start;
+  padding-block: var(--space-1);
+}
+.promo-card__cta .icon {
+  transition: transform var(--dur-fast);
+}
+.promo-card:hover .promo-card__cta .icon {
+  transform: translateX(3px);
+}
+.promo-card--dark :focus-visible,
+.promo-card--dark:focus-visible {
+  outline-color: var(--color-focus-on-dark);
+}
+@media (min-width: 768px) {
+  .promo-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-5);
+  }
+}
+@media (min-width: 1280px) {
+  .promo-card {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  }
+  .promo-card__media {
+    aspect-ratio: auto;
+    min-height: 300px;
+  }
+  .promo-card__body {
+    padding: var(--space-6);
+    justify-content: center;
+  }
+}
+
+.promo-card__text--dark {
+  color: var(--color-on-dark-muted);
+}

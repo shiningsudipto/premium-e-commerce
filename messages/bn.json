@@ -8,20 +8,25 @@
     "primaryNav": "প্রধান",
     "account": "অ্যাকাউন্ট",
     "signIn": "সাইন ইন",
-    "cart": "কার্ট",
-    "openMenu": "মেনু খুলুন"
+    "openMenu": "মেনু খুলুন",
+    "search": "অনুসন্ধান",
+    "closeMenu": "মেনু বন্ধ করুন",
+    "menu": "মেনু",
+    "bag": "ব্যাগ, {count, plural, =0 {খালি} other {#টি পণ্য}}"
   },
   "footer": {
-    "help": "প্রশ্ন আছে? লিখুন <mail>{email}</mail>"
-  },
-  "home": {
-    "title": "{store}-এ স্বাগতম",
-    "browse": "স্টোর দেখুন"
+    "paymentMethods": "পেমেন্টের মাধ্যম"
   },
   "errors": {
     "notFoundTitle": "পৃষ্ঠাটি পাওয়া যায়নি",
     "backHome": "হোম পেজে ফিরে যান",
     "errorTitle": "কিছু একটা সমস্যা হয়েছে",
     "retry": "আবার চেষ্টা করুন"
+  },
+  "product": {
+    "quickAdd": "দ্রুত যোগ করুন",
+    "soldOut": "বিক্রি শেষ",
+    "addToBag": "ব্যাগে যোগ করুন",
+    "colour": "রং"
   }
 }

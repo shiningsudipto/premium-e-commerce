@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Figtree, Fraunces } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getTranslations } from "next-intl/server";
 import { market } from "next/root-params";
@@ -6,8 +7,19 @@ import { env } from "@/src/lib/env";
 import { FlagsProvider } from "@/src/lib/flags-client";
 import { allSegments, parseMarketSegment } from "@/src/lib/market";
 import { getMarketFlags, getMarkets, getStoreConfig, getTheme } from "@/src/lib/store-data";
-import { googleFontsUrl, inlineCss, webFontFamilies } from "@/src/lib/theme";
+import { fontStackCss, googleFontsUrl, inlineCss, webFontFamilies } from "@/src/lib/theme";
 import "../globals.css";
+
+// The design's typefaces, self-hosted by next/font (no layout shift, no third-party request).
+// Fraunces is variable in weight and optical size, with italics for the emphasized phrases.
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  style: ["normal", "italic"],
+  axes: ["opsz"],
+  variable: "--font-fraunces",
+  display: "swap",
+});
+const figtree = Figtree({ subsets: ["latin"], variable: "--font-figtree", display: "swap" });
 
 // Root layout for every storefront page. proxy.ts guarantees a valid /{locale}-{market}/ prefix.
 
@@ -44,7 +56,7 @@ export default async function RootLayout({ children }: LayoutProps<"/[market]">)
     : null;
 
   return (
-    <html lang={ref.locale} data-market={ref.market}>
+    <html lang={ref.locale} data-market={ref.market} className={`${fraunces.variable} ${figtree.variable}`}>
       <head>
         {fonts && (
           <>
@@ -53,16 +65,22 @@ export default async function RootLayout({ children }: LayoutProps<"/[market]">)
             <link rel="stylesheet" href={fonts} />
           </>
         )}
-        {theme && <style id="theme-tokens" dangerouslySetInnerHTML={{ __html: inlineCss(theme.css) }} />}
+        {theme && (
+          <style
+            id="theme-tokens"
+            dangerouslySetInnerHTML={{
+              __html: inlineCss(
+                theme.css + fontStackCss(theme.tokens.typography.fontBody, theme.tokens.typography.fontHeading),
+              ),
+            }}
+          />
+        )}
         {theme?.customCss && (
           <style id="theme-custom" dangerouslySetInnerHTML={{ __html: inlineCss(theme.customCss) }} />
         )}
       </head>
-      <body className="flex min-h-dvh flex-col">
-        <a
-          href="#main"
-          className="sr-only z-50 rounded-md bg-primary px-4 py-2 text-primary-foreground focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
-        >
+      <body className="pt flex min-h-dvh flex-col">
+        <a className="skip-link" href="#main">
           {t("skipToContent")}
         </a>
         <NextIntlClientProvider>

@@ -1,9 +1,7 @@
 import { env } from "../lib/env";
-import type { Tokens } from "../lib/session/cookies";
 import type { MarketInfo, MarketRef } from "../lib/market";
 
-// Plain fetch calls to the API for proxy.ts and the BFF, which work with raw requests and
-// responses rather than the typed client.
+// Plain fetch helpers for proxy.ts, which works with raw requests rather than the typed client.
 
 export type ForwardContext = {
   market: MarketRef;
@@ -33,35 +31,6 @@ export function clientIpOf(headers: Headers): string | null {
 }
 
 export const newRequestId = () => crypto.randomUUID();
-
-// Exchanges a refresh token. null means the API refused it (expired, revoked or reused);
-// a network failure throws, so a flaky connection doesn't sign anyone out.
-export async function refreshTokens(
-  refreshToken: string,
-  headers: Record<string, string> = {},
-): Promise<Tokens | null> {
-  const res = await fetch(`${env.API_URL}/v1/store/auth/refresh`, {
-    method: "POST",
-    headers: { "content-type": "application/json", ...headers },
-    body: JSON.stringify({ refreshToken }),
-    cache: "no-store",
-    signal: AbortSignal.timeout(10_000),
-  });
-  if (res.status === 401 || res.status === 400) return null;
-  if (!res.ok) throw new Error(`refresh failed with ${res.status}`);
-  return (await res.json()) as Tokens;
-}
-
-export async function createGuestToken(headers: Record<string, string>): Promise<string> {
-  const res = await fetch(`${env.API_URL}/v1/store/auth/guest`, {
-    method: "POST",
-    headers,
-    cache: "no-store",
-    signal: AbortSignal.timeout(10_000),
-  });
-  if (!res.ok) throw new Error(`guest token failed with ${res.status}`);
-  return ((await res.json()) as { guestToken: string }).guestToken;
-}
 
 // Markets for proxy.ts, kept in memory for a few minutes. If the API is unreachable the last
 // known list is used, and before the first success only the default market is accepted.

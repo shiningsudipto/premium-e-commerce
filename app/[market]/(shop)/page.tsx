@@ -1,21 +1,45 @@
-import { getTranslations } from "next-intl/server";
+import type { Metadata } from "next";
 import { market } from "next/root-params";
+import * as home from "@/src/content/home";
+import { CollectionList } from "@/src/blocks/collection-list";
+import { Craft, Faq, PromoCards, PromoSplit, Story, Testimonials } from "@/src/blocks/editorial";
+import { Hero } from "@/src/blocks/hero";
+import { Letters } from "@/src/blocks/letters/letters";
+import { Offer } from "@/src/blocks/offer/offer";
+import { ProductShelf } from "@/src/blocks/product-shelf/product-shelf";
+import { Spotlight } from "@/src/blocks/spotlight/spotlight";
 import { env } from "@/src/lib/env";
 import { parseMarketSegment } from "@/src/lib/market";
 import { getStoreConfig } from "@/src/lib/store-data";
 
-// Placeholder home page until the block-based home arrives in Phase 1. It's fully cached:
-// the store name changes when the worker revalidates the "config" tag.
+export async function generateMetadata(): Promise<Metadata> {
+  const ref = parseMarketSegment(await market()) ?? parseMarketSegment(env.DEFAULT_MARKET)!;
+  const config = await getStoreConfig(ref);
+  return {
+    title: { absolute: `${config.storeName} · Handcrafted leather goods` },
+    description: home.hero.lede,
+  };
+}
+
+// Home page (Premium Touch design). Each section is a block with its own props, in the order of
+// the design; commerce blocks read the catalog, editorial blocks read src/content/home.ts.
 export default async function HomePage() {
   const ref = parseMarketSegment(await market()) ?? parseMarketSegment(env.DEFAULT_MARKET)!;
-  const [config, t] = await Promise.all([getStoreConfig(ref), getTranslations("home")]);
+  const config = await getStoreConfig(ref);
   return (
-    <section className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-24 sm:px-6 sm:py-32">
-      <p className="text-xs font-medium tracking-[0.2em] text-accent uppercase">{t("eyebrow")}</p>
-      <h1 data-testid="store-name" className="max-w-3xl text-5xl leading-[1.05] tracking-tight sm:text-7xl">
-        {t("title", { store: config.storeName })}
-      </h1>
-      <p className="max-w-xl text-lg text-muted-foreground">{t("lede")}</p>
-    </section>
+    <>
+      <Hero market={ref} content={home.hero} />
+      <CollectionList market={ref} content={home.collections} />
+      <ProductShelf market={ref} content={home.shop} />
+      <PromoSplit market={ref} currency={config.market.currency} content={home.giftSet} />
+      <Craft market={ref} content={home.craft} />
+      <Story market={ref} content={home.story} />
+      <Spotlight market={ref} content={home.spotlight} />
+      <PromoCards market={ref} content={home.services} />
+      <Testimonials content={home.reviews} />
+      <Offer market={ref} content={home.offer} />
+      <Faq market={ref} content={home.faq} />
+      <Letters market={ref} storeName={config.storeName} content={home.letters} />
+    </>
   );
 }

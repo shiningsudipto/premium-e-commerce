@@ -46,3 +46,7 @@ next-env.d.ts
 /test-results/
 /playwright-report/
 /playwright/.cache/
+
+# admin end-to-end state
+/e2e/admin/.staff.json
+/e2e/admin/.auth/

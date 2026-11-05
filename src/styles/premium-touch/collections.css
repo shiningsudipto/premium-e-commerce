@@ -1,0 +1,110 @@
+/* ---------- 2. Collection list ---------- */
+.collections__grid {
+  display: flex;
+  gap: var(--space-4);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  margin-inline: calc(-1 * var(--gutter));
+  padding-inline: var(--gutter);
+  scroll-padding-inline: var(--gutter);
+  padding-bottom: var(--space-3);
+  scrollbar-width: thin;
+}
+.tile {
+  position: relative;
+  flex: 0 0 78%;
+  scroll-snap-align: start;
+  aspect-ratio: 4 / 5;
+  display: block;
+  overflow: hidden;
+  text-decoration: none;
+  color: var(--color-foreground) !important;
+}
+.tile .ph {
+  transition: transform 700ms var(--ease-out);
+}
+.tile:hover .ph {
+  transform: scale(1.03);
+}
+.tile__label {
+  position: absolute;
+  left: var(--space-4);
+  bottom: var(--space-4);
+  right: var(--space-4);
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: var(--space-3);
+  background: var(--color-background);
+  padding: var(--space-3) var(--space-4);
+}
+.tile__name {
+  font-family: var(--font-heading);
+  font-size: var(--text-2xl);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+}
+.tile__count {
+  font-size: var(--text-xs);
+  color: var(--color-muted-foreground);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.tile__arrow {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-pill);
+  border: var(--hairline-strong);
+  display: grid;
+  place-items: center;
+  flex: none;
+  transition:
+    background-color var(--dur-fast),
+    color var(--dur-fast);
+}
+.tile:hover .tile__arrow {
+  background: var(--color-primary);
+  color: var(--color-primary-foreground);
+  border-color: var(--color-primary);
+}
+@media (min-width: 768px) {
+  .collections__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-rows: 280px 280px;
+    overflow: visible;
+    margin-inline: 0;
+    padding-inline: 0;
+    padding-bottom: 0;
+  }
+  .tile {
+    aspect-ratio: auto;
+  }
+  .tile:nth-child(1) {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+  .tile:nth-child(2) {
+    grid-column: span 2;
+  }
+}
+@media (min-width: 1280px) {
+  .collections__grid {
+    grid-template-rows: 330px 330px;
+    gap: var(--space-5);
+  }
+}
+
+/* the tile is a list item holding the link, so the list keeps list semantics */
+.tile__link {
+  position: absolute;
+  inset: 0;
+  display: block;
+  color: inherit !important;
+  text-decoration: none;
+}
+.tile__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}

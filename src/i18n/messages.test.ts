@@ -15,8 +15,8 @@ describe("message fallback chain", () => {
   });
 
   it("serves Bengali where translated and English elsewhere", async () => {
-    const bn = (await loadMessages("bn")) as { home: { title: string; lede: string } };
-    expect(bn.home.title).toContain("স্বাগতম");
-    expect(bn.home.lede).toBe("Our full catalog is on its way. Thank you for visiting.");
+    const bn = (await loadMessages("bn")) as { product: { quickAdd: string; secondAngle: string } };
+    expect(bn.product.quickAdd).toBe("দ্রুত যোগ করুন");
+    expect(bn.product.secondAngle).toBe("Second angle");
   });
 });

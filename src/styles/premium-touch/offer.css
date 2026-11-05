@@ -1,0 +1,112 @@
+/* ---------- 7. Countdown ---------- */
+.offer {
+  position: relative;
+  background: var(--color-background);
+  border: var(--hairline-strong);
+  padding: var(--space-6) var(--space-5);
+  display: grid;
+  gap: var(--space-6);
+}
+.offer::before {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border: var(--stitch);
+  pointer-events: none;
+}
+.offer__copy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  position: relative;
+}
+.timer {
+  display: flex;
+  gap: var(--space-3);
+  position: relative;
+}
+.timer__unit {
+  flex: 1;
+  min-width: 72px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-3) var(--space-2);
+  background: var(--color-secondary);
+}
+.timer__num {
+  font-family: var(--font-heading);
+  font-size: var(--text-3xl);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-primary);
+}
+.timer__lbl {
+  font-size: var(--text-2xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-muted-foreground);
+  margin-top: var(--space-1);
+}
+.offer__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  position: relative;
+}
+.code-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  border: var(--stitch);
+  border-color: var(--color-primary);
+}
+.code-chip__code {
+  padding: 0 var(--space-4);
+  font-family: var(--font-heading);
+  font-size: var(--text-xl);
+  letter-spacing: 0.12em;
+  color: var(--color-primary);
+}
+.code-chip__btn {
+  align-self: stretch;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0 var(--space-4);
+  border: 0;
+  border-left: var(--stitch);
+  border-left-color: var(--color-primary);
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-foreground);
+  cursor: pointer;
+  min-width: 92px;
+}
+.code-chip__btn:hover {
+  background: var(--color-secondary);
+}
+@media (min-width: 1024px) {
+  .offer {
+    grid-template-columns: 1.2fr auto auto;
+    align-items: center;
+    padding: var(--space-7);
+    gap: var(--space-7);
+  }
+  .offer__actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.offer__title {
+  font-size: clamp(1.75rem, 1.3rem + 1.6vw, 2.5rem);
+}
+.offer__ended {
+  position: relative;
+}

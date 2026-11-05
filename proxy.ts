@@ -1,19 +1,24 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { clientIpOf, contextHeaders, newRequestId, proxyMarkets, refreshTokens } from "./src/api/upstream";
+import { adminProxy, isAdminPath } from "./src/admin/lib/session/proxy";
+import { clientIpOf, contextHeaders, newRequestId, proxyMarkets } from "./src/api/upstream";
 import { env, isProduction } from "./src/lib/env";
 import { parseMarketSegment, pickSegment, resolveSegment } from "./src/lib/market";
-import { clearedSession, COOKIE, marketCookie, sessionCookies, type CookieWrite } from "./src/lib/session/cookies";
+import { callSession, type ParsedCookie } from "./src/lib/session/api-session";
+import { COOKIE, marketCookie } from "./src/lib/session/cookies";
 import { refreshOnce } from "./src/lib/session/refresh";
 
-// Runs before every page (spec §3.3):
+// Runs before every page. /admin belongs to the back office (staff sign-in gate, see
+// src/admin/lib/session/proxy.ts); everything else is the storefront (spec §3.3):
 // 1. every URL carries a market prefix (/en-bd/…): URL → cookie → geo header → default;
 // 2. downstream rendering gets the market, locale, channel and a correlation ID as headers;
-// 3. an expired access token is refreshed here, so Server Components always see a live session.
-// Route handlers under /api do their own session work and aren't matched.
+// 3. an expired access token is refreshed here through the API (which sets the new cookies), so
+//    Server Components always see a live session.
 
 const GEO_HEADERS = ["x-vercel-ip-country", "cf-ipcountry", "cloudfront-viewer-country"];
 
 export async function proxy(request: NextRequest) {
+  if (isAdminPath(request.nextUrl.pathname)) return adminProxy(request);
+
   const fallback = parseMarketSegment(env.DEFAULT_MARKET)!;
   const markets = await proxyMarkets(fallback);
   const { pathname, search } = request.nextUrl;
@@ -34,30 +39,28 @@ export async function proxy(request: NextRequest) {
   }
 
   const requestId = request.headers.get("x-request-id") ?? newRequestId();
-  const writes: CookieWrite[] = [];
-  if (request.cookies.get(COOKIE.market)?.value !== current.segment)
-    writes.push(marketCookie(current.segment, isProduction));
-
+  // session cookies the API sets while refreshing, passed to the browser and to this render
+  let sessionCookies: ParsedCookie[] = [];
   const refreshToken = request.cookies.get(COOKIE.refresh)?.value;
   if (refreshToken && !request.cookies.get(COOKIE.access)) {
     try {
-      const tokens = await refreshOnce(refreshToken, (rt) =>
-        refreshTokens(
-          rt,
-          contextHeaders({ market: current, channel: env.CHANNEL, requestId, clientIp: clientIpOf(request.headers) }),
-        ),
+      const context = contextHeaders({
+        market: current,
+        channel: env.CHANNEL,
+        requestId,
+        clientIp: clientIpOf(request.headers),
+      });
+      const result = await refreshOnce(refreshToken, (rt) =>
+        callSession("store", "refresh", `${COOKIE.refresh}=${encodeURIComponent(rt)}`, context),
       );
-      writes.push(...(tokens ? sessionCookies(tokens, isProduction) : clearedSession(isProduction)));
+      sessionCookies = result.cookies;
     } catch {
       // API unreachable: render signed out for now and try again on the next request
     }
   }
-
-  // what Server Components see: the updated cookies plus the context headers
-  for (const w of writes) {
-    if (w.name === COOKIE.market) continue;
-    if (w.value) request.cookies.set(w.name, w.value);
-    else request.cookies.delete(w.name);
+  for (const c of sessionCookies) {
+    if (c.value) request.cookies.set(c.name, c.value);
+    else request.cookies.delete(c.name);
   }
   const headers = new Headers(request.headers);
   headers.set("x-market-segment", current.segment);
@@ -68,7 +71,11 @@ export async function proxy(request: NextRequest) {
 
   const response = NextResponse.next({ request: { headers } });
   response.headers.set("x-request-id", requestId);
-  for (const { name, value, ...options } of writes) response.cookies.set(name, value, options);
+  for (const c of sessionCookies) response.cookies.set(c.name, c.value, c.options);
+  if (request.cookies.get(COOKIE.market)?.value !== current.segment) {
+    const { name, value, ...options } = marketCookie(current.segment, isProduction);
+    response.cookies.set(name, value, options);
+  }
   return response;
 }
 

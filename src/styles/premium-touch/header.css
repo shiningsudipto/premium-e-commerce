@@ -1,0 +1,195 @@
+/* ---------- Announcement + header ---------- */
+.announce {
+  background: var(--color-primary);
+  color: var(--color-primary-foreground);
+  font-size: var(--text-xs);
+  letter-spacing: 0.06em;
+  text-align: center;
+  padding: var(--space-2) var(--gutter);
+}
+.announce span {
+  opacity: 0.6;
+  padding-inline: var(--space-2);
+}
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: color-mix(in srgb, var(--color-background) 94%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: var(--hairline);
+  transition: box-shadow var(--dur-base);
+}
+.site-header.is-condensed {
+  box-shadow: var(--shadow-sm);
+}
+.site-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  height: var(--header-h);
+  transition: height var(--dur-base) var(--ease-out);
+}
+.site-header.is-condensed .site-header__inner {
+  height: var(--header-h-condensed);
+}
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--color-foreground) !important;
+  text-decoration: none;
+}
+.logo__mark {
+  width: 36px;
+  height: 36px;
+  flex: none;
+  transition:
+    width var(--dur-base),
+    height var(--dur-base);
+}
+.site-header.is-condensed .logo__mark {
+  width: 28px;
+  height: 28px;
+}
+.logo__word {
+  font-family: var(--font-heading);
+  font-size: var(--text-xl);
+  font-weight: 450;
+  letter-spacing: 0.01em;
+  line-height: 1;
+  font-variant-caps: all-small-caps;
+}
+.nav {
+  display: none;
+}
+.nav a {
+  color: var(--color-foreground) !important;
+  text-decoration: none;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  letter-spacing: 0.03em;
+  padding-block: var(--space-2);
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0 1px;
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  transition: background-size var(--dur-base) var(--ease-out);
+}
+.nav a:hover {
+  background-size: 100% 1px;
+}
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+.header-actions .hide-sm {
+  display: none;
+}
+.cart-count {
+  position: absolute;
+  top: 4px;
+  right: 2px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: var(--radius-pill);
+  background: var(--color-primary);
+  color: var(--color-primary-foreground);
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-semibold);
+  line-height: 18px;
+  text-align: center;
+}
+.menu-btn {
+  margin-left: calc(-1 * var(--space-2));
+}
+@media (min-width: 768px) {
+  .header-actions .hide-sm {
+    display: inline-grid;
+  }
+}
+@media (min-width: 1280px) {
+  .menu-btn {
+    display: none;
+  }
+  .nav {
+    display: flex;
+    gap: var(--space-6);
+  }
+  .site-header__inner {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+  }
+  .header-actions {
+    justify-content: flex-end;
+  }
+}
+
+/* Drawer */
+.drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+}
+.drawer__scrim {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgb(30 20 14 / 0.45);
+  cursor: pointer;
+}
+.drawer__panel {
+  position: relative;
+  width: min(88vw, 380px);
+  height: 100%;
+  min-height: 100vh;
+  background: var(--color-background);
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  overflow-y: auto;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .drawer__panel {
+    animation: pt-rise var(--dur-base) var(--ease-out) both;
+  }
+}
+.drawer__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.drawer__nav a {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-block: var(--space-4);
+  border-bottom: var(--hairline);
+  font-family: var(--font-heading);
+  font-size: var(--text-2xl);
+  color: var(--color-foreground) !important;
+  text-decoration: none;
+  min-height: 44px;
+}
+.drawer__foot {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  font-size: var(--text-sm);
+}
+
+.site-header__start {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+/* header actions are links here (search, account, bag); keep them ink, not link teal */
+a.icon-btn {
+  color: var(--color-foreground) !important;
+}

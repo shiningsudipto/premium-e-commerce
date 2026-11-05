@@ -7,7 +7,7 @@ test("visitors without a market prefix are sent to their market", async ({ page 
   await page.goto("/");
   await expect(page).toHaveURL(/\/en-bd$/);
   await expect(page.locator("html")).toHaveAttribute("lang", "en");
-  await expect(page.getByTestId("store-name")).toContainText("Welcome to");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Made slowly. Carried for decades.");
 });
 
 test("the active theme's tokens drive the page", async ({ page }) => {
@@ -15,16 +15,21 @@ test("the active theme's tokens drive the page", async ({ page }) => {
   const primary = await page.evaluate(() =>
     getComputedStyle(document.documentElement).getPropertyValue("--color-primary").trim(),
   );
-  expect(primary).toBe("#1f3a2e");
-  const footerBg = await page.locator("footer").evaluate((el) => getComputedStyle(el).backgroundColor);
-  expect(footerBg).toBe("rgb(242, 237, 228)"); // --color-secondary #f2ede4
+  expect(primary).toBe("#4a002a");
+  // the primary call to action is painted with the theme's primary colour
+  const cta = page.getByRole("link", { name: "Shop the collection" });
+  expect(await cta.evaluate((el) => getComputedStyle(el).backgroundColor)).toBe("rgb(74, 0, 42)");
+  // and headings use the self-hosted display face named by the theme
+  const heading = await page.getByRole("heading", { level: 1 }).evaluate((el) => getComputedStyle(el).fontFamily);
+  expect(heading).toMatch(/Fraunces/);
 });
 
 test("the chosen locale is remembered and falls back to English for untranslated text", async ({ page }) => {
   await page.goto("/bn-bd");
   await expect(page.locator("html")).toHaveAttribute("lang", "bn");
-  await expect(page.getByTestId("store-name")).toContainText("স্বাগতম");
-  await expect(page.getByText("Our full catalog is on its way.")).toBeVisible();
+  // translated chrome, English where there is no translation yet
+  await expect(page.getByRole("link", { name: "মূল বিষয়বস্তুতে যান" })).toBeAttached();
+  await expect(page.getByRole("button", { name: "Copy promo code EID15" })).toBeAttached();
   await page.goto("/");
   await expect(page).toHaveURL(/\/bn-bd$/);
 });
@@ -49,16 +54,11 @@ test("unknown pages show the not-found page inside the shop and aren't indexed",
   await expect(page).toHaveURL(/\/en-bd$/);
 });
 
-test("the BFF serves storefront APIs and refuses the rest", async ({ request }) => {
-  const config = await request.get("/api/bff/v1/store/config");
-  expect(config.ok()).toBe(true);
-  expect(await config.json()).toMatchObject({ market: { handle: "bd", currency: "BDT" } });
-  expect((await request.get("/api/bff/v1/admin/orders")).status()).toBe(404);
-  const crossSite = await request.post("/api/bff/v1/store/carts", {
-    headers: { origin: "https://evil.example" },
-    data: {},
-  });
-  expect(crossSite.status()).toBe(403);
+test("the web app exposes no API of its own besides cache revalidation", async ({ request }) => {
+  // browsers talk to the Express API directly (ADR 0012)
+  for (const path of ["/api/bff/v1/store/config", "/api/auth/login", "/api/admin/bff/v1/admin/flags"]) {
+    expect((await request.get(path)).status()).toBe(404);
+  }
   const unsigned = await request.post("/api/revalidate", { data: { tags: ["config"] } });
   expect(unsigned.status()).toBe(401);
 });

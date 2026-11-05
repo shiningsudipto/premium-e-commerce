@@ -1,0 +1,109 @@
+/* ---------- 4. Craft (columns + image + rich text) ---------- */
+.craft {
+  background: var(--color-tobacco);
+  overflow: hidden;
+}
+.craft__grid {
+  position: relative;
+  display: grid;
+  gap: var(--space-8);
+}
+.craft__media {
+  position: relative;
+  padding-top: var(--space-8);
+}
+.craft__numeral {
+  position: absolute;
+  top: -0.12em;
+  left: -0.06em;
+  z-index: 0;
+  font-family: var(--font-heading);
+  font-size: var(--text-numeral);
+  font-weight: 300;
+  font-style: italic;
+  line-height: 0.8;
+  letter-spacing: -0.06em;
+  color: var(--color-on-dark);
+  opacity: 0.09;
+  pointer-events: none;
+  user-select: none;
+  font-variation-settings: "opsz" 144;
+  white-space: nowrap;
+}
+.craft__numeral small {
+  font-size: 0.22em;
+  letter-spacing: 0;
+  font-style: normal;
+  margin-left: 0.1em;
+}
+.craft__main {
+  position: relative;
+  z-index: 1;
+  aspect-ratio: 4 / 5;
+  width: 82%;
+}
+.craft__detail {
+  position: absolute;
+  z-index: 2;
+  right: 0;
+  bottom: calc(-1 * var(--space-6));
+  width: 44%;
+  aspect-ratio: 1;
+  border: 6px solid var(--color-tobacco);
+}
+.craft__copy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+.craft__points {
+  counter-reset: none;
+  border-top: 1px solid color-mix(in srgb, var(--color-on-dark) 25%, transparent);
+}
+.craft__point {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: var(--space-4);
+  padding-block: var(--space-5);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-on-dark) 25%, transparent);
+}
+.craft__num {
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-size: var(--text-2xl);
+  line-height: 1;
+  color: var(--color-on-dark);
+}
+.craft__point h3 {
+  margin-bottom: var(--space-2);
+  color: var(--color-on-dark);
+}
+.craft__stat {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border: 1.5px dashed color-mix(in srgb, var(--color-on-dark) 45%, transparent);
+  align-self: flex-start;
+  font-size: var(--text-sm);
+  color: var(--color-on-dark-muted);
+}
+.craft__stat strong {
+  font-family: var(--font-heading);
+  font-size: var(--text-2xl);
+  font-weight: 400;
+  color: var(--color-on-dark);
+}
+@media (min-width: 1024px) {
+  .craft__grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    align-items: center;
+  }
+  .craft__media {
+    grid-column: 1 / 7;
+    padding-top: var(--space-9);
+  }
+  .craft__copy {
+    grid-column: 8 / 13;
+  }
+}
