@@ -1,0 +1,27 @@
+{
+  "common": {
+    "skipToContent": "মূল বিষয়বস্তুতে যান",
+    "loading": "লোড হচ্ছে…",
+    "home": "হোম"
+  },
+  "header": {
+    "primaryNav": "প্রধান",
+    "account": "অ্যাকাউন্ট",
+    "signIn": "সাইন ইন",
+    "cart": "কার্ট",
+    "openMenu": "মেনু খুলুন"
+  },
+  "footer": {
+    "help": "প্রশ্ন আছে? লিখুন <mail>{email}</mail>"
+  },
+  "home": {
+    "title": "{store}-এ স্বাগতম",
+    "browse": "স্টোর দেখুন"
+  },
+  "errors": {
+    "notFoundTitle": "পৃষ্ঠাটি পাওয়া যায়নি",
+    "backHome": "হোম পেজে ফিরে যান",
+    "errorTitle": "কিছু একটা সমস্যা হয়েছে",
+    "retry": "আবার চেষ্টা করুন"
+  }
+}
