@@ -6,6 +6,7 @@ import type { ArtName } from "../../components/storefront/art";
 import { Media, type MediaImage, type Tone } from "../../components/storefront/media";
 import { swatchColor } from "../../components/storefront/primitives";
 import { addToBag } from "../../features/cart/actions";
+import { useBag } from "../../features/cart/bag-provider";
 
 export type SpotlightVariant = {
   id: string;
@@ -83,6 +84,7 @@ export function SpotlightBuy({
   const [colour, setColour] = useState(initialColour);
   const [pending, start] = useTransition();
   const [message, setMessage] = useState("");
+  const { openBag } = useBag();
   const variant = variants.find((v) => v.colour === colour) ?? variants[0];
   const colours = [...new Set(variants.map((v) => v.colour).filter((c): c is string => !!c))];
 
@@ -91,6 +93,7 @@ export function SpotlightBuy({
       if (!variant) return;
       const result = await addToBag({ variantId: variant.id });
       setMessage(result.ok ? `${title}${colour ? ` in ${colour}` : ""} added to your bag.` : result.message);
+      if (result.ok) openBag(result.cart);
     });
 
   return (

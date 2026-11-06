@@ -1,5 +1,6 @@
 import { env } from "../lib/env";
 import type { MarketInfo, MarketRef } from "../lib/market";
+import { buildTable, type RedirectRule, type RedirectTable } from "../lib/redirects";
 
 // Plain fetch helpers for proxy.ts, which works with raw requests rather than the typed client.
 
@@ -56,5 +57,31 @@ export async function proxyMarkets(fallback: MarketRef): Promise<MarketInfo[]> {
         { handle: fallback.market, defaultLocale: fallback.locale, locales: [fallback.locale], countries: [] },
       ]
     );
+  }
+}
+
+// Redirect rules for proxy.ts, refreshed every minute so a new rule applies quickly without a
+// lookup per request. If the API is down the last table is kept (or none before the first load).
+const REDIRECTS_TTL_MS = 60_000;
+const redirectCache = globalThis as { __peRedirects?: { table: RedirectTable; fetchedAt: number } };
+
+export async function proxyRedirects(market: MarketRef): Promise<RedirectTable> {
+  const cached = redirectCache.__peRedirects;
+  if (cached && Date.now() - cached.fetchedAt < REDIRECTS_TTL_MS) return cached.table;
+  try {
+    const res = await fetch(`${env.API_URL}/v1/store/redirects`, {
+      cache: "no-store",
+      headers: { "x-market": market.market, "x-locale": market.locale },
+      signal: AbortSignal.timeout(3_000),
+    });
+    if (!res.ok) throw new Error(String(res.status));
+    const table = buildTable((await res.json()) as RedirectRule[]);
+    redirectCache.__peRedirects = { table, fetchedAt: Date.now() };
+    return table;
+  } catch {
+    const table = cached?.table ?? new Map();
+    // don't retry on every request while the API is down
+    redirectCache.__peRedirects = { table, fetchedAt: Date.now() - REDIRECTS_TTL_MS + 10_000 };
+    return table;
   }
 }

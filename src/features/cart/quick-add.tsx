@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { buttonClass } from "../../components/storefront/primitives";
 import { addToBag } from "./actions";
+import { useBag } from "./bag-provider";
 
 // The "Quick add" button on product cards. Products with several variants go to their page so
 // the shopper can choose; the result is announced to screen readers.
@@ -21,6 +22,7 @@ export function QuickAdd({
   labels: { add: string; added: string; soldOut: string; addAria: string; soldOutAria: string };
 }) {
   const router = useRouter();
+  const { openBag } = useBag();
   const [pending, start] = useTransition();
   const [status, setStatus] = useState<{ added: boolean; message: string }>({ added: false, message: "" });
 
@@ -33,8 +35,10 @@ export function QuickAdd({
   const onClick = () =>
     start(async () => {
       const result = await addToBag({ handle });
-      if (result.ok) setStatus({ added: true, message: `${title} added to your bag.` });
-      else if (result.reason === "choose_options") router.push(productHref);
+      if (result.ok) {
+        setStatus({ added: true, message: `${title} added to your bag.` });
+        openBag(result.cart);
+      } else if (result.reason === "choose_options") router.push(productHref);
       else setStatus({ added: false, message: result.message });
     });
 

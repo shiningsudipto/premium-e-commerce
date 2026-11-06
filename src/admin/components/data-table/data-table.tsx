@@ -295,6 +295,8 @@ function FilterForm({
         ) : (
           <Select
             key={f.key}
+            // the trigger shows the option's label, not its raw value (a status code or an id)
+            items={[{ value: "__all", label: "All" }, ...f.options]}
             value={values[f.key] ?? ""}
             onValueChange={(v) =>
               setValues({ ...draft, [f.key]: v === "__all" ? undefined : (v ?? undefined) } as Record<string, string>)

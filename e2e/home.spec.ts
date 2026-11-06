@@ -22,6 +22,8 @@ test.beforeEach(async ({ page }) => {
 });
 
 test("renders every block in the design's order", async ({ page }) => {
+  // sections stream in; read the headings once the last one has arrived
+  await expect(page.getByRole("heading", { name: SECTIONS.at(-1) })).toBeVisible();
   const headings = await page.locator("main h1, main h2").allTextContents();
   const order = SECTIONS.map((title) => headings.findIndex((h) => h.replace(/\s+/g, " ").trim() === title));
   expect(order.every((i) => i >= 0)).toBe(true);
@@ -91,6 +93,11 @@ test("adding the featured piece to the bag updates the header count", async ({ p
     .locator("#spotlight")
     .getByRole("button", { name: /Add to bag/ })
     .click();
+  // the bag drawer opens with the piece in it; closing it returns to the page
+  const drawer = page.getByTestId("bag-drawer");
+  await expect(drawer.getByTestId("bag-line")).toHaveCount(1);
+  await page.keyboard.press("Escape");
+  await expect(drawer).toBeHidden();
   await expect(bag).toHaveAccessibleName(/Bag, 1 item/);
   await expect(bag.locator(".cart-count")).toHaveText("1");
 });

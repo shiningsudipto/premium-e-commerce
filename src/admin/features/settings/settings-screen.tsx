@@ -120,7 +120,7 @@ function fallbackFor(setting: Setting, ref: ScopeRef) {
   return global ? { value: global.value, source: "global value" } : { value: setting.default, source: "default" };
 }
 
-function SettingCard({
+export function SettingCard({
   setting,
   markets,
   channels,

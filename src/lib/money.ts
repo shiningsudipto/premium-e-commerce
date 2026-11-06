@@ -26,3 +26,10 @@ export function formatMoney(minor: number, currency: string, locale = "en"): str
   }).format(amount);
   return `${currencySymbol(currency, locale)} ${number}`;
 }
+
+// Minor units as a decimal string in major units ("18900.00"), for structured data and feeds.
+export function toMajorUnits(minor: number, currency: string): string {
+  const digits =
+    new Intl.NumberFormat("en", { style: "currency", currency }).resolvedOptions().maximumFractionDigits ?? 2;
+  return (minor / 10 ** digits).toFixed(digits);
+}

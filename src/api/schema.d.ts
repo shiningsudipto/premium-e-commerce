@@ -4934,12 +4934,19 @@ export interface components {
             tierIds?: string[];
         };
         Recursive3: {
+            id: string;
+            handle: string;
+            name: string;
+            parentId: string | null;
+            children: components["schemas"]["Recursive3"][];
+        };
+        Recursive4: {
             label: string;
             /** @enum {string} */
             type: "category" | "collection" | "page" | "product" | "url";
             ref?: string;
             url?: string;
-            children?: components["schemas"]["Recursive3"][];
+            children?: components["schemas"]["Recursive4"][];
         };
     };
     responses: never;
@@ -6304,7 +6311,33 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        placement: string;
+                        items: {
+                            id: string;
+                            handle: string;
+                            title: string;
+                            vendor: string | null;
+                            tags: string[];
+                            images: {
+                                url: string;
+                                alt: string | null;
+                                width: number | null;
+                                height: number | null;
+                            }[];
+                            price: {
+                                currency: string;
+                                minMinor: number;
+                                maxMinor: number;
+                                compareAtMinor: number | null;
+                            } | null;
+                            swatches: string[];
+                            availableForSale: boolean;
+                            variantCount: number;
+                        }[];
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -13822,7 +13855,29 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        items: {
+                            id: string;
+                            handle: string;
+                            title: string;
+                            /** @enum {string} */
+                            status: "DRAFT" | "ACTIVE" | "ARCHIVED";
+                            vendor: string | null;
+                            publishAt: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                            variantCount: number;
+                            image: {
+                                url: string;
+                                alt: string | null;
+                            } | null;
+                        }[];
+                        nextCursor: string | null;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -15209,6 +15264,16 @@ export interface operations {
                         version: number;
                         /** Format: date-time */
                         updatedAt: string;
+                        products: {
+                            productId: string;
+                            position: number;
+                            product: {
+                                title: string;
+                                handle: string;
+                                /** @enum {string} */
+                                status: "DRAFT" | "ACTIVE" | "ARCHIVED";
+                            };
+                        }[];
                     }[];
                 };
             };
@@ -15643,7 +15708,33 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        handle: string;
+                        name: string;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        attributes: {
+                            attributeId: string;
+                            required: boolean;
+                            position: number;
+                            attribute: {
+                                handle: string;
+                                label: string;
+                                /** @enum {string} */
+                                type: "TEXT" | "RICH_TEXT" | "NUMBER" | "BOOLEAN" | "SELECT" | "MULTI_SELECT" | "COLOR" | "DATE" | "FILE" | "REFERENCE" | "JSON";
+                                values: unknown;
+                                filterable: boolean;
+                                displayType: string | null;
+                                position: number;
+                                id: string;
+                            };
+                        }[];
+                    }[];
+                };
             };
             /** @description Error */
             default: {
@@ -15685,7 +15776,33 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        handle: string;
+                        name: string;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        attributes: {
+                            attributeId: string;
+                            required: boolean;
+                            position: number;
+                            attribute: {
+                                handle: string;
+                                label: string;
+                                /** @enum {string} */
+                                type: "TEXT" | "RICH_TEXT" | "NUMBER" | "BOOLEAN" | "SELECT" | "MULTI_SELECT" | "COLOR" | "DATE" | "FILE" | "REFERENCE" | "JSON";
+                                values: unknown;
+                                filterable: boolean;
+                                displayType: string | null;
+                                position: number;
+                                id: string;
+                            };
+                        }[];
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -15729,7 +15846,33 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        handle: string;
+                        name: string;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        attributes: {
+                            attributeId: string;
+                            required: boolean;
+                            position: number;
+                            attribute: {
+                                handle: string;
+                                label: string;
+                                /** @enum {string} */
+                                type: "TEXT" | "RICH_TEXT" | "NUMBER" | "BOOLEAN" | "SELECT" | "MULTI_SELECT" | "COLOR" | "DATE" | "FILE" | "REFERENCE" | "JSON";
+                                values: unknown;
+                                filterable: boolean;
+                                displayType: string | null;
+                                position: number;
+                                id: string;
+                            };
+                        }[];
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -15998,7 +16141,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["Recursive3"][];
+                };
             };
             /** @description Error */
             default: {
@@ -16030,7 +16175,27 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        handle: string;
+                        name: string;
+                        description: unknown;
+                        seo: {
+                            title?: string;
+                            description?: string;
+                            canonical?: string;
+                            noindex?: boolean;
+                            ogImage?: string;
+                        };
+                        breadcrumbs: {
+                            handle: string;
+                            name: string;
+                        }[];
+                        /** Format: date-time */
+                        updatedAt: string;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -16062,7 +16227,23 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        handle: string;
+                        title: string;
+                        description: unknown;
+                        seo: {
+                            title?: string;
+                            description?: string;
+                            canonical?: string;
+                            noindex?: boolean;
+                            ogImage?: string;
+                        };
+                        /** Format: date-time */
+                        updatedAt: string;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -16479,7 +16660,7 @@ export interface operations {
             content: {
                 "application/json": {
                     name: string;
-                    items: components["schemas"]["Recursive3"][];
+                    items: components["schemas"]["Recursive4"][];
                     version?: number;
                 };
             };
@@ -17214,7 +17395,54 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        email: string | null;
+                        phone: string | null;
+                        firstName: string | null;
+                        lastName: string | null;
+                        acceptsMarketing: boolean;
+                        /** Format: date-time */
+                        createdAt: string;
+                        tags: string[];
+                        groupId: string | null;
+                        customFields: unknown;
+                        archivedAt: string | null;
+                        hasAccount: boolean;
+                        version: number;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        deletionRequestedAt: string | null;
+                        anonymizedAt: string | null;
+                        addresses: {
+                            firstName: string;
+                            lastName: string;
+                            company: string | null;
+                            line1: string;
+                            line2: string | null;
+                            city: string;
+                            region: string | null;
+                            postalCode: string | null;
+                            country: unknown;
+                            phone: string | null;
+                            id: string;
+                            label: string | null;
+                            isDefaultShipping: boolean;
+                            isDefaultBilling: boolean;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                        }[];
+                        roles: string[];
+                        stats: {
+                            orderCount: number;
+                            lifetimeValueMinor: number;
+                            averageOrderMinor: number;
+                        };
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -17304,7 +17532,17 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        handle: string;
+                        name: string;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                    }[];
+                };
             };
             /** @description Error */
             default: {
@@ -17341,7 +17579,17 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        handle: string;
+                        name: string;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -18516,7 +18764,14 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        sent: true;
+                    } | {
+                        skipped: string;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -18554,7 +18809,28 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        items: {
+                            id: string;
+                            number: number;
+                            displayNumber: string;
+                            /** @enum {string} */
+                            status: "DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED";
+                            email: string;
+                            currency: string;
+                            totalMinor: number;
+                            placedAt: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                            channelId: string;
+                            lineCount: number;
+                            paymentStatus: ("PENDING" | "AUTHORIZED" | "CAPTURED" | "PARTIALLY_REFUNDED" | "REFUNDED" | "FAILED" | "VOIDED") | null;
+                            paymentProvider: string | null;
+                        }[];
+                        nextCursor: string | null;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -18586,7 +18862,170 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        number: number;
+                        displayNumber: string;
+                        /** @enum {string} */
+                        status: "DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED";
+                        holdPreviousStatus: ("DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED") | null;
+                        customerId: string | null;
+                        customer: {
+                            id: string;
+                            email: string | null;
+                            firstName: string | null;
+                            lastName: string | null;
+                        } | null;
+                        email: string;
+                        currency: string;
+                        taxInclusive: boolean;
+                        subtotalMinor: number;
+                        discountMinor: number;
+                        shippingMinor: number;
+                        taxMinor: number;
+                        totalMinor: number;
+                        marketId: string;
+                        channelId: string;
+                        locale: string | null;
+                        shippingAddress: {
+                            firstName: string;
+                            lastName: string;
+                            company?: string | null;
+                            line1: string;
+                            line2?: string | null;
+                            city: string;
+                            region?: string | null;
+                            postalCode?: string | null;
+                            country: string;
+                            phone?: string | null;
+                        };
+                        billingAddress: {
+                            firstName: string;
+                            lastName: string;
+                            company?: string | null;
+                            line1: string;
+                            line2?: string | null;
+                            city: string;
+                            region?: string | null;
+                            postalCode?: string | null;
+                            country: string;
+                            phone?: string | null;
+                        };
+                        shippingMethod: {
+                            rateId?: string | null;
+                            name: string;
+                            amountMinor: number;
+                        };
+                        notes: string | null;
+                        tags: string[];
+                        customFields: unknown;
+                        cancelReason: string | null;
+                        cancelledAt: string | null;
+                        placedAt: string | null;
+                        deliveredAt: string | null;
+                        affiliateId: string | null;
+                        promotions: unknown;
+                        version: number;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        lines: {
+                            id: string;
+                            productId: string;
+                            variantId: string;
+                            titleSnapshot: string;
+                            variantTitle: string;
+                            skuSnapshot: string;
+                            unitPriceMinor: number;
+                            compareAtMinor: number | null;
+                            quantity: number;
+                            discountMinor: number;
+                            taxMinor: number;
+                            totalMinor: number;
+                            costMinor: number | null;
+                            marginMinor: number | null;
+                            customizations: unknown;
+                            fulfilledQuantity: number;
+                            refundedQuantity: number;
+                        }[];
+                        events: {
+                            id: string;
+                            type: string;
+                            message: string;
+                            data: unknown;
+                            actorType: string;
+                            actorId: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                        }[];
+                        payments: {
+                            id: string;
+                            provider: string;
+                            /** @enum {string} */
+                            status: "PENDING" | "AUTHORIZED" | "CAPTURED" | "PARTIALLY_REFUNDED" | "REFUNDED" | "FAILED" | "VOIDED";
+                            amountMinor: number;
+                            currency: string;
+                            capturedMinor: number;
+                            refundedMinor: number;
+                            providerRef: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                            transactions: {
+                                id: string;
+                                /** @enum {string} */
+                                kind: "AUTHORIZE" | "CAPTURE" | "VOID" | "REFUND";
+                                /** @enum {string} */
+                                status: "SUCCESS" | "FAILED" | "PENDING";
+                                amountMinor: number;
+                                providerRef: string | null;
+                                /** Format: date-time */
+                                createdAt: string;
+                            }[];
+                        }[];
+                        fulfillments: {
+                            id: string;
+                            locationId: string;
+                            /** @enum {string} */
+                            status: "PENDING" | "PICKING" | "PACKED" | "SHIPPED" | "IN_TRANSIT" | "DELIVERED" | "FAILED_DELIVERY" | "RETURNED_TO_SENDER";
+                            carrier: string | null;
+                            trackingNumber: string | null;
+                            trackingUrl: string | null;
+                            shippedAt: string | null;
+                            deliveredAt: string | null;
+                            version: number;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                            lines: {
+                                id: string;
+                                orderLineId: string;
+                                quantity: number;
+                            }[];
+                        }[];
+                        refunds: {
+                            id: string;
+                            paymentId: string | null;
+                            amountMinor: number;
+                            currency: string;
+                            /** @enum {string} */
+                            method: "ORIGINAL" | "STORE_CREDIT" | "MANUAL";
+                            reason: string | null;
+                            lines: {
+                                orderLineId: string;
+                                quantity: number;
+                                restock: boolean;
+                            }[];
+                            createdById: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                        }[];
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -18626,7 +19065,170 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        number: number;
+                        displayNumber: string;
+                        /** @enum {string} */
+                        status: "DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED";
+                        holdPreviousStatus: ("DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED") | null;
+                        customerId: string | null;
+                        customer: {
+                            id: string;
+                            email: string | null;
+                            firstName: string | null;
+                            lastName: string | null;
+                        } | null;
+                        email: string;
+                        currency: string;
+                        taxInclusive: boolean;
+                        subtotalMinor: number;
+                        discountMinor: number;
+                        shippingMinor: number;
+                        taxMinor: number;
+                        totalMinor: number;
+                        marketId: string;
+                        channelId: string;
+                        locale: string | null;
+                        shippingAddress: {
+                            firstName: string;
+                            lastName: string;
+                            company?: string | null;
+                            line1: string;
+                            line2?: string | null;
+                            city: string;
+                            region?: string | null;
+                            postalCode?: string | null;
+                            country: string;
+                            phone?: string | null;
+                        };
+                        billingAddress: {
+                            firstName: string;
+                            lastName: string;
+                            company?: string | null;
+                            line1: string;
+                            line2?: string | null;
+                            city: string;
+                            region?: string | null;
+                            postalCode?: string | null;
+                            country: string;
+                            phone?: string | null;
+                        };
+                        shippingMethod: {
+                            rateId?: string | null;
+                            name: string;
+                            amountMinor: number;
+                        };
+                        notes: string | null;
+                        tags: string[];
+                        customFields: unknown;
+                        cancelReason: string | null;
+                        cancelledAt: string | null;
+                        placedAt: string | null;
+                        deliveredAt: string | null;
+                        affiliateId: string | null;
+                        promotions: unknown;
+                        version: number;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        lines: {
+                            id: string;
+                            productId: string;
+                            variantId: string;
+                            titleSnapshot: string;
+                            variantTitle: string;
+                            skuSnapshot: string;
+                            unitPriceMinor: number;
+                            compareAtMinor: number | null;
+                            quantity: number;
+                            discountMinor: number;
+                            taxMinor: number;
+                            totalMinor: number;
+                            costMinor: number | null;
+                            marginMinor: number | null;
+                            customizations: unknown;
+                            fulfilledQuantity: number;
+                            refundedQuantity: number;
+                        }[];
+                        events: {
+                            id: string;
+                            type: string;
+                            message: string;
+                            data: unknown;
+                            actorType: string;
+                            actorId: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                        }[];
+                        payments: {
+                            id: string;
+                            provider: string;
+                            /** @enum {string} */
+                            status: "PENDING" | "AUTHORIZED" | "CAPTURED" | "PARTIALLY_REFUNDED" | "REFUNDED" | "FAILED" | "VOIDED";
+                            amountMinor: number;
+                            currency: string;
+                            capturedMinor: number;
+                            refundedMinor: number;
+                            providerRef: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                            transactions: {
+                                id: string;
+                                /** @enum {string} */
+                                kind: "AUTHORIZE" | "CAPTURE" | "VOID" | "REFUND";
+                                /** @enum {string} */
+                                status: "SUCCESS" | "FAILED" | "PENDING";
+                                amountMinor: number;
+                                providerRef: string | null;
+                                /** Format: date-time */
+                                createdAt: string;
+                            }[];
+                        }[];
+                        fulfillments: {
+                            id: string;
+                            locationId: string;
+                            /** @enum {string} */
+                            status: "PENDING" | "PICKING" | "PACKED" | "SHIPPED" | "IN_TRANSIT" | "DELIVERED" | "FAILED_DELIVERY" | "RETURNED_TO_SENDER";
+                            carrier: string | null;
+                            trackingNumber: string | null;
+                            trackingUrl: string | null;
+                            shippedAt: string | null;
+                            deliveredAt: string | null;
+                            version: number;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                            lines: {
+                                id: string;
+                                orderLineId: string;
+                                quantity: number;
+                            }[];
+                        }[];
+                        refunds: {
+                            id: string;
+                            paymentId: string | null;
+                            amountMinor: number;
+                            currency: string;
+                            /** @enum {string} */
+                            method: "ORIGINAL" | "STORE_CREDIT" | "MANUAL";
+                            reason: string | null;
+                            lines: {
+                                orderLineId: string;
+                                quantity: number;
+                                restock: boolean;
+                            }[];
+                            createdById: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                        }[];
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -18674,7 +19276,170 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        number: number;
+                        displayNumber: string;
+                        /** @enum {string} */
+                        status: "DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED";
+                        holdPreviousStatus: ("DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED") | null;
+                        customerId: string | null;
+                        customer: {
+                            id: string;
+                            email: string | null;
+                            firstName: string | null;
+                            lastName: string | null;
+                        } | null;
+                        email: string;
+                        currency: string;
+                        taxInclusive: boolean;
+                        subtotalMinor: number;
+                        discountMinor: number;
+                        shippingMinor: number;
+                        taxMinor: number;
+                        totalMinor: number;
+                        marketId: string;
+                        channelId: string;
+                        locale: string | null;
+                        shippingAddress: {
+                            firstName: string;
+                            lastName: string;
+                            company?: string | null;
+                            line1: string;
+                            line2?: string | null;
+                            city: string;
+                            region?: string | null;
+                            postalCode?: string | null;
+                            country: string;
+                            phone?: string | null;
+                        };
+                        billingAddress: {
+                            firstName: string;
+                            lastName: string;
+                            company?: string | null;
+                            line1: string;
+                            line2?: string | null;
+                            city: string;
+                            region?: string | null;
+                            postalCode?: string | null;
+                            country: string;
+                            phone?: string | null;
+                        };
+                        shippingMethod: {
+                            rateId?: string | null;
+                            name: string;
+                            amountMinor: number;
+                        };
+                        notes: string | null;
+                        tags: string[];
+                        customFields: unknown;
+                        cancelReason: string | null;
+                        cancelledAt: string | null;
+                        placedAt: string | null;
+                        deliveredAt: string | null;
+                        affiliateId: string | null;
+                        promotions: unknown;
+                        version: number;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        lines: {
+                            id: string;
+                            productId: string;
+                            variantId: string;
+                            titleSnapshot: string;
+                            variantTitle: string;
+                            skuSnapshot: string;
+                            unitPriceMinor: number;
+                            compareAtMinor: number | null;
+                            quantity: number;
+                            discountMinor: number;
+                            taxMinor: number;
+                            totalMinor: number;
+                            costMinor: number | null;
+                            marginMinor: number | null;
+                            customizations: unknown;
+                            fulfilledQuantity: number;
+                            refundedQuantity: number;
+                        }[];
+                        events: {
+                            id: string;
+                            type: string;
+                            message: string;
+                            data: unknown;
+                            actorType: string;
+                            actorId: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                        }[];
+                        payments: {
+                            id: string;
+                            provider: string;
+                            /** @enum {string} */
+                            status: "PENDING" | "AUTHORIZED" | "CAPTURED" | "PARTIALLY_REFUNDED" | "REFUNDED" | "FAILED" | "VOIDED";
+                            amountMinor: number;
+                            currency: string;
+                            capturedMinor: number;
+                            refundedMinor: number;
+                            providerRef: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                            transactions: {
+                                id: string;
+                                /** @enum {string} */
+                                kind: "AUTHORIZE" | "CAPTURE" | "VOID" | "REFUND";
+                                /** @enum {string} */
+                                status: "SUCCESS" | "FAILED" | "PENDING";
+                                amountMinor: number;
+                                providerRef: string | null;
+                                /** Format: date-time */
+                                createdAt: string;
+                            }[];
+                        }[];
+                        fulfillments: {
+                            id: string;
+                            locationId: string;
+                            /** @enum {string} */
+                            status: "PENDING" | "PICKING" | "PACKED" | "SHIPPED" | "IN_TRANSIT" | "DELIVERED" | "FAILED_DELIVERY" | "RETURNED_TO_SENDER";
+                            carrier: string | null;
+                            trackingNumber: string | null;
+                            trackingUrl: string | null;
+                            shippedAt: string | null;
+                            deliveredAt: string | null;
+                            version: number;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                            lines: {
+                                id: string;
+                                orderLineId: string;
+                                quantity: number;
+                            }[];
+                        }[];
+                        refunds: {
+                            id: string;
+                            paymentId: string | null;
+                            amountMinor: number;
+                            currency: string;
+                            /** @enum {string} */
+                            method: "ORIGINAL" | "STORE_CREDIT" | "MANUAL";
+                            reason: string | null;
+                            lines: {
+                                orderLineId: string;
+                                quantity: number;
+                                restock: boolean;
+                            }[];
+                            createdById: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                        }[];
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -18717,7 +19482,170 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        number: number;
+                        displayNumber: string;
+                        /** @enum {string} */
+                        status: "DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED";
+                        holdPreviousStatus: ("DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED") | null;
+                        customerId: string | null;
+                        customer: {
+                            id: string;
+                            email: string | null;
+                            firstName: string | null;
+                            lastName: string | null;
+                        } | null;
+                        email: string;
+                        currency: string;
+                        taxInclusive: boolean;
+                        subtotalMinor: number;
+                        discountMinor: number;
+                        shippingMinor: number;
+                        taxMinor: number;
+                        totalMinor: number;
+                        marketId: string;
+                        channelId: string;
+                        locale: string | null;
+                        shippingAddress: {
+                            firstName: string;
+                            lastName: string;
+                            company?: string | null;
+                            line1: string;
+                            line2?: string | null;
+                            city: string;
+                            region?: string | null;
+                            postalCode?: string | null;
+                            country: string;
+                            phone?: string | null;
+                        };
+                        billingAddress: {
+                            firstName: string;
+                            lastName: string;
+                            company?: string | null;
+                            line1: string;
+                            line2?: string | null;
+                            city: string;
+                            region?: string | null;
+                            postalCode?: string | null;
+                            country: string;
+                            phone?: string | null;
+                        };
+                        shippingMethod: {
+                            rateId?: string | null;
+                            name: string;
+                            amountMinor: number;
+                        };
+                        notes: string | null;
+                        tags: string[];
+                        customFields: unknown;
+                        cancelReason: string | null;
+                        cancelledAt: string | null;
+                        placedAt: string | null;
+                        deliveredAt: string | null;
+                        affiliateId: string | null;
+                        promotions: unknown;
+                        version: number;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        lines: {
+                            id: string;
+                            productId: string;
+                            variantId: string;
+                            titleSnapshot: string;
+                            variantTitle: string;
+                            skuSnapshot: string;
+                            unitPriceMinor: number;
+                            compareAtMinor: number | null;
+                            quantity: number;
+                            discountMinor: number;
+                            taxMinor: number;
+                            totalMinor: number;
+                            costMinor: number | null;
+                            marginMinor: number | null;
+                            customizations: unknown;
+                            fulfilledQuantity: number;
+                            refundedQuantity: number;
+                        }[];
+                        events: {
+                            id: string;
+                            type: string;
+                            message: string;
+                            data: unknown;
+                            actorType: string;
+                            actorId: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                        }[];
+                        payments: {
+                            id: string;
+                            provider: string;
+                            /** @enum {string} */
+                            status: "PENDING" | "AUTHORIZED" | "CAPTURED" | "PARTIALLY_REFUNDED" | "REFUNDED" | "FAILED" | "VOIDED";
+                            amountMinor: number;
+                            currency: string;
+                            capturedMinor: number;
+                            refundedMinor: number;
+                            providerRef: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                            transactions: {
+                                id: string;
+                                /** @enum {string} */
+                                kind: "AUTHORIZE" | "CAPTURE" | "VOID" | "REFUND";
+                                /** @enum {string} */
+                                status: "SUCCESS" | "FAILED" | "PENDING";
+                                amountMinor: number;
+                                providerRef: string | null;
+                                /** Format: date-time */
+                                createdAt: string;
+                            }[];
+                        }[];
+                        fulfillments: {
+                            id: string;
+                            locationId: string;
+                            /** @enum {string} */
+                            status: "PENDING" | "PICKING" | "PACKED" | "SHIPPED" | "IN_TRANSIT" | "DELIVERED" | "FAILED_DELIVERY" | "RETURNED_TO_SENDER";
+                            carrier: string | null;
+                            trackingNumber: string | null;
+                            trackingUrl: string | null;
+                            shippedAt: string | null;
+                            deliveredAt: string | null;
+                            version: number;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                            lines: {
+                                id: string;
+                                orderLineId: string;
+                                quantity: number;
+                            }[];
+                        }[];
+                        refunds: {
+                            id: string;
+                            paymentId: string | null;
+                            amountMinor: number;
+                            currency: string;
+                            /** @enum {string} */
+                            method: "ORIGINAL" | "STORE_CREDIT" | "MANUAL";
+                            reason: string | null;
+                            lines: {
+                                orderLineId: string;
+                                quantity: number;
+                                restock: boolean;
+                            }[];
+                            createdById: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                        }[];
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -18766,7 +19694,186 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        number: number;
+                        displayNumber: string;
+                        /** @enum {string} */
+                        status: "DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED";
+                        holdPreviousStatus: ("DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED") | null;
+                        customerId: string | null;
+                        customer: {
+                            id: string;
+                            email: string | null;
+                            firstName: string | null;
+                            lastName: string | null;
+                        } | null;
+                        email: string;
+                        currency: string;
+                        taxInclusive: boolean;
+                        subtotalMinor: number;
+                        discountMinor: number;
+                        shippingMinor: number;
+                        taxMinor: number;
+                        totalMinor: number;
+                        marketId: string;
+                        channelId: string;
+                        locale: string | null;
+                        shippingAddress: {
+                            firstName: string;
+                            lastName: string;
+                            company?: string | null;
+                            line1: string;
+                            line2?: string | null;
+                            city: string;
+                            region?: string | null;
+                            postalCode?: string | null;
+                            country: string;
+                            phone?: string | null;
+                        };
+                        billingAddress: {
+                            firstName: string;
+                            lastName: string;
+                            company?: string | null;
+                            line1: string;
+                            line2?: string | null;
+                            city: string;
+                            region?: string | null;
+                            postalCode?: string | null;
+                            country: string;
+                            phone?: string | null;
+                        };
+                        shippingMethod: {
+                            rateId?: string | null;
+                            name: string;
+                            amountMinor: number;
+                        };
+                        notes: string | null;
+                        tags: string[];
+                        customFields: unknown;
+                        cancelReason: string | null;
+                        cancelledAt: string | null;
+                        placedAt: string | null;
+                        deliveredAt: string | null;
+                        affiliateId: string | null;
+                        promotions: unknown;
+                        version: number;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        lines: {
+                            id: string;
+                            productId: string;
+                            variantId: string;
+                            titleSnapshot: string;
+                            variantTitle: string;
+                            skuSnapshot: string;
+                            unitPriceMinor: number;
+                            compareAtMinor: number | null;
+                            quantity: number;
+                            discountMinor: number;
+                            taxMinor: number;
+                            totalMinor: number;
+                            costMinor: number | null;
+                            marginMinor: number | null;
+                            customizations: unknown;
+                            fulfilledQuantity: number;
+                            refundedQuantity: number;
+                        }[];
+                        events: {
+                            id: string;
+                            type: string;
+                            message: string;
+                            data: unknown;
+                            actorType: string;
+                            actorId: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                        }[];
+                        payments: {
+                            id: string;
+                            provider: string;
+                            /** @enum {string} */
+                            status: "PENDING" | "AUTHORIZED" | "CAPTURED" | "PARTIALLY_REFUNDED" | "REFUNDED" | "FAILED" | "VOIDED";
+                            amountMinor: number;
+                            currency: string;
+                            capturedMinor: number;
+                            refundedMinor: number;
+                            providerRef: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                            transactions: {
+                                id: string;
+                                /** @enum {string} */
+                                kind: "AUTHORIZE" | "CAPTURE" | "VOID" | "REFUND";
+                                /** @enum {string} */
+                                status: "SUCCESS" | "FAILED" | "PENDING";
+                                amountMinor: number;
+                                providerRef: string | null;
+                                /** Format: date-time */
+                                createdAt: string;
+                            }[];
+                        }[];
+                        fulfillments: {
+                            id: string;
+                            locationId: string;
+                            /** @enum {string} */
+                            status: "PENDING" | "PICKING" | "PACKED" | "SHIPPED" | "IN_TRANSIT" | "DELIVERED" | "FAILED_DELIVERY" | "RETURNED_TO_SENDER";
+                            carrier: string | null;
+                            trackingNumber: string | null;
+                            trackingUrl: string | null;
+                            shippedAt: string | null;
+                            deliveredAt: string | null;
+                            version: number;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                            lines: {
+                                id: string;
+                                orderLineId: string;
+                                quantity: number;
+                            }[];
+                        }[];
+                        refunds: {
+                            id: string;
+                            paymentId: string | null;
+                            amountMinor: number;
+                            currency: string;
+                            /** @enum {string} */
+                            method: "ORIGINAL" | "STORE_CREDIT" | "MANUAL";
+                            reason: string | null;
+                            lines: {
+                                orderLineId: string;
+                                quantity: number;
+                                restock: boolean;
+                            }[];
+                            createdById: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                        }[];
+                    } | {
+                        /** @constant */
+                        approvalRequired: true;
+                        approval: {
+                            id: string;
+                            action: string;
+                            entityType: string;
+                            entityId: string;
+                            payload: unknown;
+                            reason: string | null;
+                            /** @enum {string} */
+                            status: "PENDING" | "APPROVED" | "REJECTED" | "EXPIRED";
+                            requestedBy: string;
+                            /** Format: date-time */
+                            createdAt: string;
+                        };
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -18806,7 +19913,170 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        number: number;
+                        displayNumber: string;
+                        /** @enum {string} */
+                        status: "DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED";
+                        holdPreviousStatus: ("DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED") | null;
+                        customerId: string | null;
+                        customer: {
+                            id: string;
+                            email: string | null;
+                            firstName: string | null;
+                            lastName: string | null;
+                        } | null;
+                        email: string;
+                        currency: string;
+                        taxInclusive: boolean;
+                        subtotalMinor: number;
+                        discountMinor: number;
+                        shippingMinor: number;
+                        taxMinor: number;
+                        totalMinor: number;
+                        marketId: string;
+                        channelId: string;
+                        locale: string | null;
+                        shippingAddress: {
+                            firstName: string;
+                            lastName: string;
+                            company?: string | null;
+                            line1: string;
+                            line2?: string | null;
+                            city: string;
+                            region?: string | null;
+                            postalCode?: string | null;
+                            country: string;
+                            phone?: string | null;
+                        };
+                        billingAddress: {
+                            firstName: string;
+                            lastName: string;
+                            company?: string | null;
+                            line1: string;
+                            line2?: string | null;
+                            city: string;
+                            region?: string | null;
+                            postalCode?: string | null;
+                            country: string;
+                            phone?: string | null;
+                        };
+                        shippingMethod: {
+                            rateId?: string | null;
+                            name: string;
+                            amountMinor: number;
+                        };
+                        notes: string | null;
+                        tags: string[];
+                        customFields: unknown;
+                        cancelReason: string | null;
+                        cancelledAt: string | null;
+                        placedAt: string | null;
+                        deliveredAt: string | null;
+                        affiliateId: string | null;
+                        promotions: unknown;
+                        version: number;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        lines: {
+                            id: string;
+                            productId: string;
+                            variantId: string;
+                            titleSnapshot: string;
+                            variantTitle: string;
+                            skuSnapshot: string;
+                            unitPriceMinor: number;
+                            compareAtMinor: number | null;
+                            quantity: number;
+                            discountMinor: number;
+                            taxMinor: number;
+                            totalMinor: number;
+                            costMinor: number | null;
+                            marginMinor: number | null;
+                            customizations: unknown;
+                            fulfilledQuantity: number;
+                            refundedQuantity: number;
+                        }[];
+                        events: {
+                            id: string;
+                            type: string;
+                            message: string;
+                            data: unknown;
+                            actorType: string;
+                            actorId: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                        }[];
+                        payments: {
+                            id: string;
+                            provider: string;
+                            /** @enum {string} */
+                            status: "PENDING" | "AUTHORIZED" | "CAPTURED" | "PARTIALLY_REFUNDED" | "REFUNDED" | "FAILED" | "VOIDED";
+                            amountMinor: number;
+                            currency: string;
+                            capturedMinor: number;
+                            refundedMinor: number;
+                            providerRef: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                            transactions: {
+                                id: string;
+                                /** @enum {string} */
+                                kind: "AUTHORIZE" | "CAPTURE" | "VOID" | "REFUND";
+                                /** @enum {string} */
+                                status: "SUCCESS" | "FAILED" | "PENDING";
+                                amountMinor: number;
+                                providerRef: string | null;
+                                /** Format: date-time */
+                                createdAt: string;
+                            }[];
+                        }[];
+                        fulfillments: {
+                            id: string;
+                            locationId: string;
+                            /** @enum {string} */
+                            status: "PENDING" | "PICKING" | "PACKED" | "SHIPPED" | "IN_TRANSIT" | "DELIVERED" | "FAILED_DELIVERY" | "RETURNED_TO_SENDER";
+                            carrier: string | null;
+                            trackingNumber: string | null;
+                            trackingUrl: string | null;
+                            shippedAt: string | null;
+                            deliveredAt: string | null;
+                            version: number;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                            lines: {
+                                id: string;
+                                orderLineId: string;
+                                quantity: number;
+                            }[];
+                        }[];
+                        refunds: {
+                            id: string;
+                            paymentId: string | null;
+                            amountMinor: number;
+                            currency: string;
+                            /** @enum {string} */
+                            method: "ORIGINAL" | "STORE_CREDIT" | "MANUAL";
+                            reason: string | null;
+                            lines: {
+                                orderLineId: string;
+                                quantity: number;
+                                restock: boolean;
+                            }[];
+                            createdById: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                        }[];
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -18844,7 +20114,170 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        number: number;
+                        displayNumber: string;
+                        /** @enum {string} */
+                        status: "DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED";
+                        holdPreviousStatus: ("DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED") | null;
+                        customerId: string | null;
+                        customer: {
+                            id: string;
+                            email: string | null;
+                            firstName: string | null;
+                            lastName: string | null;
+                        } | null;
+                        email: string;
+                        currency: string;
+                        taxInclusive: boolean;
+                        subtotalMinor: number;
+                        discountMinor: number;
+                        shippingMinor: number;
+                        taxMinor: number;
+                        totalMinor: number;
+                        marketId: string;
+                        channelId: string;
+                        locale: string | null;
+                        shippingAddress: {
+                            firstName: string;
+                            lastName: string;
+                            company?: string | null;
+                            line1: string;
+                            line2?: string | null;
+                            city: string;
+                            region?: string | null;
+                            postalCode?: string | null;
+                            country: string;
+                            phone?: string | null;
+                        };
+                        billingAddress: {
+                            firstName: string;
+                            lastName: string;
+                            company?: string | null;
+                            line1: string;
+                            line2?: string | null;
+                            city: string;
+                            region?: string | null;
+                            postalCode?: string | null;
+                            country: string;
+                            phone?: string | null;
+                        };
+                        shippingMethod: {
+                            rateId?: string | null;
+                            name: string;
+                            amountMinor: number;
+                        };
+                        notes: string | null;
+                        tags: string[];
+                        customFields: unknown;
+                        cancelReason: string | null;
+                        cancelledAt: string | null;
+                        placedAt: string | null;
+                        deliveredAt: string | null;
+                        affiliateId: string | null;
+                        promotions: unknown;
+                        version: number;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        lines: {
+                            id: string;
+                            productId: string;
+                            variantId: string;
+                            titleSnapshot: string;
+                            variantTitle: string;
+                            skuSnapshot: string;
+                            unitPriceMinor: number;
+                            compareAtMinor: number | null;
+                            quantity: number;
+                            discountMinor: number;
+                            taxMinor: number;
+                            totalMinor: number;
+                            costMinor: number | null;
+                            marginMinor: number | null;
+                            customizations: unknown;
+                            fulfilledQuantity: number;
+                            refundedQuantity: number;
+                        }[];
+                        events: {
+                            id: string;
+                            type: string;
+                            message: string;
+                            data: unknown;
+                            actorType: string;
+                            actorId: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                        }[];
+                        payments: {
+                            id: string;
+                            provider: string;
+                            /** @enum {string} */
+                            status: "PENDING" | "AUTHORIZED" | "CAPTURED" | "PARTIALLY_REFUNDED" | "REFUNDED" | "FAILED" | "VOIDED";
+                            amountMinor: number;
+                            currency: string;
+                            capturedMinor: number;
+                            refundedMinor: number;
+                            providerRef: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                            transactions: {
+                                id: string;
+                                /** @enum {string} */
+                                kind: "AUTHORIZE" | "CAPTURE" | "VOID" | "REFUND";
+                                /** @enum {string} */
+                                status: "SUCCESS" | "FAILED" | "PENDING";
+                                amountMinor: number;
+                                providerRef: string | null;
+                                /** Format: date-time */
+                                createdAt: string;
+                            }[];
+                        }[];
+                        fulfillments: {
+                            id: string;
+                            locationId: string;
+                            /** @enum {string} */
+                            status: "PENDING" | "PICKING" | "PACKED" | "SHIPPED" | "IN_TRANSIT" | "DELIVERED" | "FAILED_DELIVERY" | "RETURNED_TO_SENDER";
+                            carrier: string | null;
+                            trackingNumber: string | null;
+                            trackingUrl: string | null;
+                            shippedAt: string | null;
+                            deliveredAt: string | null;
+                            version: number;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                            lines: {
+                                id: string;
+                                orderLineId: string;
+                                quantity: number;
+                            }[];
+                        }[];
+                        refunds: {
+                            id: string;
+                            paymentId: string | null;
+                            amountMinor: number;
+                            currency: string;
+                            /** @enum {string} */
+                            method: "ORIGINAL" | "STORE_CREDIT" | "MANUAL";
+                            reason: string | null;
+                            lines: {
+                                orderLineId: string;
+                                quantity: number;
+                                restock: boolean;
+                            }[];
+                            createdById: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                        }[];
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -18876,7 +20309,170 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        number: number;
+                        displayNumber: string;
+                        /** @enum {string} */
+                        status: "DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED";
+                        holdPreviousStatus: ("DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED") | null;
+                        customerId: string | null;
+                        customer: {
+                            id: string;
+                            email: string | null;
+                            firstName: string | null;
+                            lastName: string | null;
+                        } | null;
+                        email: string;
+                        currency: string;
+                        taxInclusive: boolean;
+                        subtotalMinor: number;
+                        discountMinor: number;
+                        shippingMinor: number;
+                        taxMinor: number;
+                        totalMinor: number;
+                        marketId: string;
+                        channelId: string;
+                        locale: string | null;
+                        shippingAddress: {
+                            firstName: string;
+                            lastName: string;
+                            company?: string | null;
+                            line1: string;
+                            line2?: string | null;
+                            city: string;
+                            region?: string | null;
+                            postalCode?: string | null;
+                            country: string;
+                            phone?: string | null;
+                        };
+                        billingAddress: {
+                            firstName: string;
+                            lastName: string;
+                            company?: string | null;
+                            line1: string;
+                            line2?: string | null;
+                            city: string;
+                            region?: string | null;
+                            postalCode?: string | null;
+                            country: string;
+                            phone?: string | null;
+                        };
+                        shippingMethod: {
+                            rateId?: string | null;
+                            name: string;
+                            amountMinor: number;
+                        };
+                        notes: string | null;
+                        tags: string[];
+                        customFields: unknown;
+                        cancelReason: string | null;
+                        cancelledAt: string | null;
+                        placedAt: string | null;
+                        deliveredAt: string | null;
+                        affiliateId: string | null;
+                        promotions: unknown;
+                        version: number;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        lines: {
+                            id: string;
+                            productId: string;
+                            variantId: string;
+                            titleSnapshot: string;
+                            variantTitle: string;
+                            skuSnapshot: string;
+                            unitPriceMinor: number;
+                            compareAtMinor: number | null;
+                            quantity: number;
+                            discountMinor: number;
+                            taxMinor: number;
+                            totalMinor: number;
+                            costMinor: number | null;
+                            marginMinor: number | null;
+                            customizations: unknown;
+                            fulfilledQuantity: number;
+                            refundedQuantity: number;
+                        }[];
+                        events: {
+                            id: string;
+                            type: string;
+                            message: string;
+                            data: unknown;
+                            actorType: string;
+                            actorId: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                        }[];
+                        payments: {
+                            id: string;
+                            provider: string;
+                            /** @enum {string} */
+                            status: "PENDING" | "AUTHORIZED" | "CAPTURED" | "PARTIALLY_REFUNDED" | "REFUNDED" | "FAILED" | "VOIDED";
+                            amountMinor: number;
+                            currency: string;
+                            capturedMinor: number;
+                            refundedMinor: number;
+                            providerRef: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                            transactions: {
+                                id: string;
+                                /** @enum {string} */
+                                kind: "AUTHORIZE" | "CAPTURE" | "VOID" | "REFUND";
+                                /** @enum {string} */
+                                status: "SUCCESS" | "FAILED" | "PENDING";
+                                amountMinor: number;
+                                providerRef: string | null;
+                                /** Format: date-time */
+                                createdAt: string;
+                            }[];
+                        }[];
+                        fulfillments: {
+                            id: string;
+                            locationId: string;
+                            /** @enum {string} */
+                            status: "PENDING" | "PICKING" | "PACKED" | "SHIPPED" | "IN_TRANSIT" | "DELIVERED" | "FAILED_DELIVERY" | "RETURNED_TO_SENDER";
+                            carrier: string | null;
+                            trackingNumber: string | null;
+                            trackingUrl: string | null;
+                            shippedAt: string | null;
+                            deliveredAt: string | null;
+                            version: number;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                            lines: {
+                                id: string;
+                                orderLineId: string;
+                                quantity: number;
+                            }[];
+                        }[];
+                        refunds: {
+                            id: string;
+                            paymentId: string | null;
+                            amountMinor: number;
+                            currency: string;
+                            /** @enum {string} */
+                            method: "ORIGINAL" | "STORE_CREDIT" | "MANUAL";
+                            reason: string | null;
+                            lines: {
+                                orderLineId: string;
+                                quantity: number;
+                                restock: boolean;
+                            }[];
+                            createdById: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                        }[];
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -18908,7 +20504,170 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        number: number;
+                        displayNumber: string;
+                        /** @enum {string} */
+                        status: "DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED";
+                        holdPreviousStatus: ("DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED") | null;
+                        customerId: string | null;
+                        customer: {
+                            id: string;
+                            email: string | null;
+                            firstName: string | null;
+                            lastName: string | null;
+                        } | null;
+                        email: string;
+                        currency: string;
+                        taxInclusive: boolean;
+                        subtotalMinor: number;
+                        discountMinor: number;
+                        shippingMinor: number;
+                        taxMinor: number;
+                        totalMinor: number;
+                        marketId: string;
+                        channelId: string;
+                        locale: string | null;
+                        shippingAddress: {
+                            firstName: string;
+                            lastName: string;
+                            company?: string | null;
+                            line1: string;
+                            line2?: string | null;
+                            city: string;
+                            region?: string | null;
+                            postalCode?: string | null;
+                            country: string;
+                            phone?: string | null;
+                        };
+                        billingAddress: {
+                            firstName: string;
+                            lastName: string;
+                            company?: string | null;
+                            line1: string;
+                            line2?: string | null;
+                            city: string;
+                            region?: string | null;
+                            postalCode?: string | null;
+                            country: string;
+                            phone?: string | null;
+                        };
+                        shippingMethod: {
+                            rateId?: string | null;
+                            name: string;
+                            amountMinor: number;
+                        };
+                        notes: string | null;
+                        tags: string[];
+                        customFields: unknown;
+                        cancelReason: string | null;
+                        cancelledAt: string | null;
+                        placedAt: string | null;
+                        deliveredAt: string | null;
+                        affiliateId: string | null;
+                        promotions: unknown;
+                        version: number;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        lines: {
+                            id: string;
+                            productId: string;
+                            variantId: string;
+                            titleSnapshot: string;
+                            variantTitle: string;
+                            skuSnapshot: string;
+                            unitPriceMinor: number;
+                            compareAtMinor: number | null;
+                            quantity: number;
+                            discountMinor: number;
+                            taxMinor: number;
+                            totalMinor: number;
+                            costMinor: number | null;
+                            marginMinor: number | null;
+                            customizations: unknown;
+                            fulfilledQuantity: number;
+                            refundedQuantity: number;
+                        }[];
+                        events: {
+                            id: string;
+                            type: string;
+                            message: string;
+                            data: unknown;
+                            actorType: string;
+                            actorId: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                        }[];
+                        payments: {
+                            id: string;
+                            provider: string;
+                            /** @enum {string} */
+                            status: "PENDING" | "AUTHORIZED" | "CAPTURED" | "PARTIALLY_REFUNDED" | "REFUNDED" | "FAILED" | "VOIDED";
+                            amountMinor: number;
+                            currency: string;
+                            capturedMinor: number;
+                            refundedMinor: number;
+                            providerRef: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                            transactions: {
+                                id: string;
+                                /** @enum {string} */
+                                kind: "AUTHORIZE" | "CAPTURE" | "VOID" | "REFUND";
+                                /** @enum {string} */
+                                status: "SUCCESS" | "FAILED" | "PENDING";
+                                amountMinor: number;
+                                providerRef: string | null;
+                                /** Format: date-time */
+                                createdAt: string;
+                            }[];
+                        }[];
+                        fulfillments: {
+                            id: string;
+                            locationId: string;
+                            /** @enum {string} */
+                            status: "PENDING" | "PICKING" | "PACKED" | "SHIPPED" | "IN_TRANSIT" | "DELIVERED" | "FAILED_DELIVERY" | "RETURNED_TO_SENDER";
+                            carrier: string | null;
+                            trackingNumber: string | null;
+                            trackingUrl: string | null;
+                            shippedAt: string | null;
+                            deliveredAt: string | null;
+                            version: number;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                            lines: {
+                                id: string;
+                                orderLineId: string;
+                                quantity: number;
+                            }[];
+                        }[];
+                        refunds: {
+                            id: string;
+                            paymentId: string | null;
+                            amountMinor: number;
+                            currency: string;
+                            /** @enum {string} */
+                            method: "ORIGINAL" | "STORE_CREDIT" | "MANUAL";
+                            reason: string | null;
+                            lines: {
+                                orderLineId: string;
+                                quantity: number;
+                                restock: boolean;
+                            }[];
+                            createdById: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                        }[];
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -18946,7 +20705,170 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        number: number;
+                        displayNumber: string;
+                        /** @enum {string} */
+                        status: "DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED";
+                        holdPreviousStatus: ("DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED") | null;
+                        customerId: string | null;
+                        customer: {
+                            id: string;
+                            email: string | null;
+                            firstName: string | null;
+                            lastName: string | null;
+                        } | null;
+                        email: string;
+                        currency: string;
+                        taxInclusive: boolean;
+                        subtotalMinor: number;
+                        discountMinor: number;
+                        shippingMinor: number;
+                        taxMinor: number;
+                        totalMinor: number;
+                        marketId: string;
+                        channelId: string;
+                        locale: string | null;
+                        shippingAddress: {
+                            firstName: string;
+                            lastName: string;
+                            company?: string | null;
+                            line1: string;
+                            line2?: string | null;
+                            city: string;
+                            region?: string | null;
+                            postalCode?: string | null;
+                            country: string;
+                            phone?: string | null;
+                        };
+                        billingAddress: {
+                            firstName: string;
+                            lastName: string;
+                            company?: string | null;
+                            line1: string;
+                            line2?: string | null;
+                            city: string;
+                            region?: string | null;
+                            postalCode?: string | null;
+                            country: string;
+                            phone?: string | null;
+                        };
+                        shippingMethod: {
+                            rateId?: string | null;
+                            name: string;
+                            amountMinor: number;
+                        };
+                        notes: string | null;
+                        tags: string[];
+                        customFields: unknown;
+                        cancelReason: string | null;
+                        cancelledAt: string | null;
+                        placedAt: string | null;
+                        deliveredAt: string | null;
+                        affiliateId: string | null;
+                        promotions: unknown;
+                        version: number;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        lines: {
+                            id: string;
+                            productId: string;
+                            variantId: string;
+                            titleSnapshot: string;
+                            variantTitle: string;
+                            skuSnapshot: string;
+                            unitPriceMinor: number;
+                            compareAtMinor: number | null;
+                            quantity: number;
+                            discountMinor: number;
+                            taxMinor: number;
+                            totalMinor: number;
+                            costMinor: number | null;
+                            marginMinor: number | null;
+                            customizations: unknown;
+                            fulfilledQuantity: number;
+                            refundedQuantity: number;
+                        }[];
+                        events: {
+                            id: string;
+                            type: string;
+                            message: string;
+                            data: unknown;
+                            actorType: string;
+                            actorId: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                        }[];
+                        payments: {
+                            id: string;
+                            provider: string;
+                            /** @enum {string} */
+                            status: "PENDING" | "AUTHORIZED" | "CAPTURED" | "PARTIALLY_REFUNDED" | "REFUNDED" | "FAILED" | "VOIDED";
+                            amountMinor: number;
+                            currency: string;
+                            capturedMinor: number;
+                            refundedMinor: number;
+                            providerRef: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                            transactions: {
+                                id: string;
+                                /** @enum {string} */
+                                kind: "AUTHORIZE" | "CAPTURE" | "VOID" | "REFUND";
+                                /** @enum {string} */
+                                status: "SUCCESS" | "FAILED" | "PENDING";
+                                amountMinor: number;
+                                providerRef: string | null;
+                                /** Format: date-time */
+                                createdAt: string;
+                            }[];
+                        }[];
+                        fulfillments: {
+                            id: string;
+                            locationId: string;
+                            /** @enum {string} */
+                            status: "PENDING" | "PICKING" | "PACKED" | "SHIPPED" | "IN_TRANSIT" | "DELIVERED" | "FAILED_DELIVERY" | "RETURNED_TO_SENDER";
+                            carrier: string | null;
+                            trackingNumber: string | null;
+                            trackingUrl: string | null;
+                            shippedAt: string | null;
+                            deliveredAt: string | null;
+                            version: number;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                            lines: {
+                                id: string;
+                                orderLineId: string;
+                                quantity: number;
+                            }[];
+                        }[];
+                        refunds: {
+                            id: string;
+                            paymentId: string | null;
+                            amountMinor: number;
+                            currency: string;
+                            /** @enum {string} */
+                            method: "ORIGINAL" | "STORE_CREDIT" | "MANUAL";
+                            reason: string | null;
+                            lines: {
+                                orderLineId: string;
+                                quantity: number;
+                                restock: boolean;
+                            }[];
+                            createdById: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                        }[];
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -18984,7 +20906,170 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        number: number;
+                        displayNumber: string;
+                        /** @enum {string} */
+                        status: "DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED";
+                        holdPreviousStatus: ("DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED") | null;
+                        customerId: string | null;
+                        customer: {
+                            id: string;
+                            email: string | null;
+                            firstName: string | null;
+                            lastName: string | null;
+                        } | null;
+                        email: string;
+                        currency: string;
+                        taxInclusive: boolean;
+                        subtotalMinor: number;
+                        discountMinor: number;
+                        shippingMinor: number;
+                        taxMinor: number;
+                        totalMinor: number;
+                        marketId: string;
+                        channelId: string;
+                        locale: string | null;
+                        shippingAddress: {
+                            firstName: string;
+                            lastName: string;
+                            company?: string | null;
+                            line1: string;
+                            line2?: string | null;
+                            city: string;
+                            region?: string | null;
+                            postalCode?: string | null;
+                            country: string;
+                            phone?: string | null;
+                        };
+                        billingAddress: {
+                            firstName: string;
+                            lastName: string;
+                            company?: string | null;
+                            line1: string;
+                            line2?: string | null;
+                            city: string;
+                            region?: string | null;
+                            postalCode?: string | null;
+                            country: string;
+                            phone?: string | null;
+                        };
+                        shippingMethod: {
+                            rateId?: string | null;
+                            name: string;
+                            amountMinor: number;
+                        };
+                        notes: string | null;
+                        tags: string[];
+                        customFields: unknown;
+                        cancelReason: string | null;
+                        cancelledAt: string | null;
+                        placedAt: string | null;
+                        deliveredAt: string | null;
+                        affiliateId: string | null;
+                        promotions: unknown;
+                        version: number;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        lines: {
+                            id: string;
+                            productId: string;
+                            variantId: string;
+                            titleSnapshot: string;
+                            variantTitle: string;
+                            skuSnapshot: string;
+                            unitPriceMinor: number;
+                            compareAtMinor: number | null;
+                            quantity: number;
+                            discountMinor: number;
+                            taxMinor: number;
+                            totalMinor: number;
+                            costMinor: number | null;
+                            marginMinor: number | null;
+                            customizations: unknown;
+                            fulfilledQuantity: number;
+                            refundedQuantity: number;
+                        }[];
+                        events: {
+                            id: string;
+                            type: string;
+                            message: string;
+                            data: unknown;
+                            actorType: string;
+                            actorId: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                        }[];
+                        payments: {
+                            id: string;
+                            provider: string;
+                            /** @enum {string} */
+                            status: "PENDING" | "AUTHORIZED" | "CAPTURED" | "PARTIALLY_REFUNDED" | "REFUNDED" | "FAILED" | "VOIDED";
+                            amountMinor: number;
+                            currency: string;
+                            capturedMinor: number;
+                            refundedMinor: number;
+                            providerRef: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                            transactions: {
+                                id: string;
+                                /** @enum {string} */
+                                kind: "AUTHORIZE" | "CAPTURE" | "VOID" | "REFUND";
+                                /** @enum {string} */
+                                status: "SUCCESS" | "FAILED" | "PENDING";
+                                amountMinor: number;
+                                providerRef: string | null;
+                                /** Format: date-time */
+                                createdAt: string;
+                            }[];
+                        }[];
+                        fulfillments: {
+                            id: string;
+                            locationId: string;
+                            /** @enum {string} */
+                            status: "PENDING" | "PICKING" | "PACKED" | "SHIPPED" | "IN_TRANSIT" | "DELIVERED" | "FAILED_DELIVERY" | "RETURNED_TO_SENDER";
+                            carrier: string | null;
+                            trackingNumber: string | null;
+                            trackingUrl: string | null;
+                            shippedAt: string | null;
+                            deliveredAt: string | null;
+                            version: number;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                            lines: {
+                                id: string;
+                                orderLineId: string;
+                                quantity: number;
+                            }[];
+                        }[];
+                        refunds: {
+                            id: string;
+                            paymentId: string | null;
+                            amountMinor: number;
+                            currency: string;
+                            /** @enum {string} */
+                            method: "ORIGINAL" | "STORE_CREDIT" | "MANUAL";
+                            reason: string | null;
+                            lines: {
+                                orderLineId: string;
+                                quantity: number;
+                                restock: boolean;
+                            }[];
+                            createdById: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                        }[];
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -19017,7 +21102,23 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        items: {
+                            id: string;
+                            number: string;
+                            /** @enum {string} */
+                            status: "DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED";
+                            currency: string;
+                            totalMinor: number;
+                            placedAt: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                            lineCount: number;
+                        }[];
+                        nextCursor: string | null;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -19049,7 +21150,62 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        number: string;
+                        /** @enum {string} */
+                        status: "DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED";
+                        email: string | null;
+                        currency: string;
+                        taxInclusive: boolean;
+                        subtotalMinor: number;
+                        discountMinor: number;
+                        shippingMinor: number;
+                        taxMinor: number;
+                        totalMinor: number;
+                        shippingAddress: unknown;
+                        billingAddress: unknown;
+                        shippingMethod: unknown;
+                        placedAt: string | null;
+                        lines: {
+                            id: string;
+                            variantId: string | null;
+                            title: string;
+                            variantTitle: string | null;
+                            sku: string | null;
+                            quantity: number;
+                            unitPriceMinor: number;
+                            totalMinor: number;
+                            fulfilledQuantity: number;
+                            refundedQuantity: number;
+                        }[];
+                        payments: {
+                            provider: string;
+                            status: string;
+                            amountMinor: number;
+                        }[];
+                        fulfillments: {
+                            id: string;
+                            status: string;
+                            carrier: string | null;
+                            trackingNumber: string | null;
+                            trackingUrl: string | null;
+                            shippedAt: string | null;
+                            deliveredAt: string | null;
+                            lines: {
+                                orderLineId: string;
+                                quantity: number;
+                            }[];
+                        }[];
+                        timeline: {
+                            type: string;
+                            message: string;
+                            /** Format: date-time */
+                            createdAt: string;
+                        }[];
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -19883,7 +22039,40 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        name: string;
+                        countries: string[];
+                        isActive: boolean;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        rates: {
+                            id: string;
+                            zoneId: string;
+                            name: string;
+                            /** @enum {string} */
+                            type: "FLAT" | "PRICE" | "WEIGHT";
+                            currency: string;
+                            amountMinor: number;
+                            minSubtotalMinor: number | null;
+                            maxSubtotalMinor: number | null;
+                            minWeightGrams: number | null;
+                            maxWeightGrams: number | null;
+                            freeAboveMinor: number | null;
+                            minDeliveryDays: number | null;
+                            maxDeliveryDays: number | null;
+                            position: number;
+                            isActive: boolean;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                        }[];
+                    }[];
+                };
             };
             /** @description Error */
             default: {
@@ -19921,7 +22110,18 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        name: string;
+                        countries: string[];
+                        isActive: boolean;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -19961,7 +22161,18 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        name: string;
+                        countries: string[];
+                        isActive: boolean;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -20044,7 +22255,30 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        zoneId: string;
+                        name: string;
+                        /** @enum {string} */
+                        type: "FLAT" | "PRICE" | "WEIGHT";
+                        currency: string;
+                        amountMinor: number;
+                        minSubtotalMinor: number | null;
+                        maxSubtotalMinor: number | null;
+                        minWeightGrams: number | null;
+                        maxWeightGrams: number | null;
+                        freeAboveMinor: number | null;
+                        minDeliveryDays: number | null;
+                        maxDeliveryDays: number | null;
+                        position: number;
+                        isActive: boolean;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -20096,7 +22330,30 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        zoneId: string;
+                        name: string;
+                        /** @enum {string} */
+                        type: "FLAT" | "PRICE" | "WEIGHT";
+                        currency: string;
+                        amountMinor: number;
+                        minSubtotalMinor: number | null;
+                        maxSubtotalMinor: number | null;
+                        minWeightGrams: number | null;
+                        maxWeightGrams: number | null;
+                        freeAboveMinor: number | null;
+                        minDeliveryDays: number | null;
+                        maxDeliveryDays: number | null;
+                        position: number;
+                        isActive: boolean;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -20769,7 +23026,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        handle: string;
+                        name: string;
+                    }[];
+                };
             };
             /** @description Error */
             default: {
@@ -20806,7 +23069,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        handle: string;
+                        name: string;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -20845,7 +23114,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        handle: string;
+                        name: string;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -20875,7 +23150,21 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        taxClassId: string | null;
+                        name: string;
+                        country: string;
+                        region: string | null;
+                        rateBps: number;
+                        shipping: boolean;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                    }[];
+                };
             };
             /** @description Error */
             default: {
@@ -20916,7 +23205,21 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        taxClassId: string | null;
+                        name: string;
+                        country: string;
+                        region: string | null;
+                        rateBps: number;
+                        shipping: boolean;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -20959,7 +23262,21 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        taxClassId: string | null;
+                        name: string;
+                        country: string;
+                        region: string | null;
+                        rateBps: number;
+                        shipping: boolean;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                    };
+                };
             };
             /** @description Error */
             default: {

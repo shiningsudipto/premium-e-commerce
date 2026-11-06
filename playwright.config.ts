@@ -22,10 +22,8 @@ export default defineConfig({
       use: { ...devices["Desktop Chrome"] },
     },
   ],
-  webServer: {
-    command: "npm run dev",
-    url: "http://localhost:3000/admin/login",
-    reuseExistingServer: true,
-    timeout: 120_000,
-  },
+  // started here only for the default local URL; with STOREFRONT_URL set, that server is used as is
+  webServer: process.env.STOREFRONT_URL
+    ? undefined
+    : { command: "npm run dev", url: "http://localhost:3000/admin/login", reuseExistingServer: true, timeout: 120_000 },
 });

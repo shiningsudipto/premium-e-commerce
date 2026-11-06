@@ -8,12 +8,13 @@ import { contextHeaders } from "../../api/upstream";
 import { env } from "../../lib/env";
 import { callSession } from "../../lib/session/api-session";
 import { COOKIE } from "../../lib/session/cookies";
+import type { Bag, BagResult } from "./types";
 
 // Adding to the bag from any page (spec §5.2). A first-time visitor gets a guest session, the
 // same one the BFF would create, so the cart follows them to checkout.
 
 export type AddToBagResult =
-  | { ok: true; itemCount: number }
+  | { ok: true; itemCount: number; cart: Bag }
   | { ok: false; reason: "choose_options" | "sold_out" | "unavailable"; message: string };
 
 const MESSAGES: Partial<Record<string, string>> = {
@@ -70,7 +71,7 @@ export async function addToBag(input: {
     );
     // the header's bag count is rendered on the server
     refresh();
-    return { ok: true, itemCount: updated.itemCount };
+    return { ok: true, itemCount: updated.itemCount, cart: updated };
   } catch (err) {
     const code = err instanceof ApiError ? err.code : undefined;
     if (code === "INSUFFICIENT_STOCK") return { ok: false, reason: "sold_out", message: MESSAGES[code]! };
@@ -79,5 +80,51 @@ export async function addToBag(input: {
       reason: "unavailable",
       message: (code && MESSAGES[code]) ?? "Something went wrong. Please try again.",
     };
+  }
+}
+
+const failure = (err: unknown): BagResult => {
+  const code = err instanceof ApiError ? err.code : undefined;
+  return { ok: false, message: (code && MESSAGES[code]) ?? "Something went wrong. Please try again." };
+};
+
+// The shopper's bag for the drawer. Without a session there is no bag (and none is created).
+export async function loadBag(): Promise<Bag | null> {
+  const ctx = await requestContext();
+  if (!ctx.token) return null;
+  try {
+    return await unwrap(serverApi(ctx).POST("/v1/store/carts"));
+  } catch {
+    return null;
+  }
+}
+
+// Quantity 0 removes the line. The API checks the cart belongs to this shopper.
+export async function setLineQuantity(cartId: string, lineId: string, quantity: number): Promise<BagResult> {
+  try {
+    const ctx = await requestContext();
+    const cart = await unwrap(
+      serverApi(ctx).PATCH("/v1/store/carts/{id}/lines/{lineId}", {
+        params: { path: { id: cartId, lineId } },
+        body: { quantity: Math.max(0, Math.min(999, Math.trunc(quantity))) },
+      }),
+    );
+    refresh();
+    return { ok: true, cart };
+  } catch (err) {
+    return failure(err);
+  }
+}
+
+export async function removeLine(cartId: string, lineId: string): Promise<BagResult> {
+  try {
+    const ctx = await requestContext();
+    const cart = await unwrap(
+      serverApi(ctx).DELETE("/v1/store/carts/{id}/lines/{lineId}", { params: { path: { id: cartId, lineId } } }),
+    );
+    refresh();
+    return { ok: true, cart };
+  } catch (err) {
+    return failure(err);
   }
 }

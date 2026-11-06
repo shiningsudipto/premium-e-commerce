@@ -6,11 +6,11 @@ import { getMenu } from "../../lib/catalog";
 import { href } from "../../lib/links";
 import type { MarketRef } from "../../lib/market";
 import type { StoreConfig } from "../../lib/store-data";
-import { Icon } from "../storefront/icon";
 import { Logo } from "../storefront/primitives";
 import { AccountButton, AccountButtonFallback, BagButton, BagButtonFallback } from "./header-actions";
 import { HeaderBar } from "./header-bar";
 import { MobileMenu } from "./mobile-menu";
+import { SearchDialog } from "../../features/search/search-dialog";
 
 export function marketLabel(market: MarketRef, config: StoreConfig) {
   const symbol =
@@ -65,9 +65,7 @@ export async function SiteHeader({ market, config }: { market: MarketRef; config
           ))}
         </nav>
         <div className="header-actions">
-          <Link className="icon-btn" href={href(market, "/search")} aria-label={t("search")}>
-            <Icon name="search" />
-          </Link>
+          <SearchDialog market={market} label={t("search")} />
           <Suspense fallback={<AccountButtonFallback market={market} label={t("signIn")} />}>
             <AccountButton market={market} />
           </Suspense>

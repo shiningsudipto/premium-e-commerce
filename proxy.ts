@@ -1,8 +1,9 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { adminProxy, isAdminPath } from "./src/admin/lib/session/proxy";
-import { clientIpOf, contextHeaders, newRequestId, proxyMarkets } from "./src/api/upstream";
+import { clientIpOf, contextHeaders, newRequestId, proxyMarkets, proxyRedirects } from "./src/api/upstream";
 import { env, isProduction } from "./src/lib/env";
 import { parseMarketSegment, pickSegment, resolveSegment } from "./src/lib/market";
+import { resolveRedirect } from "./src/lib/redirects";
 import { callSession, type ParsedCookie } from "./src/lib/session/api-session";
 import { COOKIE, marketCookie } from "./src/lib/session/cookies";
 import { refreshOnce } from "./src/lib/session/refresh";
@@ -11,7 +12,8 @@ import { refreshOnce } from "./src/lib/session/refresh";
 // src/admin/lib/session/proxy.ts); everything else is the storefront (spec §3.3):
 // 1. every URL carries a market prefix (/en-bd/…): URL → cookie → geo header → default;
 // 2. downstream rendering gets the market, locale, channel and a correlation ID as headers;
-// 3. an expired access token is refreshed here through the API (which sets the new cookies), so
+// 3. merchant redirects (admin → Redirects) are applied, on the path without its prefix;
+// 4. an expired access token is refreshed here through the API (which sets the new cookies), so
 //    Server Components always see a live session.
 
 const GEO_HEADERS = ["x-vercel-ip-country", "cf-ipcountry", "cloudfront-viewer-country"];
@@ -36,6 +38,15 @@ export async function proxy(request: NextRequest) {
     url.pathname = `/${segment}${pathname === "/" ? "" : pathname}`;
     url.search = search;
     return NextResponse.redirect(url, 307);
+  }
+
+  const rest = pathname.slice(first!.length + 1) || "/";
+  const redirect = resolveRedirect(await proxyRedirects(current), rest, current.segment);
+  if (redirect) {
+    const target = redirect.location.startsWith("/")
+      ? new URL(redirect.location + search, request.url)
+      : redirect.location;
+    return NextResponse.redirect(target, redirect.status);
   }
 
   const requestId = request.headers.get("x-request-id") ?? newRequestId();

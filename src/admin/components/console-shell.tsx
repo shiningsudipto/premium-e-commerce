@@ -4,14 +4,26 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
 import {
+  ContactIcon,
+  CreditCardIcon,
   FlagIcon,
+  FolderTreeIcon,
   HistoryIcon,
+  LayersIcon,
   LayoutDashboardIcon,
+  ListTreeIcon,
   LogOutIcon,
+  MailIcon,
   MenuIcon,
+  PackageIcon,
+  PercentIcon,
+  ReceiptIcon,
   ShieldIcon,
+  SignpostIcon,
   SlidersHorizontalIcon,
+  TruckIcon,
   UsersIcon,
+  WarehouseIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -35,9 +47,42 @@ type NavItem = { href: string; label: string; icon: typeof FlagIcon; permission?
 export const NAV: { heading: string; items: NavItem[] }[] = [
   { heading: "Overview", items: [{ href: "/admin", label: "Dashboard", icon: LayoutDashboardIcon }] },
   {
+    heading: "Sales",
+    items: [
+      { href: "/admin/orders", label: "Orders", icon: ReceiptIcon, permission: "orders.read" },
+      { href: "/admin/customers", label: "Customers", icon: ContactIcon, permission: "customers.read" },
+    ],
+  },
+  {
+    heading: "Catalog",
+    items: [
+      { href: "/admin/products", label: "Products", icon: PackageIcon, permission: "products.read" },
+      { href: "/admin/categories", label: "Categories", icon: FolderTreeIcon, permission: "products.read" },
+      { href: "/admin/collections", label: "Collections", icon: LayersIcon, permission: "products.read" },
+      { href: "/admin/inventory", label: "Inventory", icon: WarehouseIcon, permission: "inventory.read" },
+    ],
+  },
+  {
+    heading: "Content",
+    items: [
+      { href: "/admin/menus", label: "Menus", icon: ListTreeIcon, permission: "content.menus.write" },
+      { href: "/admin/redirects", label: "Redirects", icon: SignpostIcon, permission: "redirects.write" },
+      {
+        href: "/admin/notifications",
+        label: "Notifications",
+        icon: MailIcon,
+        // the template list checks either permission itself (copy editors may only reword)
+        permission: ["notifications.templates.write", "notifications.copy.write"],
+      },
+    ],
+  },
+  {
     heading: "Configuration",
     items: [
       { href: "/admin/settings", label: "Settings", icon: SlidersHorizontalIcon, permission: "settings.read" },
+      { href: "/admin/shipping", label: "Shipping", icon: TruckIcon, permission: "settings.read" },
+      { href: "/admin/tax", label: "Tax", icon: PercentIcon, permission: "settings.read" },
+      { href: "/admin/payments", label: "Payments", icon: CreditCardIcon, permission: "settings.read" },
       { href: "/admin/flags", label: "Feature flags", icon: FlagIcon, permission: "settings.read" },
     ],
   },

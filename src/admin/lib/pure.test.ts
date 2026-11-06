@@ -20,13 +20,32 @@ describe("permission gating", () => {
     expect(labels(["audit.read_own"])).toEqual(["Dashboard", "Audit log"]);
     expect(visibleNav(["*"]).flatMap((s) => s.items.map((i) => i.href))).toEqual([
       "/admin",
+      "/admin/orders",
+      "/admin/customers",
+      "/admin/products",
+      "/admin/categories",
+      "/admin/collections",
+      "/admin/inventory",
+      "/admin/menus",
+      "/admin/redirects",
+      "/admin/notifications",
       "/admin/settings",
+      "/admin/shipping",
+      "/admin/tax",
+      "/admin/payments",
       "/admin/flags",
       "/admin/staff",
       "/admin/roles",
       "/admin/audit",
     ]);
-    expect(labels(["*"])).toEqual(["Dashboard", "Settings", "Feature flags", "Staff", "Roles", "Audit log"]);
+    // a copy editor sees the templates through either notifications permission
+    expect(labels(["notifications.copy.write", "products.read"])).toEqual([
+      "Dashboard",
+      "Products",
+      "Categories",
+      "Collections",
+      "Notifications",
+    ]);
   });
 });
 

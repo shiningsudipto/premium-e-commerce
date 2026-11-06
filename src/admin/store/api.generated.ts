@@ -5721,7 +5721,24 @@ export type GetV1AdminAuditApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type GetV1AdminProductsApiResponse = unknown;
+export type GetV1AdminProductsApiResponse = /** status 200 OK */ {
+  items: {
+    id: string;
+    handle: string;
+    title: string;
+    status: "DRAFT" | "ACTIVE" | "ARCHIVED";
+    vendor: string | null;
+    publishAt: string | null;
+    createdAt: string;
+    updatedAt: string;
+    variantCount: number;
+    image: {
+      url: string;
+      alt: string | null;
+    } | null;
+  }[];
+  nextCursor: string | null;
+};
 export type GetV1AdminProductsApiArg = {
   cursor?: string;
   limit?: number;
@@ -6620,6 +6637,15 @@ export type GetV1AdminCollectionsApiResponse = /** status 200 OK */ {
   isPublished: boolean;
   version: number;
   updatedAt: string;
+  products: {
+    productId: string;
+    position: number;
+    product: {
+      title: string;
+      handle: string;
+      status: "DRAFT" | "ACTIVE" | "ARCHIVED";
+    };
+  }[];
 }[];
 export type GetV1AdminCollectionsApiArg = {
   "x-market"?: string;
@@ -6852,12 +6878,76 @@ export type PutV1AdminAttributesIdApiArg = {
     position?: number;
   };
 };
-export type GetV1AdminProductTypesApiResponse = unknown;
+export type GetV1AdminProductTypesApiResponse = /** status 200 OK */ {
+  id: string;
+  handle: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+  attributes: {
+    attributeId: string;
+    required: boolean;
+    position: number;
+    attribute: {
+      handle: string;
+      label: string;
+      type:
+        | "TEXT"
+        | "RICH_TEXT"
+        | "NUMBER"
+        | "BOOLEAN"
+        | "SELECT"
+        | "MULTI_SELECT"
+        | "COLOR"
+        | "DATE"
+        | "FILE"
+        | "REFERENCE"
+        | "JSON";
+      values: any;
+      filterable: boolean;
+      displayType: string | null;
+      position: number;
+      id: string;
+    };
+  }[];
+}[];
 export type GetV1AdminProductTypesApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type PostV1AdminProductTypesApiResponse = unknown;
+export type PostV1AdminProductTypesApiResponse = /** status 201 OK */ {
+  id: string;
+  handle: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+  attributes: {
+    attributeId: string;
+    required: boolean;
+    position: number;
+    attribute: {
+      handle: string;
+      label: string;
+      type:
+        | "TEXT"
+        | "RICH_TEXT"
+        | "NUMBER"
+        | "BOOLEAN"
+        | "SELECT"
+        | "MULTI_SELECT"
+        | "COLOR"
+        | "DATE"
+        | "FILE"
+        | "REFERENCE"
+        | "JSON";
+      values: any;
+      filterable: boolean;
+      displayType: string | null;
+      position: number;
+      id: string;
+    };
+  }[];
+};
 export type PostV1AdminProductTypesApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
@@ -6870,7 +6960,39 @@ export type PostV1AdminProductTypesApiArg = {
     }[];
   };
 };
-export type PutV1AdminProductTypesIdApiResponse = unknown;
+export type PutV1AdminProductTypesIdApiResponse = /** status 200 OK */ {
+  id: string;
+  handle: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+  attributes: {
+    attributeId: string;
+    required: boolean;
+    position: number;
+    attribute: {
+      handle: string;
+      label: string;
+      type:
+        | "TEXT"
+        | "RICH_TEXT"
+        | "NUMBER"
+        | "BOOLEAN"
+        | "SELECT"
+        | "MULTI_SELECT"
+        | "COLOR"
+        | "DATE"
+        | "FILE"
+        | "REFERENCE"
+        | "JSON";
+      values: any;
+      filterable: boolean;
+      displayType: string | null;
+      position: number;
+      id: string;
+    };
+  }[];
+};
 export type PutV1AdminProductTypesIdApiArg = {
   id: string;
   "x-market"?: string;
@@ -6954,7 +7076,7 @@ export type PutV1AdminMenusHandleApiArg = {
   "x-locale"?: string;
   body: {
     name: string;
-    items: Recursive3[];
+    items: Recursive4[];
     version?: number;
   };
 };
@@ -7113,7 +7235,48 @@ export type GetV1AdminCustomersApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type GetV1AdminCustomersIdApiResponse = unknown;
+export type GetV1AdminCustomersIdApiResponse = /** status 200 OK */ {
+  id: string;
+  email: string | null;
+  phone: string | null;
+  firstName: string | null;
+  lastName: string | null;
+  acceptsMarketing: boolean;
+  createdAt: string;
+  tags: string[];
+  groupId: string | null;
+  customFields: any;
+  archivedAt: string | null;
+  hasAccount: boolean;
+  version: number;
+  updatedAt: string;
+  deletionRequestedAt: string | null;
+  anonymizedAt: string | null;
+  addresses: {
+    firstName: string;
+    lastName: string;
+    company: string | null;
+    line1: string;
+    line2: string | null;
+    city: string;
+    region: string | null;
+    postalCode: string | null;
+    country: any;
+    phone: string | null;
+    id: string;
+    label: string | null;
+    isDefaultShipping: boolean;
+    isDefaultBilling: boolean;
+    createdAt: string;
+    updatedAt: string;
+  }[];
+  roles: string[];
+  stats: {
+    orderCount: number;
+    lifetimeValueMinor: number;
+    averageOrderMinor: number;
+  };
+};
 export type GetV1AdminCustomersIdApiArg = {
   id: string;
   "x-market"?: string;
@@ -7147,12 +7310,24 @@ export type PatchV1AdminCustomersIdApiArg = {
     };
   };
 };
-export type GetV1AdminCustomerGroupsApiResponse = unknown;
+export type GetV1AdminCustomerGroupsApiResponse = /** status 200 OK */ {
+  id: string;
+  handle: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+}[];
 export type GetV1AdminCustomerGroupsApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type PostV1AdminCustomerGroupsApiResponse = unknown;
+export type PostV1AdminCustomerGroupsApiResponse = /** status 201 OK */ {
+  id: string;
+  handle: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+};
 export type PostV1AdminCustomerGroupsApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
@@ -7604,7 +7779,13 @@ export type PostV1AdminNotificationTemplatesPreviewApiArg = {
     };
   };
 };
-export type PostV1AdminNotificationTemplatesTestSendApiResponse = unknown;
+export type PostV1AdminNotificationTemplatesTestSendApiResponse =
+  | /** status 200 OK */ {
+      sent: true;
+    }
+  | {
+      skipped: string;
+    };
 export type PostV1AdminNotificationTemplatesTestSendApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
@@ -7614,7 +7795,43 @@ export type PostV1AdminNotificationTemplatesTestSendApiArg = {
     to: string;
   };
 };
-export type GetV1AdminOrdersApiResponse = unknown;
+export type GetV1AdminOrdersApiResponse = /** status 200 OK */ {
+  items: {
+    id: string;
+    number: number;
+    displayNumber: string;
+    status:
+      | "DRAFT"
+      | "PENDING_PAYMENT"
+      | "PAID"
+      | "ON_HOLD"
+      | "PARTIALLY_FULFILLED"
+      | "FULFILLED"
+      | "DELIVERED"
+      | "COMPLETED"
+      | "CANCELLED";
+    email: string;
+    currency: string;
+    totalMinor: number;
+    placedAt: string | null;
+    createdAt: string;
+    channelId: string;
+    lineCount: number;
+    paymentStatus:
+      | (
+          | "PENDING"
+          | "AUTHORIZED"
+          | "CAPTURED"
+          | "PARTIALLY_REFUNDED"
+          | "REFUNDED"
+          | "FAILED"
+          | "VOIDED"
+        )
+      | null;
+    paymentProvider: string | null;
+  }[];
+  nextCursor: string | null;
+};
 export type GetV1AdminOrdersApiArg = {
   cursor?: string;
   limit?: number;
@@ -7635,13 +7852,377 @@ export type GetV1AdminOrdersApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type GetV1AdminOrdersIdApiResponse = unknown;
+export type GetV1AdminOrdersIdApiResponse = /** status 200 OK */ {
+  id: string;
+  number: number;
+  displayNumber: string;
+  status:
+    | "DRAFT"
+    | "PENDING_PAYMENT"
+    | "PAID"
+    | "ON_HOLD"
+    | "PARTIALLY_FULFILLED"
+    | "FULFILLED"
+    | "DELIVERED"
+    | "COMPLETED"
+    | "CANCELLED";
+  holdPreviousStatus:
+    | (
+        | "DRAFT"
+        | "PENDING_PAYMENT"
+        | "PAID"
+        | "ON_HOLD"
+        | "PARTIALLY_FULFILLED"
+        | "FULFILLED"
+        | "DELIVERED"
+        | "COMPLETED"
+        | "CANCELLED"
+      )
+    | null;
+  customerId: string | null;
+  customer: {
+    id: string;
+    email: string | null;
+    firstName: string | null;
+    lastName: string | null;
+  } | null;
+  email: string;
+  currency: string;
+  taxInclusive: boolean;
+  subtotalMinor: number;
+  discountMinor: number;
+  shippingMinor: number;
+  taxMinor: number;
+  totalMinor: number;
+  marketId: string;
+  channelId: string;
+  locale: string | null;
+  shippingAddress: {
+    firstName: string;
+    lastName: string;
+    company?: string | null;
+    line1: string;
+    line2?: string | null;
+    city: string;
+    region?: string | null;
+    postalCode?: string | null;
+    country: string;
+    phone?: string | null;
+  };
+  billingAddress: {
+    firstName: string;
+    lastName: string;
+    company?: string | null;
+    line1: string;
+    line2?: string | null;
+    city: string;
+    region?: string | null;
+    postalCode?: string | null;
+    country: string;
+    phone?: string | null;
+  };
+  shippingMethod: {
+    rateId?: string | null;
+    name: string;
+    amountMinor: number;
+  };
+  notes: string | null;
+  tags: string[];
+  customFields: any;
+  cancelReason: string | null;
+  cancelledAt: string | null;
+  placedAt: string | null;
+  deliveredAt: string | null;
+  affiliateId: string | null;
+  promotions: any;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+  lines: {
+    id: string;
+    productId: string;
+    variantId: string;
+    titleSnapshot: string;
+    variantTitle: string;
+    skuSnapshot: string;
+    unitPriceMinor: number;
+    compareAtMinor: number | null;
+    quantity: number;
+    discountMinor: number;
+    taxMinor: number;
+    totalMinor: number;
+    costMinor: number | null;
+    marginMinor: number | null;
+    customizations: any;
+    fulfilledQuantity: number;
+    refundedQuantity: number;
+  }[];
+  events: {
+    id: string;
+    type: string;
+    message: string;
+    data: any;
+    actorType: string;
+    actorId: string | null;
+    createdAt: string;
+  }[];
+  payments: {
+    id: string;
+    provider: string;
+    status:
+      | "PENDING"
+      | "AUTHORIZED"
+      | "CAPTURED"
+      | "PARTIALLY_REFUNDED"
+      | "REFUNDED"
+      | "FAILED"
+      | "VOIDED";
+    amountMinor: number;
+    currency: string;
+    capturedMinor: number;
+    refundedMinor: number;
+    providerRef: string | null;
+    createdAt: string;
+    updatedAt: string;
+    transactions: {
+      id: string;
+      kind: "AUTHORIZE" | "CAPTURE" | "VOID" | "REFUND";
+      status: "SUCCESS" | "FAILED" | "PENDING";
+      amountMinor: number;
+      providerRef: string | null;
+      createdAt: string;
+    }[];
+  }[];
+  fulfillments: {
+    id: string;
+    locationId: string;
+    status:
+      | "PENDING"
+      | "PICKING"
+      | "PACKED"
+      | "SHIPPED"
+      | "IN_TRANSIT"
+      | "DELIVERED"
+      | "FAILED_DELIVERY"
+      | "RETURNED_TO_SENDER";
+    carrier: string | null;
+    trackingNumber: string | null;
+    trackingUrl: string | null;
+    shippedAt: string | null;
+    deliveredAt: string | null;
+    version: number;
+    createdAt: string;
+    updatedAt: string;
+    lines: {
+      id: string;
+      orderLineId: string;
+      quantity: number;
+    }[];
+  }[];
+  refunds: {
+    id: string;
+    paymentId: string | null;
+    amountMinor: number;
+    currency: string;
+    method: "ORIGINAL" | "STORE_CREDIT" | "MANUAL";
+    reason: string | null;
+    lines: {
+      orderLineId: string;
+      quantity: number;
+      restock: boolean;
+    }[];
+    createdById: string | null;
+    createdAt: string;
+  }[];
+};
 export type GetV1AdminOrdersIdApiArg = {
   id: string;
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type PostV1AdminOrdersIdMarkPaidApiResponse = unknown;
+export type PostV1AdminOrdersIdMarkPaidApiResponse = /** status 200 OK */ {
+  id: string;
+  number: number;
+  displayNumber: string;
+  status:
+    | "DRAFT"
+    | "PENDING_PAYMENT"
+    | "PAID"
+    | "ON_HOLD"
+    | "PARTIALLY_FULFILLED"
+    | "FULFILLED"
+    | "DELIVERED"
+    | "COMPLETED"
+    | "CANCELLED";
+  holdPreviousStatus:
+    | (
+        | "DRAFT"
+        | "PENDING_PAYMENT"
+        | "PAID"
+        | "ON_HOLD"
+        | "PARTIALLY_FULFILLED"
+        | "FULFILLED"
+        | "DELIVERED"
+        | "COMPLETED"
+        | "CANCELLED"
+      )
+    | null;
+  customerId: string | null;
+  customer: {
+    id: string;
+    email: string | null;
+    firstName: string | null;
+    lastName: string | null;
+  } | null;
+  email: string;
+  currency: string;
+  taxInclusive: boolean;
+  subtotalMinor: number;
+  discountMinor: number;
+  shippingMinor: number;
+  taxMinor: number;
+  totalMinor: number;
+  marketId: string;
+  channelId: string;
+  locale: string | null;
+  shippingAddress: {
+    firstName: string;
+    lastName: string;
+    company?: string | null;
+    line1: string;
+    line2?: string | null;
+    city: string;
+    region?: string | null;
+    postalCode?: string | null;
+    country: string;
+    phone?: string | null;
+  };
+  billingAddress: {
+    firstName: string;
+    lastName: string;
+    company?: string | null;
+    line1: string;
+    line2?: string | null;
+    city: string;
+    region?: string | null;
+    postalCode?: string | null;
+    country: string;
+    phone?: string | null;
+  };
+  shippingMethod: {
+    rateId?: string | null;
+    name: string;
+    amountMinor: number;
+  };
+  notes: string | null;
+  tags: string[];
+  customFields: any;
+  cancelReason: string | null;
+  cancelledAt: string | null;
+  placedAt: string | null;
+  deliveredAt: string | null;
+  affiliateId: string | null;
+  promotions: any;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+  lines: {
+    id: string;
+    productId: string;
+    variantId: string;
+    titleSnapshot: string;
+    variantTitle: string;
+    skuSnapshot: string;
+    unitPriceMinor: number;
+    compareAtMinor: number | null;
+    quantity: number;
+    discountMinor: number;
+    taxMinor: number;
+    totalMinor: number;
+    costMinor: number | null;
+    marginMinor: number | null;
+    customizations: any;
+    fulfilledQuantity: number;
+    refundedQuantity: number;
+  }[];
+  events: {
+    id: string;
+    type: string;
+    message: string;
+    data: any;
+    actorType: string;
+    actorId: string | null;
+    createdAt: string;
+  }[];
+  payments: {
+    id: string;
+    provider: string;
+    status:
+      | "PENDING"
+      | "AUTHORIZED"
+      | "CAPTURED"
+      | "PARTIALLY_REFUNDED"
+      | "REFUNDED"
+      | "FAILED"
+      | "VOIDED";
+    amountMinor: number;
+    currency: string;
+    capturedMinor: number;
+    refundedMinor: number;
+    providerRef: string | null;
+    createdAt: string;
+    updatedAt: string;
+    transactions: {
+      id: string;
+      kind: "AUTHORIZE" | "CAPTURE" | "VOID" | "REFUND";
+      status: "SUCCESS" | "FAILED" | "PENDING";
+      amountMinor: number;
+      providerRef: string | null;
+      createdAt: string;
+    }[];
+  }[];
+  fulfillments: {
+    id: string;
+    locationId: string;
+    status:
+      | "PENDING"
+      | "PICKING"
+      | "PACKED"
+      | "SHIPPED"
+      | "IN_TRANSIT"
+      | "DELIVERED"
+      | "FAILED_DELIVERY"
+      | "RETURNED_TO_SENDER";
+    carrier: string | null;
+    trackingNumber: string | null;
+    trackingUrl: string | null;
+    shippedAt: string | null;
+    deliveredAt: string | null;
+    version: number;
+    createdAt: string;
+    updatedAt: string;
+    lines: {
+      id: string;
+      orderLineId: string;
+      quantity: number;
+    }[];
+  }[];
+  refunds: {
+    id: string;
+    paymentId: string | null;
+    amountMinor: number;
+    currency: string;
+    method: "ORIGINAL" | "STORE_CREDIT" | "MANUAL";
+    reason: string | null;
+    lines: {
+      orderLineId: string;
+      quantity: number;
+      restock: boolean;
+    }[];
+    createdById: string | null;
+    createdAt: string;
+  }[];
+};
 export type PostV1AdminOrdersIdMarkPaidApiArg = {
   id: string;
   "Idempotency-Key"?: string;
@@ -7652,7 +8233,189 @@ export type PostV1AdminOrdersIdMarkPaidApiArg = {
     reference?: string;
   };
 };
-export type PostV1AdminOrdersIdFulfillmentsApiResponse = unknown;
+export type PostV1AdminOrdersIdFulfillmentsApiResponse = /** status 201 OK */ {
+  id: string;
+  number: number;
+  displayNumber: string;
+  status:
+    | "DRAFT"
+    | "PENDING_PAYMENT"
+    | "PAID"
+    | "ON_HOLD"
+    | "PARTIALLY_FULFILLED"
+    | "FULFILLED"
+    | "DELIVERED"
+    | "COMPLETED"
+    | "CANCELLED";
+  holdPreviousStatus:
+    | (
+        | "DRAFT"
+        | "PENDING_PAYMENT"
+        | "PAID"
+        | "ON_HOLD"
+        | "PARTIALLY_FULFILLED"
+        | "FULFILLED"
+        | "DELIVERED"
+        | "COMPLETED"
+        | "CANCELLED"
+      )
+    | null;
+  customerId: string | null;
+  customer: {
+    id: string;
+    email: string | null;
+    firstName: string | null;
+    lastName: string | null;
+  } | null;
+  email: string;
+  currency: string;
+  taxInclusive: boolean;
+  subtotalMinor: number;
+  discountMinor: number;
+  shippingMinor: number;
+  taxMinor: number;
+  totalMinor: number;
+  marketId: string;
+  channelId: string;
+  locale: string | null;
+  shippingAddress: {
+    firstName: string;
+    lastName: string;
+    company?: string | null;
+    line1: string;
+    line2?: string | null;
+    city: string;
+    region?: string | null;
+    postalCode?: string | null;
+    country: string;
+    phone?: string | null;
+  };
+  billingAddress: {
+    firstName: string;
+    lastName: string;
+    company?: string | null;
+    line1: string;
+    line2?: string | null;
+    city: string;
+    region?: string | null;
+    postalCode?: string | null;
+    country: string;
+    phone?: string | null;
+  };
+  shippingMethod: {
+    rateId?: string | null;
+    name: string;
+    amountMinor: number;
+  };
+  notes: string | null;
+  tags: string[];
+  customFields: any;
+  cancelReason: string | null;
+  cancelledAt: string | null;
+  placedAt: string | null;
+  deliveredAt: string | null;
+  affiliateId: string | null;
+  promotions: any;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+  lines: {
+    id: string;
+    productId: string;
+    variantId: string;
+    titleSnapshot: string;
+    variantTitle: string;
+    skuSnapshot: string;
+    unitPriceMinor: number;
+    compareAtMinor: number | null;
+    quantity: number;
+    discountMinor: number;
+    taxMinor: number;
+    totalMinor: number;
+    costMinor: number | null;
+    marginMinor: number | null;
+    customizations: any;
+    fulfilledQuantity: number;
+    refundedQuantity: number;
+  }[];
+  events: {
+    id: string;
+    type: string;
+    message: string;
+    data: any;
+    actorType: string;
+    actorId: string | null;
+    createdAt: string;
+  }[];
+  payments: {
+    id: string;
+    provider: string;
+    status:
+      | "PENDING"
+      | "AUTHORIZED"
+      | "CAPTURED"
+      | "PARTIALLY_REFUNDED"
+      | "REFUNDED"
+      | "FAILED"
+      | "VOIDED";
+    amountMinor: number;
+    currency: string;
+    capturedMinor: number;
+    refundedMinor: number;
+    providerRef: string | null;
+    createdAt: string;
+    updatedAt: string;
+    transactions: {
+      id: string;
+      kind: "AUTHORIZE" | "CAPTURE" | "VOID" | "REFUND";
+      status: "SUCCESS" | "FAILED" | "PENDING";
+      amountMinor: number;
+      providerRef: string | null;
+      createdAt: string;
+    }[];
+  }[];
+  fulfillments: {
+    id: string;
+    locationId: string;
+    status:
+      | "PENDING"
+      | "PICKING"
+      | "PACKED"
+      | "SHIPPED"
+      | "IN_TRANSIT"
+      | "DELIVERED"
+      | "FAILED_DELIVERY"
+      | "RETURNED_TO_SENDER";
+    carrier: string | null;
+    trackingNumber: string | null;
+    trackingUrl: string | null;
+    shippedAt: string | null;
+    deliveredAt: string | null;
+    version: number;
+    createdAt: string;
+    updatedAt: string;
+    lines: {
+      id: string;
+      orderLineId: string;
+      quantity: number;
+    }[];
+  }[];
+  refunds: {
+    id: string;
+    paymentId: string | null;
+    amountMinor: number;
+    currency: string;
+    method: "ORIGINAL" | "STORE_CREDIT" | "MANUAL";
+    reason: string | null;
+    lines: {
+      orderLineId: string;
+      quantity: number;
+      restock: boolean;
+    }[];
+    createdById: string | null;
+    createdAt: string;
+  }[];
+};
 export type PostV1AdminOrdersIdFulfillmentsApiArg = {
   id: string;
   "Idempotency-Key"?: string;
@@ -7669,7 +8432,189 @@ export type PostV1AdminOrdersIdFulfillmentsApiArg = {
     trackingUrl?: string;
   };
 };
-export type PatchV1AdminOrdersFulfillmentsIdApiResponse = unknown;
+export type PatchV1AdminOrdersFulfillmentsIdApiResponse = /** status 200 OK */ {
+  id: string;
+  number: number;
+  displayNumber: string;
+  status:
+    | "DRAFT"
+    | "PENDING_PAYMENT"
+    | "PAID"
+    | "ON_HOLD"
+    | "PARTIALLY_FULFILLED"
+    | "FULFILLED"
+    | "DELIVERED"
+    | "COMPLETED"
+    | "CANCELLED";
+  holdPreviousStatus:
+    | (
+        | "DRAFT"
+        | "PENDING_PAYMENT"
+        | "PAID"
+        | "ON_HOLD"
+        | "PARTIALLY_FULFILLED"
+        | "FULFILLED"
+        | "DELIVERED"
+        | "COMPLETED"
+        | "CANCELLED"
+      )
+    | null;
+  customerId: string | null;
+  customer: {
+    id: string;
+    email: string | null;
+    firstName: string | null;
+    lastName: string | null;
+  } | null;
+  email: string;
+  currency: string;
+  taxInclusive: boolean;
+  subtotalMinor: number;
+  discountMinor: number;
+  shippingMinor: number;
+  taxMinor: number;
+  totalMinor: number;
+  marketId: string;
+  channelId: string;
+  locale: string | null;
+  shippingAddress: {
+    firstName: string;
+    lastName: string;
+    company?: string | null;
+    line1: string;
+    line2?: string | null;
+    city: string;
+    region?: string | null;
+    postalCode?: string | null;
+    country: string;
+    phone?: string | null;
+  };
+  billingAddress: {
+    firstName: string;
+    lastName: string;
+    company?: string | null;
+    line1: string;
+    line2?: string | null;
+    city: string;
+    region?: string | null;
+    postalCode?: string | null;
+    country: string;
+    phone?: string | null;
+  };
+  shippingMethod: {
+    rateId?: string | null;
+    name: string;
+    amountMinor: number;
+  };
+  notes: string | null;
+  tags: string[];
+  customFields: any;
+  cancelReason: string | null;
+  cancelledAt: string | null;
+  placedAt: string | null;
+  deliveredAt: string | null;
+  affiliateId: string | null;
+  promotions: any;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+  lines: {
+    id: string;
+    productId: string;
+    variantId: string;
+    titleSnapshot: string;
+    variantTitle: string;
+    skuSnapshot: string;
+    unitPriceMinor: number;
+    compareAtMinor: number | null;
+    quantity: number;
+    discountMinor: number;
+    taxMinor: number;
+    totalMinor: number;
+    costMinor: number | null;
+    marginMinor: number | null;
+    customizations: any;
+    fulfilledQuantity: number;
+    refundedQuantity: number;
+  }[];
+  events: {
+    id: string;
+    type: string;
+    message: string;
+    data: any;
+    actorType: string;
+    actorId: string | null;
+    createdAt: string;
+  }[];
+  payments: {
+    id: string;
+    provider: string;
+    status:
+      | "PENDING"
+      | "AUTHORIZED"
+      | "CAPTURED"
+      | "PARTIALLY_REFUNDED"
+      | "REFUNDED"
+      | "FAILED"
+      | "VOIDED";
+    amountMinor: number;
+    currency: string;
+    capturedMinor: number;
+    refundedMinor: number;
+    providerRef: string | null;
+    createdAt: string;
+    updatedAt: string;
+    transactions: {
+      id: string;
+      kind: "AUTHORIZE" | "CAPTURE" | "VOID" | "REFUND";
+      status: "SUCCESS" | "FAILED" | "PENDING";
+      amountMinor: number;
+      providerRef: string | null;
+      createdAt: string;
+    }[];
+  }[];
+  fulfillments: {
+    id: string;
+    locationId: string;
+    status:
+      | "PENDING"
+      | "PICKING"
+      | "PACKED"
+      | "SHIPPED"
+      | "IN_TRANSIT"
+      | "DELIVERED"
+      | "FAILED_DELIVERY"
+      | "RETURNED_TO_SENDER";
+    carrier: string | null;
+    trackingNumber: string | null;
+    trackingUrl: string | null;
+    shippedAt: string | null;
+    deliveredAt: string | null;
+    version: number;
+    createdAt: string;
+    updatedAt: string;
+    lines: {
+      id: string;
+      orderLineId: string;
+      quantity: number;
+    }[];
+  }[];
+  refunds: {
+    id: string;
+    paymentId: string | null;
+    amountMinor: number;
+    currency: string;
+    method: "ORIGINAL" | "STORE_CREDIT" | "MANUAL";
+    reason: string | null;
+    lines: {
+      orderLineId: string;
+      quantity: number;
+      restock: boolean;
+    }[];
+    createdById: string | null;
+    createdAt: string;
+  }[];
+};
 export type PatchV1AdminOrdersFulfillmentsIdApiArg = {
   id: string;
   "x-market"?: string;
@@ -7688,7 +8633,204 @@ export type PatchV1AdminOrdersFulfillmentsIdApiArg = {
     trackingUrl?: string;
   };
 };
-export type PostV1AdminOrdersIdRefundsApiResponse = unknown;
+export type PostV1AdminOrdersIdRefundsApiResponse =
+  | /** status 201 OK */ {
+      id: string;
+      number: number;
+      displayNumber: string;
+      status:
+        | "DRAFT"
+        | "PENDING_PAYMENT"
+        | "PAID"
+        | "ON_HOLD"
+        | "PARTIALLY_FULFILLED"
+        | "FULFILLED"
+        | "DELIVERED"
+        | "COMPLETED"
+        | "CANCELLED";
+      holdPreviousStatus:
+        | (
+            | "DRAFT"
+            | "PENDING_PAYMENT"
+            | "PAID"
+            | "ON_HOLD"
+            | "PARTIALLY_FULFILLED"
+            | "FULFILLED"
+            | "DELIVERED"
+            | "COMPLETED"
+            | "CANCELLED"
+          )
+        | null;
+      customerId: string | null;
+      customer: {
+        id: string;
+        email: string | null;
+        firstName: string | null;
+        lastName: string | null;
+      } | null;
+      email: string;
+      currency: string;
+      taxInclusive: boolean;
+      subtotalMinor: number;
+      discountMinor: number;
+      shippingMinor: number;
+      taxMinor: number;
+      totalMinor: number;
+      marketId: string;
+      channelId: string;
+      locale: string | null;
+      shippingAddress: {
+        firstName: string;
+        lastName: string;
+        company?: string | null;
+        line1: string;
+        line2?: string | null;
+        city: string;
+        region?: string | null;
+        postalCode?: string | null;
+        country: string;
+        phone?: string | null;
+      };
+      billingAddress: {
+        firstName: string;
+        lastName: string;
+        company?: string | null;
+        line1: string;
+        line2?: string | null;
+        city: string;
+        region?: string | null;
+        postalCode?: string | null;
+        country: string;
+        phone?: string | null;
+      };
+      shippingMethod: {
+        rateId?: string | null;
+        name: string;
+        amountMinor: number;
+      };
+      notes: string | null;
+      tags: string[];
+      customFields: any;
+      cancelReason: string | null;
+      cancelledAt: string | null;
+      placedAt: string | null;
+      deliveredAt: string | null;
+      affiliateId: string | null;
+      promotions: any;
+      version: number;
+      createdAt: string;
+      updatedAt: string;
+      lines: {
+        id: string;
+        productId: string;
+        variantId: string;
+        titleSnapshot: string;
+        variantTitle: string;
+        skuSnapshot: string;
+        unitPriceMinor: number;
+        compareAtMinor: number | null;
+        quantity: number;
+        discountMinor: number;
+        taxMinor: number;
+        totalMinor: number;
+        costMinor: number | null;
+        marginMinor: number | null;
+        customizations: any;
+        fulfilledQuantity: number;
+        refundedQuantity: number;
+      }[];
+      events: {
+        id: string;
+        type: string;
+        message: string;
+        data: any;
+        actorType: string;
+        actorId: string | null;
+        createdAt: string;
+      }[];
+      payments: {
+        id: string;
+        provider: string;
+        status:
+          | "PENDING"
+          | "AUTHORIZED"
+          | "CAPTURED"
+          | "PARTIALLY_REFUNDED"
+          | "REFUNDED"
+          | "FAILED"
+          | "VOIDED";
+        amountMinor: number;
+        currency: string;
+        capturedMinor: number;
+        refundedMinor: number;
+        providerRef: string | null;
+        createdAt: string;
+        updatedAt: string;
+        transactions: {
+          id: string;
+          kind: "AUTHORIZE" | "CAPTURE" | "VOID" | "REFUND";
+          status: "SUCCESS" | "FAILED" | "PENDING";
+          amountMinor: number;
+          providerRef: string | null;
+          createdAt: string;
+        }[];
+      }[];
+      fulfillments: {
+        id: string;
+        locationId: string;
+        status:
+          | "PENDING"
+          | "PICKING"
+          | "PACKED"
+          | "SHIPPED"
+          | "IN_TRANSIT"
+          | "DELIVERED"
+          | "FAILED_DELIVERY"
+          | "RETURNED_TO_SENDER";
+        carrier: string | null;
+        trackingNumber: string | null;
+        trackingUrl: string | null;
+        shippedAt: string | null;
+        deliveredAt: string | null;
+        version: number;
+        createdAt: string;
+        updatedAt: string;
+        lines: {
+          id: string;
+          orderLineId: string;
+          quantity: number;
+        }[];
+      }[];
+      refunds: {
+        id: string;
+        paymentId: string | null;
+        amountMinor: number;
+        currency: string;
+        method: "ORIGINAL" | "STORE_CREDIT" | "MANUAL";
+        reason: string | null;
+        lines: {
+          orderLineId: string;
+          quantity: number;
+          restock: boolean;
+        }[];
+        createdById: string | null;
+        createdAt: string;
+      }[];
+    }
+  | {
+      approvalRequired: true;
+      approval: {
+        id: string;
+        action: string;
+        entityType: string;
+        entityId: string;
+        payload: any;
+        reason: string | null;
+        status: "PENDING" | "APPROVED" | "REJECTED" | "EXPIRED";
+        requestedBy: string;
+        createdAt: string;
+      };
+    };
 export type PostV1AdminOrdersIdRefundsApiArg = {
   id: string;
   "Idempotency-Key": string;
@@ -7706,7 +8848,189 @@ export type PostV1AdminOrdersIdRefundsApiArg = {
     method?: "ORIGINAL" | "MANUAL";
   };
 };
-export type PostV1AdminOrdersIdCancelApiResponse = unknown;
+export type PostV1AdminOrdersIdCancelApiResponse = /** status 200 OK */ {
+  id: string;
+  number: number;
+  displayNumber: string;
+  status:
+    | "DRAFT"
+    | "PENDING_PAYMENT"
+    | "PAID"
+    | "ON_HOLD"
+    | "PARTIALLY_FULFILLED"
+    | "FULFILLED"
+    | "DELIVERED"
+    | "COMPLETED"
+    | "CANCELLED";
+  holdPreviousStatus:
+    | (
+        | "DRAFT"
+        | "PENDING_PAYMENT"
+        | "PAID"
+        | "ON_HOLD"
+        | "PARTIALLY_FULFILLED"
+        | "FULFILLED"
+        | "DELIVERED"
+        | "COMPLETED"
+        | "CANCELLED"
+      )
+    | null;
+  customerId: string | null;
+  customer: {
+    id: string;
+    email: string | null;
+    firstName: string | null;
+    lastName: string | null;
+  } | null;
+  email: string;
+  currency: string;
+  taxInclusive: boolean;
+  subtotalMinor: number;
+  discountMinor: number;
+  shippingMinor: number;
+  taxMinor: number;
+  totalMinor: number;
+  marketId: string;
+  channelId: string;
+  locale: string | null;
+  shippingAddress: {
+    firstName: string;
+    lastName: string;
+    company?: string | null;
+    line1: string;
+    line2?: string | null;
+    city: string;
+    region?: string | null;
+    postalCode?: string | null;
+    country: string;
+    phone?: string | null;
+  };
+  billingAddress: {
+    firstName: string;
+    lastName: string;
+    company?: string | null;
+    line1: string;
+    line2?: string | null;
+    city: string;
+    region?: string | null;
+    postalCode?: string | null;
+    country: string;
+    phone?: string | null;
+  };
+  shippingMethod: {
+    rateId?: string | null;
+    name: string;
+    amountMinor: number;
+  };
+  notes: string | null;
+  tags: string[];
+  customFields: any;
+  cancelReason: string | null;
+  cancelledAt: string | null;
+  placedAt: string | null;
+  deliveredAt: string | null;
+  affiliateId: string | null;
+  promotions: any;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+  lines: {
+    id: string;
+    productId: string;
+    variantId: string;
+    titleSnapshot: string;
+    variantTitle: string;
+    skuSnapshot: string;
+    unitPriceMinor: number;
+    compareAtMinor: number | null;
+    quantity: number;
+    discountMinor: number;
+    taxMinor: number;
+    totalMinor: number;
+    costMinor: number | null;
+    marginMinor: number | null;
+    customizations: any;
+    fulfilledQuantity: number;
+    refundedQuantity: number;
+  }[];
+  events: {
+    id: string;
+    type: string;
+    message: string;
+    data: any;
+    actorType: string;
+    actorId: string | null;
+    createdAt: string;
+  }[];
+  payments: {
+    id: string;
+    provider: string;
+    status:
+      | "PENDING"
+      | "AUTHORIZED"
+      | "CAPTURED"
+      | "PARTIALLY_REFUNDED"
+      | "REFUNDED"
+      | "FAILED"
+      | "VOIDED";
+    amountMinor: number;
+    currency: string;
+    capturedMinor: number;
+    refundedMinor: number;
+    providerRef: string | null;
+    createdAt: string;
+    updatedAt: string;
+    transactions: {
+      id: string;
+      kind: "AUTHORIZE" | "CAPTURE" | "VOID" | "REFUND";
+      status: "SUCCESS" | "FAILED" | "PENDING";
+      amountMinor: number;
+      providerRef: string | null;
+      createdAt: string;
+    }[];
+  }[];
+  fulfillments: {
+    id: string;
+    locationId: string;
+    status:
+      | "PENDING"
+      | "PICKING"
+      | "PACKED"
+      | "SHIPPED"
+      | "IN_TRANSIT"
+      | "DELIVERED"
+      | "FAILED_DELIVERY"
+      | "RETURNED_TO_SENDER";
+    carrier: string | null;
+    trackingNumber: string | null;
+    trackingUrl: string | null;
+    shippedAt: string | null;
+    deliveredAt: string | null;
+    version: number;
+    createdAt: string;
+    updatedAt: string;
+    lines: {
+      id: string;
+      orderLineId: string;
+      quantity: number;
+    }[];
+  }[];
+  refunds: {
+    id: string;
+    paymentId: string | null;
+    amountMinor: number;
+    currency: string;
+    method: "ORIGINAL" | "STORE_CREDIT" | "MANUAL";
+    reason: string | null;
+    lines: {
+      orderLineId: string;
+      quantity: number;
+      restock: boolean;
+    }[];
+    createdById: string | null;
+    createdAt: string;
+  }[];
+};
 export type PostV1AdminOrdersIdCancelApiArg = {
   id: string;
   "x-market"?: string;
@@ -7716,7 +9040,189 @@ export type PostV1AdminOrdersIdCancelApiArg = {
     refund?: boolean;
   };
 };
-export type PostV1AdminOrdersIdHoldApiResponse = unknown;
+export type PostV1AdminOrdersIdHoldApiResponse = /** status 200 OK */ {
+  id: string;
+  number: number;
+  displayNumber: string;
+  status:
+    | "DRAFT"
+    | "PENDING_PAYMENT"
+    | "PAID"
+    | "ON_HOLD"
+    | "PARTIALLY_FULFILLED"
+    | "FULFILLED"
+    | "DELIVERED"
+    | "COMPLETED"
+    | "CANCELLED";
+  holdPreviousStatus:
+    | (
+        | "DRAFT"
+        | "PENDING_PAYMENT"
+        | "PAID"
+        | "ON_HOLD"
+        | "PARTIALLY_FULFILLED"
+        | "FULFILLED"
+        | "DELIVERED"
+        | "COMPLETED"
+        | "CANCELLED"
+      )
+    | null;
+  customerId: string | null;
+  customer: {
+    id: string;
+    email: string | null;
+    firstName: string | null;
+    lastName: string | null;
+  } | null;
+  email: string;
+  currency: string;
+  taxInclusive: boolean;
+  subtotalMinor: number;
+  discountMinor: number;
+  shippingMinor: number;
+  taxMinor: number;
+  totalMinor: number;
+  marketId: string;
+  channelId: string;
+  locale: string | null;
+  shippingAddress: {
+    firstName: string;
+    lastName: string;
+    company?: string | null;
+    line1: string;
+    line2?: string | null;
+    city: string;
+    region?: string | null;
+    postalCode?: string | null;
+    country: string;
+    phone?: string | null;
+  };
+  billingAddress: {
+    firstName: string;
+    lastName: string;
+    company?: string | null;
+    line1: string;
+    line2?: string | null;
+    city: string;
+    region?: string | null;
+    postalCode?: string | null;
+    country: string;
+    phone?: string | null;
+  };
+  shippingMethod: {
+    rateId?: string | null;
+    name: string;
+    amountMinor: number;
+  };
+  notes: string | null;
+  tags: string[];
+  customFields: any;
+  cancelReason: string | null;
+  cancelledAt: string | null;
+  placedAt: string | null;
+  deliveredAt: string | null;
+  affiliateId: string | null;
+  promotions: any;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+  lines: {
+    id: string;
+    productId: string;
+    variantId: string;
+    titleSnapshot: string;
+    variantTitle: string;
+    skuSnapshot: string;
+    unitPriceMinor: number;
+    compareAtMinor: number | null;
+    quantity: number;
+    discountMinor: number;
+    taxMinor: number;
+    totalMinor: number;
+    costMinor: number | null;
+    marginMinor: number | null;
+    customizations: any;
+    fulfilledQuantity: number;
+    refundedQuantity: number;
+  }[];
+  events: {
+    id: string;
+    type: string;
+    message: string;
+    data: any;
+    actorType: string;
+    actorId: string | null;
+    createdAt: string;
+  }[];
+  payments: {
+    id: string;
+    provider: string;
+    status:
+      | "PENDING"
+      | "AUTHORIZED"
+      | "CAPTURED"
+      | "PARTIALLY_REFUNDED"
+      | "REFUNDED"
+      | "FAILED"
+      | "VOIDED";
+    amountMinor: number;
+    currency: string;
+    capturedMinor: number;
+    refundedMinor: number;
+    providerRef: string | null;
+    createdAt: string;
+    updatedAt: string;
+    transactions: {
+      id: string;
+      kind: "AUTHORIZE" | "CAPTURE" | "VOID" | "REFUND";
+      status: "SUCCESS" | "FAILED" | "PENDING";
+      amountMinor: number;
+      providerRef: string | null;
+      createdAt: string;
+    }[];
+  }[];
+  fulfillments: {
+    id: string;
+    locationId: string;
+    status:
+      | "PENDING"
+      | "PICKING"
+      | "PACKED"
+      | "SHIPPED"
+      | "IN_TRANSIT"
+      | "DELIVERED"
+      | "FAILED_DELIVERY"
+      | "RETURNED_TO_SENDER";
+    carrier: string | null;
+    trackingNumber: string | null;
+    trackingUrl: string | null;
+    shippedAt: string | null;
+    deliveredAt: string | null;
+    version: number;
+    createdAt: string;
+    updatedAt: string;
+    lines: {
+      id: string;
+      orderLineId: string;
+      quantity: number;
+    }[];
+  }[];
+  refunds: {
+    id: string;
+    paymentId: string | null;
+    amountMinor: number;
+    currency: string;
+    method: "ORIGINAL" | "STORE_CREDIT" | "MANUAL";
+    reason: string | null;
+    lines: {
+      orderLineId: string;
+      quantity: number;
+      restock: boolean;
+    }[];
+    createdById: string | null;
+    createdAt: string;
+  }[];
+};
 export type PostV1AdminOrdersIdHoldApiArg = {
   id: string;
   "x-market"?: string;
@@ -7725,19 +9231,565 @@ export type PostV1AdminOrdersIdHoldApiArg = {
     reason: string;
   };
 };
-export type PostV1AdminOrdersIdReleaseApiResponse = unknown;
+export type PostV1AdminOrdersIdReleaseApiResponse = /** status 200 OK */ {
+  id: string;
+  number: number;
+  displayNumber: string;
+  status:
+    | "DRAFT"
+    | "PENDING_PAYMENT"
+    | "PAID"
+    | "ON_HOLD"
+    | "PARTIALLY_FULFILLED"
+    | "FULFILLED"
+    | "DELIVERED"
+    | "COMPLETED"
+    | "CANCELLED";
+  holdPreviousStatus:
+    | (
+        | "DRAFT"
+        | "PENDING_PAYMENT"
+        | "PAID"
+        | "ON_HOLD"
+        | "PARTIALLY_FULFILLED"
+        | "FULFILLED"
+        | "DELIVERED"
+        | "COMPLETED"
+        | "CANCELLED"
+      )
+    | null;
+  customerId: string | null;
+  customer: {
+    id: string;
+    email: string | null;
+    firstName: string | null;
+    lastName: string | null;
+  } | null;
+  email: string;
+  currency: string;
+  taxInclusive: boolean;
+  subtotalMinor: number;
+  discountMinor: number;
+  shippingMinor: number;
+  taxMinor: number;
+  totalMinor: number;
+  marketId: string;
+  channelId: string;
+  locale: string | null;
+  shippingAddress: {
+    firstName: string;
+    lastName: string;
+    company?: string | null;
+    line1: string;
+    line2?: string | null;
+    city: string;
+    region?: string | null;
+    postalCode?: string | null;
+    country: string;
+    phone?: string | null;
+  };
+  billingAddress: {
+    firstName: string;
+    lastName: string;
+    company?: string | null;
+    line1: string;
+    line2?: string | null;
+    city: string;
+    region?: string | null;
+    postalCode?: string | null;
+    country: string;
+    phone?: string | null;
+  };
+  shippingMethod: {
+    rateId?: string | null;
+    name: string;
+    amountMinor: number;
+  };
+  notes: string | null;
+  tags: string[];
+  customFields: any;
+  cancelReason: string | null;
+  cancelledAt: string | null;
+  placedAt: string | null;
+  deliveredAt: string | null;
+  affiliateId: string | null;
+  promotions: any;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+  lines: {
+    id: string;
+    productId: string;
+    variantId: string;
+    titleSnapshot: string;
+    variantTitle: string;
+    skuSnapshot: string;
+    unitPriceMinor: number;
+    compareAtMinor: number | null;
+    quantity: number;
+    discountMinor: number;
+    taxMinor: number;
+    totalMinor: number;
+    costMinor: number | null;
+    marginMinor: number | null;
+    customizations: any;
+    fulfilledQuantity: number;
+    refundedQuantity: number;
+  }[];
+  events: {
+    id: string;
+    type: string;
+    message: string;
+    data: any;
+    actorType: string;
+    actorId: string | null;
+    createdAt: string;
+  }[];
+  payments: {
+    id: string;
+    provider: string;
+    status:
+      | "PENDING"
+      | "AUTHORIZED"
+      | "CAPTURED"
+      | "PARTIALLY_REFUNDED"
+      | "REFUNDED"
+      | "FAILED"
+      | "VOIDED";
+    amountMinor: number;
+    currency: string;
+    capturedMinor: number;
+    refundedMinor: number;
+    providerRef: string | null;
+    createdAt: string;
+    updatedAt: string;
+    transactions: {
+      id: string;
+      kind: "AUTHORIZE" | "CAPTURE" | "VOID" | "REFUND";
+      status: "SUCCESS" | "FAILED" | "PENDING";
+      amountMinor: number;
+      providerRef: string | null;
+      createdAt: string;
+    }[];
+  }[];
+  fulfillments: {
+    id: string;
+    locationId: string;
+    status:
+      | "PENDING"
+      | "PICKING"
+      | "PACKED"
+      | "SHIPPED"
+      | "IN_TRANSIT"
+      | "DELIVERED"
+      | "FAILED_DELIVERY"
+      | "RETURNED_TO_SENDER";
+    carrier: string | null;
+    trackingNumber: string | null;
+    trackingUrl: string | null;
+    shippedAt: string | null;
+    deliveredAt: string | null;
+    version: number;
+    createdAt: string;
+    updatedAt: string;
+    lines: {
+      id: string;
+      orderLineId: string;
+      quantity: number;
+    }[];
+  }[];
+  refunds: {
+    id: string;
+    paymentId: string | null;
+    amountMinor: number;
+    currency: string;
+    method: "ORIGINAL" | "STORE_CREDIT" | "MANUAL";
+    reason: string | null;
+    lines: {
+      orderLineId: string;
+      quantity: number;
+      restock: boolean;
+    }[];
+    createdById: string | null;
+    createdAt: string;
+  }[];
+};
 export type PostV1AdminOrdersIdReleaseApiArg = {
   id: string;
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type PostV1AdminOrdersIdCompleteApiResponse = unknown;
+export type PostV1AdminOrdersIdCompleteApiResponse = /** status 200 OK */ {
+  id: string;
+  number: number;
+  displayNumber: string;
+  status:
+    | "DRAFT"
+    | "PENDING_PAYMENT"
+    | "PAID"
+    | "ON_HOLD"
+    | "PARTIALLY_FULFILLED"
+    | "FULFILLED"
+    | "DELIVERED"
+    | "COMPLETED"
+    | "CANCELLED";
+  holdPreviousStatus:
+    | (
+        | "DRAFT"
+        | "PENDING_PAYMENT"
+        | "PAID"
+        | "ON_HOLD"
+        | "PARTIALLY_FULFILLED"
+        | "FULFILLED"
+        | "DELIVERED"
+        | "COMPLETED"
+        | "CANCELLED"
+      )
+    | null;
+  customerId: string | null;
+  customer: {
+    id: string;
+    email: string | null;
+    firstName: string | null;
+    lastName: string | null;
+  } | null;
+  email: string;
+  currency: string;
+  taxInclusive: boolean;
+  subtotalMinor: number;
+  discountMinor: number;
+  shippingMinor: number;
+  taxMinor: number;
+  totalMinor: number;
+  marketId: string;
+  channelId: string;
+  locale: string | null;
+  shippingAddress: {
+    firstName: string;
+    lastName: string;
+    company?: string | null;
+    line1: string;
+    line2?: string | null;
+    city: string;
+    region?: string | null;
+    postalCode?: string | null;
+    country: string;
+    phone?: string | null;
+  };
+  billingAddress: {
+    firstName: string;
+    lastName: string;
+    company?: string | null;
+    line1: string;
+    line2?: string | null;
+    city: string;
+    region?: string | null;
+    postalCode?: string | null;
+    country: string;
+    phone?: string | null;
+  };
+  shippingMethod: {
+    rateId?: string | null;
+    name: string;
+    amountMinor: number;
+  };
+  notes: string | null;
+  tags: string[];
+  customFields: any;
+  cancelReason: string | null;
+  cancelledAt: string | null;
+  placedAt: string | null;
+  deliveredAt: string | null;
+  affiliateId: string | null;
+  promotions: any;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+  lines: {
+    id: string;
+    productId: string;
+    variantId: string;
+    titleSnapshot: string;
+    variantTitle: string;
+    skuSnapshot: string;
+    unitPriceMinor: number;
+    compareAtMinor: number | null;
+    quantity: number;
+    discountMinor: number;
+    taxMinor: number;
+    totalMinor: number;
+    costMinor: number | null;
+    marginMinor: number | null;
+    customizations: any;
+    fulfilledQuantity: number;
+    refundedQuantity: number;
+  }[];
+  events: {
+    id: string;
+    type: string;
+    message: string;
+    data: any;
+    actorType: string;
+    actorId: string | null;
+    createdAt: string;
+  }[];
+  payments: {
+    id: string;
+    provider: string;
+    status:
+      | "PENDING"
+      | "AUTHORIZED"
+      | "CAPTURED"
+      | "PARTIALLY_REFUNDED"
+      | "REFUNDED"
+      | "FAILED"
+      | "VOIDED";
+    amountMinor: number;
+    currency: string;
+    capturedMinor: number;
+    refundedMinor: number;
+    providerRef: string | null;
+    createdAt: string;
+    updatedAt: string;
+    transactions: {
+      id: string;
+      kind: "AUTHORIZE" | "CAPTURE" | "VOID" | "REFUND";
+      status: "SUCCESS" | "FAILED" | "PENDING";
+      amountMinor: number;
+      providerRef: string | null;
+      createdAt: string;
+    }[];
+  }[];
+  fulfillments: {
+    id: string;
+    locationId: string;
+    status:
+      | "PENDING"
+      | "PICKING"
+      | "PACKED"
+      | "SHIPPED"
+      | "IN_TRANSIT"
+      | "DELIVERED"
+      | "FAILED_DELIVERY"
+      | "RETURNED_TO_SENDER";
+    carrier: string | null;
+    trackingNumber: string | null;
+    trackingUrl: string | null;
+    shippedAt: string | null;
+    deliveredAt: string | null;
+    version: number;
+    createdAt: string;
+    updatedAt: string;
+    lines: {
+      id: string;
+      orderLineId: string;
+      quantity: number;
+    }[];
+  }[];
+  refunds: {
+    id: string;
+    paymentId: string | null;
+    amountMinor: number;
+    currency: string;
+    method: "ORIGINAL" | "STORE_CREDIT" | "MANUAL";
+    reason: string | null;
+    lines: {
+      orderLineId: string;
+      quantity: number;
+      restock: boolean;
+    }[];
+    createdById: string | null;
+    createdAt: string;
+  }[];
+};
 export type PostV1AdminOrdersIdCompleteApiArg = {
   id: string;
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type PostV1AdminOrdersIdNotesApiResponse = unknown;
+export type PostV1AdminOrdersIdNotesApiResponse = /** status 201 OK */ {
+  id: string;
+  number: number;
+  displayNumber: string;
+  status:
+    | "DRAFT"
+    | "PENDING_PAYMENT"
+    | "PAID"
+    | "ON_HOLD"
+    | "PARTIALLY_FULFILLED"
+    | "FULFILLED"
+    | "DELIVERED"
+    | "COMPLETED"
+    | "CANCELLED";
+  holdPreviousStatus:
+    | (
+        | "DRAFT"
+        | "PENDING_PAYMENT"
+        | "PAID"
+        | "ON_HOLD"
+        | "PARTIALLY_FULFILLED"
+        | "FULFILLED"
+        | "DELIVERED"
+        | "COMPLETED"
+        | "CANCELLED"
+      )
+    | null;
+  customerId: string | null;
+  customer: {
+    id: string;
+    email: string | null;
+    firstName: string | null;
+    lastName: string | null;
+  } | null;
+  email: string;
+  currency: string;
+  taxInclusive: boolean;
+  subtotalMinor: number;
+  discountMinor: number;
+  shippingMinor: number;
+  taxMinor: number;
+  totalMinor: number;
+  marketId: string;
+  channelId: string;
+  locale: string | null;
+  shippingAddress: {
+    firstName: string;
+    lastName: string;
+    company?: string | null;
+    line1: string;
+    line2?: string | null;
+    city: string;
+    region?: string | null;
+    postalCode?: string | null;
+    country: string;
+    phone?: string | null;
+  };
+  billingAddress: {
+    firstName: string;
+    lastName: string;
+    company?: string | null;
+    line1: string;
+    line2?: string | null;
+    city: string;
+    region?: string | null;
+    postalCode?: string | null;
+    country: string;
+    phone?: string | null;
+  };
+  shippingMethod: {
+    rateId?: string | null;
+    name: string;
+    amountMinor: number;
+  };
+  notes: string | null;
+  tags: string[];
+  customFields: any;
+  cancelReason: string | null;
+  cancelledAt: string | null;
+  placedAt: string | null;
+  deliveredAt: string | null;
+  affiliateId: string | null;
+  promotions: any;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+  lines: {
+    id: string;
+    productId: string;
+    variantId: string;
+    titleSnapshot: string;
+    variantTitle: string;
+    skuSnapshot: string;
+    unitPriceMinor: number;
+    compareAtMinor: number | null;
+    quantity: number;
+    discountMinor: number;
+    taxMinor: number;
+    totalMinor: number;
+    costMinor: number | null;
+    marginMinor: number | null;
+    customizations: any;
+    fulfilledQuantity: number;
+    refundedQuantity: number;
+  }[];
+  events: {
+    id: string;
+    type: string;
+    message: string;
+    data: any;
+    actorType: string;
+    actorId: string | null;
+    createdAt: string;
+  }[];
+  payments: {
+    id: string;
+    provider: string;
+    status:
+      | "PENDING"
+      | "AUTHORIZED"
+      | "CAPTURED"
+      | "PARTIALLY_REFUNDED"
+      | "REFUNDED"
+      | "FAILED"
+      | "VOIDED";
+    amountMinor: number;
+    currency: string;
+    capturedMinor: number;
+    refundedMinor: number;
+    providerRef: string | null;
+    createdAt: string;
+    updatedAt: string;
+    transactions: {
+      id: string;
+      kind: "AUTHORIZE" | "CAPTURE" | "VOID" | "REFUND";
+      status: "SUCCESS" | "FAILED" | "PENDING";
+      amountMinor: number;
+      providerRef: string | null;
+      createdAt: string;
+    }[];
+  }[];
+  fulfillments: {
+    id: string;
+    locationId: string;
+    status:
+      | "PENDING"
+      | "PICKING"
+      | "PACKED"
+      | "SHIPPED"
+      | "IN_TRANSIT"
+      | "DELIVERED"
+      | "FAILED_DELIVERY"
+      | "RETURNED_TO_SENDER";
+    carrier: string | null;
+    trackingNumber: string | null;
+    trackingUrl: string | null;
+    shippedAt: string | null;
+    deliveredAt: string | null;
+    version: number;
+    createdAt: string;
+    updatedAt: string;
+    lines: {
+      id: string;
+      orderLineId: string;
+      quantity: number;
+    }[];
+  }[];
+  refunds: {
+    id: string;
+    paymentId: string | null;
+    amountMinor: number;
+    currency: string;
+    method: "ORIGINAL" | "STORE_CREDIT" | "MANUAL";
+    reason: string | null;
+    lines: {
+      orderLineId: string;
+      quantity: number;
+      restock: boolean;
+    }[];
+    createdById: string | null;
+    createdAt: string;
+  }[];
+};
 export type PostV1AdminOrdersIdNotesApiArg = {
   id: string;
   "x-market"?: string;
@@ -7746,7 +9798,189 @@ export type PostV1AdminOrdersIdNotesApiArg = {
     note: string;
   };
 };
-export type PutV1AdminOrdersIdTagsApiResponse = unknown;
+export type PutV1AdminOrdersIdTagsApiResponse = /** status 200 OK */ {
+  id: string;
+  number: number;
+  displayNumber: string;
+  status:
+    | "DRAFT"
+    | "PENDING_PAYMENT"
+    | "PAID"
+    | "ON_HOLD"
+    | "PARTIALLY_FULFILLED"
+    | "FULFILLED"
+    | "DELIVERED"
+    | "COMPLETED"
+    | "CANCELLED";
+  holdPreviousStatus:
+    | (
+        | "DRAFT"
+        | "PENDING_PAYMENT"
+        | "PAID"
+        | "ON_HOLD"
+        | "PARTIALLY_FULFILLED"
+        | "FULFILLED"
+        | "DELIVERED"
+        | "COMPLETED"
+        | "CANCELLED"
+      )
+    | null;
+  customerId: string | null;
+  customer: {
+    id: string;
+    email: string | null;
+    firstName: string | null;
+    lastName: string | null;
+  } | null;
+  email: string;
+  currency: string;
+  taxInclusive: boolean;
+  subtotalMinor: number;
+  discountMinor: number;
+  shippingMinor: number;
+  taxMinor: number;
+  totalMinor: number;
+  marketId: string;
+  channelId: string;
+  locale: string | null;
+  shippingAddress: {
+    firstName: string;
+    lastName: string;
+    company?: string | null;
+    line1: string;
+    line2?: string | null;
+    city: string;
+    region?: string | null;
+    postalCode?: string | null;
+    country: string;
+    phone?: string | null;
+  };
+  billingAddress: {
+    firstName: string;
+    lastName: string;
+    company?: string | null;
+    line1: string;
+    line2?: string | null;
+    city: string;
+    region?: string | null;
+    postalCode?: string | null;
+    country: string;
+    phone?: string | null;
+  };
+  shippingMethod: {
+    rateId?: string | null;
+    name: string;
+    amountMinor: number;
+  };
+  notes: string | null;
+  tags: string[];
+  customFields: any;
+  cancelReason: string | null;
+  cancelledAt: string | null;
+  placedAt: string | null;
+  deliveredAt: string | null;
+  affiliateId: string | null;
+  promotions: any;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+  lines: {
+    id: string;
+    productId: string;
+    variantId: string;
+    titleSnapshot: string;
+    variantTitle: string;
+    skuSnapshot: string;
+    unitPriceMinor: number;
+    compareAtMinor: number | null;
+    quantity: number;
+    discountMinor: number;
+    taxMinor: number;
+    totalMinor: number;
+    costMinor: number | null;
+    marginMinor: number | null;
+    customizations: any;
+    fulfilledQuantity: number;
+    refundedQuantity: number;
+  }[];
+  events: {
+    id: string;
+    type: string;
+    message: string;
+    data: any;
+    actorType: string;
+    actorId: string | null;
+    createdAt: string;
+  }[];
+  payments: {
+    id: string;
+    provider: string;
+    status:
+      | "PENDING"
+      | "AUTHORIZED"
+      | "CAPTURED"
+      | "PARTIALLY_REFUNDED"
+      | "REFUNDED"
+      | "FAILED"
+      | "VOIDED";
+    amountMinor: number;
+    currency: string;
+    capturedMinor: number;
+    refundedMinor: number;
+    providerRef: string | null;
+    createdAt: string;
+    updatedAt: string;
+    transactions: {
+      id: string;
+      kind: "AUTHORIZE" | "CAPTURE" | "VOID" | "REFUND";
+      status: "SUCCESS" | "FAILED" | "PENDING";
+      amountMinor: number;
+      providerRef: string | null;
+      createdAt: string;
+    }[];
+  }[];
+  fulfillments: {
+    id: string;
+    locationId: string;
+    status:
+      | "PENDING"
+      | "PICKING"
+      | "PACKED"
+      | "SHIPPED"
+      | "IN_TRANSIT"
+      | "DELIVERED"
+      | "FAILED_DELIVERY"
+      | "RETURNED_TO_SENDER";
+    carrier: string | null;
+    trackingNumber: string | null;
+    trackingUrl: string | null;
+    shippedAt: string | null;
+    deliveredAt: string | null;
+    version: number;
+    createdAt: string;
+    updatedAt: string;
+    lines: {
+      id: string;
+      orderLineId: string;
+      quantity: number;
+    }[];
+  }[];
+  refunds: {
+    id: string;
+    paymentId: string | null;
+    amountMinor: number;
+    currency: string;
+    method: "ORIGINAL" | "STORE_CREDIT" | "MANUAL";
+    reason: string | null;
+    lines: {
+      orderLineId: string;
+      quantity: number;
+      restock: boolean;
+    }[];
+    createdById: string | null;
+    createdAt: string;
+  }[];
+};
 export type PutV1AdminOrdersIdTagsApiArg = {
   id: string;
   "x-market"?: string;
@@ -7956,12 +10190,45 @@ export type PutV1AdminFlagsKeyApiArg = {
     version?: number;
   };
 };
-export type GetV1AdminShippingZonesApiResponse = unknown;
+export type GetV1AdminShippingZonesApiResponse = /** status 200 OK */ {
+  id: string;
+  name: string;
+  countries: string[];
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  rates: {
+    id: string;
+    zoneId: string;
+    name: string;
+    type: "FLAT" | "PRICE" | "WEIGHT";
+    currency: string;
+    amountMinor: number;
+    minSubtotalMinor: number | null;
+    maxSubtotalMinor: number | null;
+    minWeightGrams: number | null;
+    maxWeightGrams: number | null;
+    freeAboveMinor: number | null;
+    minDeliveryDays: number | null;
+    maxDeliveryDays: number | null;
+    position: number;
+    isActive: boolean;
+    createdAt: string;
+    updatedAt: string;
+  }[];
+}[];
 export type GetV1AdminShippingZonesApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type PostV1AdminShippingZonesApiResponse = unknown;
+export type PostV1AdminShippingZonesApiResponse = /** status 201 OK */ {
+  id: string;
+  name: string;
+  countries: string[];
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+};
 export type PostV1AdminShippingZonesApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
@@ -7971,7 +10238,14 @@ export type PostV1AdminShippingZonesApiArg = {
     isActive?: boolean;
   };
 };
-export type PutV1AdminShippingZonesIdApiResponse = unknown;
+export type PutV1AdminShippingZonesIdApiResponse = /** status 200 OK */ {
+  id: string;
+  name: string;
+  countries: string[];
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+};
 export type PutV1AdminShippingZonesIdApiArg = {
   id: string;
   "x-market"?: string;
@@ -7988,7 +10262,25 @@ export type DeleteV1AdminShippingZonesIdApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type PostV1AdminShippingZonesIdRatesApiResponse = unknown;
+export type PostV1AdminShippingZonesIdRatesApiResponse = /** status 201 OK */ {
+  id: string;
+  zoneId: string;
+  name: string;
+  type: "FLAT" | "PRICE" | "WEIGHT";
+  currency: string;
+  amountMinor: number;
+  minSubtotalMinor: number | null;
+  maxSubtotalMinor: number | null;
+  minWeightGrams: number | null;
+  maxWeightGrams: number | null;
+  freeAboveMinor: number | null;
+  minDeliveryDays: number | null;
+  maxDeliveryDays: number | null;
+  position: number;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+};
 export type PostV1AdminShippingZonesIdRatesApiArg = {
   id: string;
   "x-market"?: string;
@@ -8009,7 +10301,26 @@ export type PostV1AdminShippingZonesIdRatesApiArg = {
     isActive?: boolean;
   };
 };
-export type PutV1AdminShippingZonesZoneIdRatesIdApiResponse = unknown;
+export type PutV1AdminShippingZonesZoneIdRatesIdApiResponse =
+  /** status 200 OK */ {
+    id: string;
+    zoneId: string;
+    name: string;
+    type: "FLAT" | "PRICE" | "WEIGHT";
+    currency: string;
+    amountMinor: number;
+    minSubtotalMinor: number | null;
+    maxSubtotalMinor: number | null;
+    minWeightGrams: number | null;
+    maxWeightGrams: number | null;
+    freeAboveMinor: number | null;
+    minDeliveryDays: number | null;
+    maxDeliveryDays: number | null;
+    position: number;
+    isActive: boolean;
+    createdAt: string;
+    updatedAt: string;
+  };
 export type PutV1AdminShippingZonesZoneIdRatesIdApiArg = {
   zoneId: string;
   id: string;
@@ -8259,12 +10570,20 @@ export type PostV1AdminApiKeysIdRevokeApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type GetV1AdminTaxClassesApiResponse = unknown;
+export type GetV1AdminTaxClassesApiResponse = /** status 200 OK */ {
+  id: string;
+  handle: string;
+  name: string;
+}[];
 export type GetV1AdminTaxClassesApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type PostV1AdminTaxClassesApiResponse = unknown;
+export type PostV1AdminTaxClassesApiResponse = /** status 201 OK */ {
+  id: string;
+  handle: string;
+  name: string;
+};
 export type PostV1AdminTaxClassesApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
@@ -8273,7 +10592,11 @@ export type PostV1AdminTaxClassesApiArg = {
     name: string;
   };
 };
-export type PutV1AdminTaxClassesIdApiResponse = unknown;
+export type PutV1AdminTaxClassesIdApiResponse = /** status 200 OK */ {
+  id: string;
+  handle: string;
+  name: string;
+};
 export type PutV1AdminTaxClassesIdApiArg = {
   id: string;
   "x-market"?: string;
@@ -8283,12 +10606,32 @@ export type PutV1AdminTaxClassesIdApiArg = {
     name: string;
   };
 };
-export type GetV1AdminTaxRatesApiResponse = unknown;
+export type GetV1AdminTaxRatesApiResponse = /** status 200 OK */ {
+  id: string;
+  taxClassId: string | null;
+  name: string;
+  country: string;
+  region: string | null;
+  rateBps: number;
+  shipping: boolean;
+  createdAt: string;
+  updatedAt: string;
+}[];
 export type GetV1AdminTaxRatesApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type PostV1AdminTaxRatesApiResponse = unknown;
+export type PostV1AdminTaxRatesApiResponse = /** status 201 OK */ {
+  id: string;
+  taxClassId: string | null;
+  name: string;
+  country: string;
+  region: string | null;
+  rateBps: number;
+  shipping: boolean;
+  createdAt: string;
+  updatedAt: string;
+};
 export type PostV1AdminTaxRatesApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
@@ -8301,7 +10644,17 @@ export type PostV1AdminTaxRatesApiArg = {
     shipping?: boolean;
   };
 };
-export type PutV1AdminTaxRatesIdApiResponse = unknown;
+export type PutV1AdminTaxRatesIdApiResponse = /** status 200 OK */ {
+  id: string;
+  taxClassId: string | null;
+  name: string;
+  country: string;
+  region: string | null;
+  rateBps: number;
+  shipping: boolean;
+  createdAt: string;
+  updatedAt: string;
+};
 export type PutV1AdminTaxRatesIdApiArg = {
   id: string;
   "x-market"?: string;
@@ -8599,12 +10952,12 @@ export type Recursive2 =
       attributed: boolean;
       tierIds?: string[];
     };
-export type Recursive3 = {
+export type Recursive4 = {
   label: string;
   type: "category" | "collection" | "page" | "product" | "url";
   ref?: string;
   url?: string;
-  children?: Recursive3[];
+  children?: Recursive4[];
 };
 export const {
   useGetV1AdminAffiliateProgramAffiliatesIdPayoutMethodsQuery,

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { requestContext } from "../../api/server";
 import { bagCount } from "../../features/cart/bag";
+import { BagTrigger } from "../../features/cart/bag-trigger";
 import { href } from "../../lib/links";
 import type { MarketRef } from "../../lib/market";
 import { Icon } from "../storefront/icon";
@@ -35,14 +36,14 @@ export async function BagButtonFallback({ market }: { market: MarketRef }) {
 
 function BagLink({ market, count, label }: { market: MarketRef; count: number; label: string }) {
   return (
-    <Link className="icon-btn" href={href(market, "/cart")} aria-label={label} data-testid="bag-link">
+    <BagTrigger className="icon-btn" href={href(market, "/cart")} aria-label={label} data-testid="bag-link">
       <Icon name="bag" />
       {count > 0 && (
         <span className="cart-count" aria-hidden="true">
           {count > 99 ? "99+" : count}
         </span>
       )}
-    </Link>
+    </BagTrigger>
   );
 }
 

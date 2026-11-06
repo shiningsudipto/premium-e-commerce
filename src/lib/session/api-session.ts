@@ -65,3 +65,32 @@ export async function callSession(
   if (res.status >= 400 && res.status < 500) return { ok: false, cookies };
   throw new Error(`session ${action} failed with ${res.status}`);
 }
+
+export type SessionCallResult<T = unknown> = {
+  ok: boolean;
+  status: number;
+  body: T | { code?: string; message?: string; details?: unknown };
+  cookies: ParsedCookie[];
+};
+
+// Sign-in, registration and sign-out from Server Actions: same idea as callSession, but with a
+// JSON body and the API's answer returned so the form can show its message.
+export async function postSession<T>(
+  audience: SessionAudience,
+  action: "login" | "register" | "logout",
+  init: { cookieHeader?: string; headers?: Record<string, string>; body?: unknown },
+): Promise<SessionCallResult<T>> {
+  const res = await fetch(`${env.API_URL}/v1/${audience}/session/${action}`, {
+    method: "POST",
+    headers: {
+      ...init.headers,
+      ...(init.body !== undefined ? { "content-type": "application/json" } : {}),
+      ...(init.cookieHeader ? { cookie: init.cookieHeader } : {}),
+    },
+    body: init.body !== undefined ? JSON.stringify(init.body) : undefined,
+    cache: "no-store",
+    signal: AbortSignal.timeout(10_000),
+  });
+  const body = (await res.json().catch(() => ({}))) as SessionCallResult<T>["body"];
+  return { ok: res.ok, status: res.status, body, cookies: res.headers.getSetCookie().map(parseSetCookie) };
+}
