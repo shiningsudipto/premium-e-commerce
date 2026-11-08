@@ -1,0 +1,386 @@
+/* B-Phase 2: growth (wishlists, promotions, CMS blocks) */
+
+/* ---------- Wishlist heart ---------- */
+.heart {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--color-background);
+  color: var(--color-foreground);
+  cursor: pointer;
+  transition:
+    color var(--dur-fast),
+    background-color var(--dur-fast),
+    transform var(--dur-fast);
+}
+.heart:hover {
+  color: var(--color-primary);
+}
+.heart:active {
+  transform: scale(0.92);
+}
+.heart.is-saved {
+  color: var(--color-primary);
+}
+.heart.is-saved .icon {
+  fill: currentColor;
+}
+.heart--bordered {
+  width: 48px;
+  height: auto;
+  min-height: 48px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+}
+/* on cards: above the card's full-size link, opposite the badge */
+.card__heart {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  z-index: 3;
+  width: 40px;
+  height: 40px;
+  box-shadow: var(--shadow-sm, 0 1px 2px rgb(0 0 0 / 0.08));
+}
+
+/* ---------- Wishlists in the account ---------- */
+.wishlists {
+  display: grid;
+  gap: var(--space-6);
+}
+.wishlist-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.wishlist-tabs button {
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  font-size: var(--text-sm);
+  background: transparent;
+  cursor: pointer;
+  color: inherit;
+}
+.wishlist-tabs button[aria-pressed="true"] {
+  background: var(--color-foreground);
+  border-color: var(--color-foreground);
+  color: var(--color-background);
+}
+.wishlist-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.wishlist-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.wishlist-share {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+}
+.wishlist-share .input {
+  flex: 1 1 260px;
+}
+.inline-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: flex-end;
+}
+.inline-form .field {
+  flex: 1 1 220px;
+}
+.wish-items {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.wish-item {
+  display: grid;
+  gap: var(--space-2);
+  align-content: start;
+}
+.wish-item__media {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--ph-light);
+}
+.wish-item__media .ph {
+  position: absolute;
+  inset: 0;
+}
+.wish-item__title {
+  font-weight: var(--weight-semibold);
+}
+.wish-item__title a {
+  color: inherit;
+  text-decoration: none;
+}
+.wish-item__title a:hover {
+  text-decoration: underline;
+}
+.wish-item__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+/* ---------- Promotion codes (bag page, checkout) ---------- */
+.promo {
+  display: grid;
+  gap: var(--space-3);
+  padding-block: var(--space-4);
+  border-block: var(--hairline);
+}
+.promo__form {
+  display: grid;
+  gap: var(--space-2);
+}
+.promo__label {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+}
+.promo__row {
+  display: flex;
+  gap: var(--space-2);
+}
+.promo__row .input {
+  flex: 1 1 auto;
+  min-width: 0;
+  text-transform: uppercase;
+}
+.promo__codes {
+  display: grid;
+  gap: var(--space-2);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.promo__code {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--color-secondary);
+}
+.promo__tag {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.promo__note {
+  margin: var(--space-1) 0 0;
+  font-size: var(--text-sm);
+}
+.promo__code.is-applied .promo__note {
+  color: var(--color-success, var(--color-accent));
+}
+.promo__code.is-rejected .promo__note {
+  color: var(--color-muted-foreground);
+}
+
+/* ---------- Page-builder blocks (CMS pages) ---------- */
+.block-hero--image {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: clamp(320px, 50vw, 560px);
+  display: grid;
+  align-content: end;
+  color: var(--color-on-dark, #fff);
+}
+.block-hero__media {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+.block-hero__media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgb(0 0 0 / 0.55), rgb(0 0 0 / 0.05) 60%);
+}
+.block-hero--image .block-hero__body {
+  padding: var(--space-7) var(--space-6);
+}
+.block-hero--image .lede {
+  color: inherit;
+}
+.cms-figure {
+  margin: 0;
+  display: grid;
+  gap: var(--space-2);
+}
+.cms-image {
+  position: relative;
+  overflow: hidden;
+  background: var(--ph-light);
+}
+.cms-video {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background: var(--color-foreground);
+}
+.cms-video iframe,
+.cms-video video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.cms-carousel {
+  position: relative;
+  display: grid;
+  gap: var(--space-3);
+}
+.cms-carousel__track {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: min(100%, 860px);
+  gap: var(--space-4);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.cms-carousel__track::-webkit-scrollbar {
+  display: none;
+}
+.cms-carousel__slide {
+  scroll-snap-align: start;
+}
+.cms-carousel__slide a {
+  color: inherit;
+  text-decoration: none;
+}
+.cms-carousel__media {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--ph-light);
+}
+.cms-carousel__caption {
+  margin: var(--space-2) 0 0;
+  font-weight: var(--weight-semibold);
+}
+.cms-carousel__nav {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+.cms-carousel__nav .icon-btn {
+  border: 1px solid var(--color-border-strong);
+  font-size: var(--text-lg);
+}
+.cms-countdown {
+  display: grid;
+  gap: var(--space-3);
+  justify-items: center;
+  padding: var(--space-6);
+  text-align: center;
+  background: var(--color-secondary);
+}
+.cms-countdown__clock {
+  display: flex;
+  gap: var(--space-4);
+  margin: 0;
+}
+.cms-countdown__unit {
+  display: grid;
+  min-width: 3.5rem;
+}
+.cms-countdown__unit strong {
+  font-size: var(--text-2xl, 1.75rem);
+  font-variant-numeric: tabular-nums;
+}
+.cms-countdown__unit span {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-muted-foreground);
+}
+.cms-tabs__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  border-bottom: var(--hairline);
+}
+.cms-tabs__list [role="tab"] {
+  padding: var(--space-3) var(--space-4);
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--color-muted-foreground);
+  font: inherit;
+  cursor: pointer;
+}
+.cms-tabs__list [role="tab"][aria-selected="true"] {
+  border-bottom-color: var(--color-foreground);
+  color: var(--color-foreground);
+}
+.cms-tabs__panel {
+  padding-top: var(--space-4);
+}
+.cms-tiles {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr));
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.cms-tile {
+  display: grid;
+  gap: var(--space-2);
+  color: inherit;
+  text-decoration: none;
+}
+.cms-tile__media {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+}
+.cms-tile__title {
+  font-weight: var(--weight-semibold);
+}
+.cms-tile:hover .cms-tile__title {
+  text-decoration: underline;
+}
+.cms-newsletter {
+  display: grid;
+  gap: var(--space-3);
+  max-width: 560px;
+}
+/* columns set to stay side by side on phones (stackOnMobile: false) */
+@media (max-width: 767px) {
+  .cms-columns.cms-columns--keep {
+    grid-template-columns: repeat(var(--cols, 2), minmax(0, 1fr)) !important;
+  }
+}
+/* loading the customer's saved items: not clickable yet */
+.heart:disabled {
+  cursor: progress;
+  opacity: 0.6;
+}

@@ -7,6 +7,8 @@ import { artFor } from "../../components/storefront/art";
 import { Media } from "../../components/storefront/media";
 import type { MarketRef } from "../../lib/market";
 import { formatMoney } from "../../lib/money";
+import { href } from "../../lib/links";
+import { HeartButton } from "../wishlist/heart-button";
 import { useBag } from "../cart/bag-provider";
 import { bagErrorMessage, useAddToBagMutation } from "../cart/cart-api";
 import {
@@ -47,6 +49,7 @@ export function ProductView({
   children,
 }: {
   product: {
+    id: string;
     handle: string;
     title: string;
     options: { name: string; values: string[] }[];
@@ -196,6 +199,13 @@ export function ProductView({
           >
             {pending ? t("adding") : canBuy ? t("addToBag") : t("soldOut")}
           </button>
+          <HeartButton
+            productId={product.id}
+            variantId={variant?.id}
+            title={product.title}
+            signInHref={href(market, "/account/sign-in")}
+            className="heart--bordered"
+          />
         </div>
         <p
           className={cn("muted", message?.error && "field__error")}

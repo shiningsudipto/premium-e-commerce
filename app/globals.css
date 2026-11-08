@@ -20,6 +20,9 @@
 @import "../src/styles/premium-touch/newsletter.css" layer(components);
 @import "../src/styles/premium-touch/footer.css" layer(components);
 @import "../src/styles/premium-touch/commerce.css" layer(components);
+@import "../src/styles/premium-touch/growth.css" layer(components);
+@import "../src/styles/premium-touch/affiliate.css" layer(components);
+@import "../src/styles/premium-touch/community.css" layer(components);
 
 /* The theme API emits prefers-color-scheme rules for its dark palette, so dark: follows the OS too. */
 @custom-variant dark (@media (prefers-color-scheme: dark));

@@ -1,6 +1,7 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { NextResponse, type NextFetchEvent, type NextRequest } from "next/server";
 import { adminProxy, isAdminPath } from "./src/admin/lib/session/proxy";
 import { clientIpOf, contextHeaders, newRequestId, proxyMarkets, proxyRedirects } from "./src/api/upstream";
+import { affiliateRefRedirect } from "./src/features/affiliate/proxy-ref";
 import { env, isProduction } from "./src/lib/env";
 import { parseMarketSegment, pickSegment, resolveSegment } from "./src/lib/market";
 import { resolveRedirect } from "./src/lib/redirects";
@@ -14,11 +15,14 @@ import { refreshOnce } from "./src/lib/session/refresh";
 // 2. downstream rendering gets the market, locale, channel and a correlation ID as headers;
 // 3. merchant redirects (admin → Redirects) are applied, on the path without its prefix;
 // 4. an expired access token is refreshed here through the API (which sets the new cookies), so
-//    Server Components always see a live session.
+//    Server Components always see a live session;
+// 5. an affiliate link (?ref=CODE&sub=…) sets the attribution cookie, reports the click in the
+//    background and redirects to the same URL without those parameters.
 
 const GEO_HEADERS = ["x-vercel-ip-country", "cf-ipcountry", "cloudfront-viewer-country"];
 
-export async function proxy(request: NextRequest) {
+// `event` is optional so the proxy can be called directly in tests
+export async function proxy(request: NextRequest, event?: NextFetchEvent) {
   if (isAdminPath(request.nextUrl.pathname)) return adminProxy(request);
 
   const fallback = parseMarketSegment(env.DEFAULT_MARKET)!;
@@ -48,6 +52,9 @@ export async function proxy(request: NextRequest) {
       : redirect.location;
     return NextResponse.redirect(target, redirect.status);
   }
+
+  const referral = affiliateRefRedirect(request, event, current);
+  if (referral) return referral;
 
   const requestId = request.headers.get("x-request-id") ?? newRequestId();
   // session cookies the API sets while refreshing, passed to the browser and to this render

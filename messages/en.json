@@ -3,7 +3,8 @@
     "skipToContent": "Skip to content",
     "loading": "Loading…",
     "home": "Home",
-    "previewNotice": "Preview — this is the draft, not what shoppers see yet."
+    "previewNotice": "Preview — this is the draft, not what shoppers see yet.",
+    "previewExit": "Leave preview"
   },
   "header": {
     "primaryNav": "Primary",
@@ -215,6 +216,8 @@
     "overview": "Profile",
     "orders": "Orders",
     "addresses": "Addresses",
+    "returns": "Returns",
+    "wishlists": "Wishlists",
     "signOut": "Sign out",
     "signIn": "Sign in",
     "signingIn": "Signing in…",

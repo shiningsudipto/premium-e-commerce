@@ -5,6 +5,7 @@ import { artFor } from "../../components/storefront/art";
 import { Media, type Tone } from "../../components/storefront/media";
 import { Swatches } from "../../components/storefront/primitives";
 import { QuickAdd } from "../../features/cart/quick-add";
+import { HeartButton } from "../../features/wishlist/heart-button";
 import type { ProductSummary } from "../../lib/catalog";
 import { href } from "../../lib/links";
 import type { MarketRef } from "../../lib/market";
@@ -69,6 +70,12 @@ export async function ProductCard({
           sizes="(min-width: 1024px) 25vw, 50vw"
         />
         {badge && <span className={`badge badge--${badge.kind}`}>{badge.label}</span>}
+        <HeartButton
+          productId={product.id}
+          title={product.title}
+          signInHref={href(market, "/account/sign-in")}
+          className="card__heart"
+        />
         <QuickAdd
           handle={product.handle}
           title={product.title}

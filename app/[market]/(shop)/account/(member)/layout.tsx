@@ -14,6 +14,8 @@ export default async function AccountLayout({ children }: LayoutProps<"/[market]
     { href: href(market, "/account"), label: t("overview") },
     { href: href(market, "/account/orders"), label: t("orders") },
     { href: href(market, "/account/addresses"), label: t("addresses") },
+    { href: href(market, "/account/returns"), label: t("returns") },
+    { href: href(market, "/account/wishlists"), label: t("wishlists") },
   ];
   return (
     <div className="pt-container">

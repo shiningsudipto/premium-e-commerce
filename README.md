@@ -93,11 +93,23 @@ The home page implements the Premium Touch design (`../Home — Desktop 1440-htm
   - Sign-in, registration and sign-out are Server Actions. They call the API's `/v1/store/session/*` and pass its cookies on to the browser. Sign-in merges the guest bag into the account, and `?next=` only follows paths on this site.
   - Password reset uses the link in the email (`/account/reset-password?token=…`).
   - The signed-in area (profile, password, address book, orders and order detail with shipments and timeline) redirects visitors to sign-in.
-- **CMS pages** (`/pages/[handle]`): the page builder's blocks (`src/blocks/cms`). Unknown types render nothing. Blocks aimed at particular visitors (segments, signed-in, experiments) are left out of the shared cached page. `?preview=` shows a draft from the editor.
+- **CMS pages** (`/pages/[handle]`): see B-Phase 2 below.
 - **SEO.**
   - `app/sitemap.ts` lists every product, category, collection and page in every market and language, with hreflang alternates.
   - `app/robots.ts` disallows everything outside production.
   - `proxy.ts` applies the admin's redirects from a table it refreshes every minute (`src/lib/redirects.ts`). Rules are written without the market prefix.
+
+## Growth (B-Phase 2)
+
+- **Promotion codes** (`src/features/cart/promo-codes.tsx`): on the bag page (RTK Query) and at checkout (Server Actions). Each code shows its saving, or why it isn't applying yet, in shopper terms (`promotions.ts` turns the API's reasons into messages, e.g. "Spend ৳5,000 or more"). How many codes are allowed is the API's `promotions.max_codes_per_cart` setting.
+- **CMS pages** (`src/blocks/cms`): every block type in the API's registry renders: hero (with image), rich text, image, video (YouTube/Vimeo privacy embeds or a file), carousel, product grid (category, collection or hand-picked), collection list, testimonials, FAQ, accordion, tabs, countdown, newsletter, columns, spacer, global sections and custom HTML. Unknown types render nothing.
+  - The store page API resolves what blocks reference (image URLs, global sections, hand-picked product cards), so a page renders from one cached fetch. Pages are tagged with the sections they include (`section:{handle}`) and, with hand-picked products, `products`.
+  - `hideOn` hides a block per breakpoint. Market and schedule rules apply to the shared cached page; blocks aimed at signed-in shoppers, new visitors (no session yet) or segments are decided per visitor inside their own Suspense boundary (`visitor.ts`). Experiment-variant blocks wait for the A/B bucket (B-Phase 3).
+  - **Preview:** the admin's preview link is `/api/preview?handle=&token=&market=`. The route checks the signed token with the API, turns on Draft Mode and keeps the token in an httpOnly cookie; the page then shows the draft with a "Leave preview" link (`/api/preview?exit=1`). Everyone else keeps getting the cached published page.
+- **Reviews and Q&A** (flags `reviews`, `qna`; `src/features/reviews`): rating summary and bars, reviews with verified-buyer badge, merchant reply and helpful votes, review form (signed-in customers, keyboard star rating), questions with answers and an ask form. Each section is its own Suspense boundary under the cached product page; lists are cached per product and tagged `product:handle:{handle}` (sent by the worker on moderation) and `reviews:{handle}`.
+- **Returns** (`src/features/returns`): `/account/returns` lists every return (`GET /v1/store/account/returns`), and an order's page has "Request a return": lines and quantities still returnable, reason, refund or store credit. Shoppers only receive the shopper-facing return fields.
+- **Wishlists** (`src/features/wishlist`): a heart on product cards and pages saves to the customer's default list; `/account/wishlists` manages named lists, sharing and moving pieces to the bag; `/wishlists/shared/[token]` shows a shared list read-only. Browser state uses RTK Query on the bag's store. Hearts only query the API once the header reports a signed-in customer (`shopper-session.tsx`), so cached pages never depend on the session.
+- **Affiliate program** (flag `affiliates`): `proxy.ts` turns `?ref=CODE&sub=…` into the httpOnly `pe_ref` cookie (first and last click), redirects to the clean URL and sends the click beacon. The referral goes on the cart with the checkout details and when checkout opens, so the total shown already includes it. Customers apply at `/account/affiliate`; approved affiliates get the dashboard at `/affiliate` (stats, link and QR builder, orders without buyer details, earnings, payouts).
 
 ## Layout
 
@@ -106,18 +118,21 @@ proxy.ts                 /admin → staff sign-in gate; everything else: market 
 app/[market]/            root layout (theme, fonts, i18n, flags), error/not-found
 app/[market]/(shop)/     header/footer chrome (bag drawer), home, listings, search, product, cart, account, CMS pages, catch-all 404
 app/[market]/(checkout)/ checkout and confirmation, with a minimal header
+app/[market]/(affiliate)/ affiliate dashboard (flag + approved affiliates)
 app/sitemap.ts, robots.ts
 app/api/revalidate       tag revalidation for the worker
+app/api/preview          CMS draft preview (Draft Mode) from the admin's signed link
 app/(admin)/              admin root layout and stylesheet; admin/(auth) and admin/(console) pages
 src/api/                 generated OpenAPI types, typed server client, upstream calls
 src/lib/                 env, market, session, flags, theme, store data, catalog, money
 src/blocks/              home page blocks (one per design section); cms/ renders page-builder blocks
 src/components/          header, footer, storefront primitives (icons, art, media, buttons), not-found view
 src/content/             editorial content for the home page and site chrome
-src/features/            cart (actions, drawer, lines), catalog (listing query, filters), product (variants, view),
-                         checkout (address, steps, actions), account (session actions, forms), search (typeahead)
-src/styles/premium-touch design tokens and block styles
+src/features/            cart (RTK Query bag, drawer, promo codes), catalog (listing query, filters), product (variants, view),
+                         checkout (address, steps, actions), account (session actions, forms), search (typeahead),
+                         wishlist, reviews, returns, affiliate
+src/styles/premium-touch design tokens and block styles (growth.css, community.css, affiliate.css for B-Phase 2)
 src/admin/               back office: RTK Query store (generated hooks), session gate, screens, data table, schema forms, audit diff
-messages/                en, bn
+messages/                en (split: en.json core, en.growth/affiliate/community.json), bn
 e2e/                     Playwright (storefront); e2e/admin for the back office
 ```

@@ -5,8 +5,19 @@ export type Messages = { [key: string]: string | Messages };
 
 export const BASE_LOCALE = "en";
 
+// English is split by area so separate features can add strings without touching one big file:
+// en.json (core shop), en.growth.json (promotions, CMS, wishlists), en.affiliate.json and
+// en.community.json (reviews, Q&A, returns). Keys must not overlap between them.
+const english = () =>
+  Promise.all([
+    import("../../messages/en.json"),
+    import("../../messages/en.growth.json"),
+    import("../../messages/en.affiliate.json"),
+    import("../../messages/en.community.json"),
+  ]).then((parts) => parts.reduce<Messages>((acc, part) => mergeMessages(part.default as Messages, acc), {}));
+
 const catalogs: Record<string, () => Promise<Messages>> = {
-  en: () => import("../../messages/en.json").then((m) => m.default),
+  en: english,
   bn: () => import("../../messages/bn.json").then((m) => m.default),
 };
 

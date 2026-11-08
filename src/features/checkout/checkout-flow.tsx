@@ -8,6 +8,8 @@ import { Media } from "../../components/storefront/media";
 import type { MarketRef } from "../../lib/market";
 import { formatMoney } from "../../lib/money";
 import { BagSummary } from "../cart/bag-view";
+import { PromoCodes } from "../cart/promo-codes";
+import { applyPromoCode, removePromoCode } from "./promo-actions";
 import type { Bag } from "../cart/types";
 import { chooseShipping, placeOrder, saveDetails, type DetailsState } from "./actions";
 import { formatAddress, isAddress, type Address } from "./address";
@@ -116,6 +118,20 @@ export function CheckoutFlow({
             </li>
           ))}
         </ul>
+        <PromoCodes
+          cart={cart}
+          market={market}
+          onApply={async (code) => {
+            const result = await applyPromoCode(cart.id, code);
+            if (result.ok) setCart(result.cart);
+            return result.ok ? null : result.message;
+          }}
+          onRemove={async (code) => {
+            const result = await removePromoCode(cart.id, code);
+            if (result.ok) setCart(result.cart);
+            return result.ok ? null : result.message;
+          }}
+        />
         <BagSummary cart={cart} market={market} final />
       </aside>
     </div>

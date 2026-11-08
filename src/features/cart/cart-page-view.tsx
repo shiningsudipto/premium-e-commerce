@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { href } from "../../lib/links";
 import type { MarketRef } from "../../lib/market";
+import { BagPromoCodes } from "./bag-promo-codes";
 import { useBagDispatch } from "./bag-store";
 import { BagLines, BagSummary, EmptyBag, ShippingProgress } from "./bag-view";
 import { bagApi } from "./cart-api";
@@ -33,6 +34,7 @@ export function CartPageView({ initial, market }: { initial: Bag | null; market:
         <BagLines cart={cart} market={market} />
       </div>
       <aside className="cart-page__aside" aria-label={t("summary")}>
+        <BagPromoCodes cart={cart} market={market} />
         <BagSummary cart={cart} market={market} />
         {cart.issues.map((issue) => (
           <p key={issue.code} className="notice notice--error">

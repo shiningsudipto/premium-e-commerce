@@ -2070,6 +2070,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/store/account/returns": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The signed-in customer's returns across all orders, newest first */
+        get: operations["get__v1_store_account_returns"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/admin/returns": {
         parameters: {
             query?: never;
@@ -3211,6 +3228,23 @@ export interface paths {
         head?: never;
         /** Update profile */
         patch: operations["patch__v1_store_account"];
+        trace?: never;
+    };
+    "/v1/store/account/segments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** IDs of the segments the signed-in customer belongs to (for page-builder block targeting) */
+        get: operations["get__v1_store_account_segments"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/v1/store/account/addresses": {
@@ -4386,6 +4420,129 @@ export interface paths {
         post?: never;
         /** Delete a tax rate */
         delete: operations["delete__v1_admin_tax_rates_id"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/store/wishlists/saved": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Product IDs saved in any of the customer's wishlists (for heart buttons) */
+        get: operations["get__v1_store_wishlists_saved"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/store/wishlists/saved/{productId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Save a product to the default wishlist (created on first save) */
+        put: operations["put__v1_store_wishlists_saved_productId"];
+        post?: never;
+        /** Remove a product from all of the customer's wishlists */
+        delete: operations["delete__v1_store_wishlists_saved_productId"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/store/wishlists/shared/{token}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** A shared wishlist, read-only, without the owner's details */
+        get: operations["get__v1_store_wishlists_shared_token"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/store/wishlists": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The customer's wishlists */
+        get: operations["get__v1_store_wishlists"];
+        put?: never;
+        /** Create a wishlist (the first one becomes the default) */
+        post: operations["post__v1_store_wishlists"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/store/wishlists/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** A wishlist with its items and current product cards */
+        get: operations["get__v1_store_wishlists_id"];
+        put?: never;
+        post?: never;
+        /** Delete a wishlist */
+        delete: operations["delete__v1_store_wishlists_id"];
+        options?: never;
+        head?: never;
+        /** Rename a wishlist, or turn its share link on or off */
+        patch: operations["patch__v1_store_wishlists_id"];
+        trace?: never;
+    };
+    "/v1/store/wishlists/{id}/items": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add a product to a wishlist */
+        post: operations["post__v1_store_wishlists_id_items"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/store/wishlists/{id}/items/{itemId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Remove an item from a wishlist */
+        delete: operations["delete__v1_store_wishlists_id_items_itemId"];
         options?: never;
         head?: never;
         patch?: never;
@@ -7845,7 +8002,22 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        clicks: number;
+                        conversions: number;
+                        conversionRate: number;
+                        salesMinor: number;
+                        earnings: {
+                            [key: string]: number;
+                        };
+                        subIds: {
+                            subId: string | null;
+                            clicks: number;
+                            conversions: number;
+                        }[];
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -7875,7 +8047,16 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        currency: string | null;
+                        pendingMinor: number;
+                        payableMinor: number;
+                        inPayoutMinor: number;
+                        paidMinor: number;
+                        reversedMinor: number;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -8044,7 +8225,27 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        items: {
+                            id: string;
+                            kind: string;
+                            /** @enum {string} */
+                            status: "PENDING" | "APPROVED" | "PAID" | "REVERSED";
+                            /** @enum {string} */
+                            rewardType: "CASH" | "STORE_CREDIT" | "LOYALTY_POINTS";
+                            amountMinor: number;
+                            currency: string;
+                            reason: string | null;
+                            orderId: string | null;
+                            approvableAt: string | null;
+                            payoutId: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                        }[];
+                        nextCursor: string | null;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -8077,7 +8278,23 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        items: {
+                            id: string;
+                            /** @enum {string} */
+                            status: "DRAFT" | "APPROVED" | "PROCESSING" | "PAID" | "FAILED" | "CANCELLED";
+                            amountMinor: number;
+                            currency: string;
+                            method: string | null;
+                            providerRef: string | null;
+                            paidAt: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                        }[];
+                        nextCursor: string | null;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -9275,6 +9492,41 @@ export interface operations {
                         /** Format: date-time */
                         updatedAt: string;
                         preview: boolean;
+                        media: {
+                            [key: string]: {
+                                url: string;
+                                alt: string | null;
+                                width: number | null;
+                                height: number | null;
+                            };
+                        };
+                        sections: {
+                            [key: string]: unknown;
+                        };
+                        products: {
+                            [key: string]: {
+                                id: string;
+                                handle: string;
+                                title: string;
+                                vendor: string | null;
+                                tags: string[];
+                                images: {
+                                    url: string;
+                                    alt: string | null;
+                                    width: number | null;
+                                    height: number | null;
+                                }[];
+                                price: {
+                                    currency: string;
+                                    minMinor: number;
+                                    maxMinor: number;
+                                    compareAtMinor: number | null;
+                                } | null;
+                                swatches: string[];
+                                availableForSale: boolean;
+                                variantCount: number;
+                            };
+                        };
                     };
                 };
             };
@@ -10615,7 +10867,36 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        number: number;
+                        orderId: string;
+                        /** @enum {string} */
+                        status: "REQUESTED" | "APPROVED" | "REJECTED" | "LABEL_ISSUED" | "IN_TRANSIT" | "RECEIVED" | "INSPECTED" | "COMPLETED" | "PARTIALLY_ACCEPTED";
+                        /** @enum {string} */
+                        resolution: "REFUND" | "STORE_CREDIT" | "EXCHANGE";
+                        customerNote: string | null;
+                        photoUrls: string[];
+                        carrier: string | null;
+                        trackingNumber: string | null;
+                        labelUrl: string | null;
+                        creditMinor: number | null;
+                        exchangeOrderId: string | null;
+                        lines: {
+                            id: string;
+                            orderLineId: string;
+                            quantity: number;
+                            reason: string;
+                            exchangeVariantId: string | null;
+                            acceptedQuantity: number | null;
+                        }[];
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                    }[];
+                };
             };
             /** @description Error */
             default: {
@@ -10662,7 +10943,103 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        number: number;
+                        orderId: string;
+                        /** @enum {string} */
+                        status: "REQUESTED" | "APPROVED" | "REJECTED" | "LABEL_ISSUED" | "IN_TRANSIT" | "RECEIVED" | "INSPECTED" | "COMPLETED" | "PARTIALLY_ACCEPTED";
+                        /** @enum {string} */
+                        resolution: "REFUND" | "STORE_CREDIT" | "EXCHANGE";
+                        customerNote: string | null;
+                        photoUrls: string[];
+                        carrier: string | null;
+                        trackingNumber: string | null;
+                        labelUrl: string | null;
+                        creditMinor: number | null;
+                        exchangeOrderId: string | null;
+                        lines: {
+                            id: string;
+                            orderLineId: string;
+                            quantity: number;
+                            reason: string;
+                            exchangeVariantId: string | null;
+                            acceptedQuantity: number | null;
+                        }[];
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                    };
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    get__v1_store_account_returns: {
+        parameters: {
+            query?: {
+                cursor?: string;
+                limit?: number;
+            };
+            header?: {
+                "x-market"?: string;
+                "x-locale"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        items: {
+                            id: string;
+                            number: number;
+                            orderId: string;
+                            /** @enum {string} */
+                            status: "REQUESTED" | "APPROVED" | "REJECTED" | "LABEL_ISSUED" | "IN_TRANSIT" | "RECEIVED" | "INSPECTED" | "COMPLETED" | "PARTIALLY_ACCEPTED";
+                            /** @enum {string} */
+                            resolution: "REFUND" | "STORE_CREDIT" | "EXCHANGE";
+                            customerNote: string | null;
+                            photoUrls: string[];
+                            carrier: string | null;
+                            trackingNumber: string | null;
+                            labelUrl: string | null;
+                            creditMinor: number | null;
+                            exchangeOrderId: string | null;
+                            lines: {
+                                id: string;
+                                orderLineId: string;
+                                quantity: number;
+                                reason: string;
+                                exchangeVariantId: string | null;
+                                acceptedQuantity: number | null;
+                            }[];
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                            orderNumber: number;
+                            orderCurrency: string;
+                        }[];
+                        nextCursor: string | null;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -10929,7 +11306,34 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        summary: {
+                            average: number | null;
+                            count: number;
+                            distribution: {
+                                [key: string]: number;
+                            };
+                        };
+                        items: {
+                            id: string;
+                            rating: number;
+                            title: string | null;
+                            body: string;
+                            mediaUrls: string[];
+                            verifiedBuyer: boolean;
+                            helpfulCount: number;
+                            reply: string | null;
+                            repliedAt: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                            author: string;
+                        }[];
+                        total: number;
+                        page: number;
+                        pageSize: number;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -10970,7 +11374,24 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        rating: number;
+                        title: string | null;
+                        body: string;
+                        mediaUrls: string[];
+                        verifiedBuyer: boolean;
+                        helpfulCount: number;
+                        reply: string | null;
+                        repliedAt: string | null;
+                        /** Format: date-time */
+                        createdAt: string;
+                        author: string;
+                        /** @enum {string} */
+                        status: "PENDING" | "APPROVED" | "REJECTED";
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -11002,7 +11423,11 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        helpfulCount: number;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -11037,7 +11462,23 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        items: {
+                            id: string;
+                            body: string;
+                            /** Format: date-time */
+                            createdAt: string;
+                            answers: {
+                                id: string;
+                                body: string;
+                                /** Format: date-time */
+                                createdAt: string;
+                            }[];
+                        }[];
+                        nextCursor: string | null;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -11075,7 +11516,16 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        body: string;
+                        /** @enum {string} */
+                        status: "PENDING" | "APPROVED" | "REJECTED";
+                        /** Format: date-time */
+                        createdAt: string;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -17095,6 +17545,40 @@ export interface operations {
                         acceptsMarketing: boolean;
                         /** Format: date-time */
                         createdAt: string;
+                    };
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    get__v1_store_account_segments: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-market"?: string;
+                "x-locale"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        segmentIds: string[];
                     };
                 };
             };
@@ -23309,6 +23793,564 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    get__v1_store_wishlists_saved: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-market"?: string;
+                "x-locale"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        productIds: string[];
+                    };
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    put__v1_store_wishlists_saved_productId: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-market"?: string;
+                "x-locale"?: string;
+            };
+            path: {
+                productId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    variantId?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        productIds: string[];
+                    };
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    delete__v1_store_wishlists_saved_productId: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-market"?: string;
+                "x-locale"?: string;
+            };
+            path: {
+                productId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        productIds: string[];
+                    };
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    get__v1_store_wishlists_shared_token: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-market"?: string;
+                "x-locale"?: string;
+            };
+            path: {
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        name: string;
+                        items: {
+                            productId: string;
+                            variantId: string | null;
+                            product: {
+                                id: string;
+                                handle: string;
+                                title: string;
+                                vendor: string | null;
+                                tags: string[];
+                                images: {
+                                    url: string;
+                                    alt: string | null;
+                                    width: number | null;
+                                    height: number | null;
+                                }[];
+                                price: {
+                                    currency: string;
+                                    minMinor: number;
+                                    maxMinor: number;
+                                    compareAtMinor: number | null;
+                                } | null;
+                                swatches: string[];
+                                availableForSale: boolean;
+                                variantCount: number;
+                            } | null;
+                        }[];
+                    };
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    get__v1_store_wishlists: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-market"?: string;
+                "x-locale"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        id: string;
+                        name: string;
+                        isDefault: boolean;
+                        shareToken: string | null;
+                        itemCount: number;
+                        createdAt: string;
+                    }[];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    post__v1_store_wishlists: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-market"?: string;
+                "x-locale"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    name: string;
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        id: string;
+                        name: string;
+                        isDefault: boolean;
+                        shareToken: string | null;
+                        itemCount: number;
+                        createdAt: string;
+                    };
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    get__v1_store_wishlists_id: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-market"?: string;
+                "x-locale"?: string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        id: string;
+                        name: string;
+                        isDefault: boolean;
+                        shareToken: string | null;
+                        itemCount: number;
+                        createdAt: string;
+                        items: {
+                            id: string;
+                            productId: string;
+                            variantId: string | null;
+                            createdAt: string;
+                            product: {
+                                id: string;
+                                handle: string;
+                                title: string;
+                                vendor: string | null;
+                                tags: string[];
+                                images: {
+                                    url: string;
+                                    alt: string | null;
+                                    width: number | null;
+                                    height: number | null;
+                                }[];
+                                price: {
+                                    currency: string;
+                                    minMinor: number;
+                                    maxMinor: number;
+                                    compareAtMinor: number | null;
+                                } | null;
+                                swatches: string[];
+                                availableForSale: boolean;
+                                variantCount: number;
+                            } | null;
+                        }[];
+                    };
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    delete__v1_store_wishlists_id: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-market"?: string;
+                "x-locale"?: string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        ok: true;
+                    };
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    patch__v1_store_wishlists_id: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-market"?: string;
+                "x-locale"?: string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    name?: string;
+                    shared?: boolean;
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        id: string;
+                        name: string;
+                        isDefault: boolean;
+                        shareToken: string | null;
+                        itemCount: number;
+                        createdAt: string;
+                    };
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    post__v1_store_wishlists_id_items: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-market"?: string;
+                "x-locale"?: string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    productId: string;
+                    variantId?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        id: string;
+                        name: string;
+                        isDefault: boolean;
+                        shareToken: string | null;
+                        itemCount: number;
+                        createdAt: string;
+                        items: {
+                            id: string;
+                            productId: string;
+                            variantId: string | null;
+                            createdAt: string;
+                            product: {
+                                id: string;
+                                handle: string;
+                                title: string;
+                                vendor: string | null;
+                                tags: string[];
+                                images: {
+                                    url: string;
+                                    alt: string | null;
+                                    width: number | null;
+                                    height: number | null;
+                                }[];
+                                price: {
+                                    currency: string;
+                                    minMinor: number;
+                                    maxMinor: number;
+                                    compareAtMinor: number | null;
+                                } | null;
+                                swatches: string[];
+                                availableForSale: boolean;
+                                variantCount: number;
+                            } | null;
+                        }[];
+                    };
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    delete__v1_store_wishlists_id_items_itemId: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-market"?: string;
+                "x-locale"?: string;
+            };
+            path: {
+                id: string;
+                itemId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        id: string;
+                        name: string;
+                        isDefault: boolean;
+                        shareToken: string | null;
+                        itemCount: number;
+                        createdAt: string;
+                        items: {
+                            id: string;
+                            productId: string;
+                            variantId: string | null;
+                            createdAt: string;
+                            product: {
+                                id: string;
+                                handle: string;
+                                title: string;
+                                vendor: string | null;
+                                tags: string[];
+                                images: {
+                                    url: string;
+                                    alt: string | null;
+                                    width: number | null;
+                                    height: number | null;
+                                }[];
+                                price: {
+                                    currency: string;
+                                    minMinor: number;
+                                    maxMinor: number;
+                                    compareAtMinor: number | null;
+                                } | null;
+                                swatches: string[];
+                                availableForSale: boolean;
+                                variantCount: number;
+                            } | null;
+                        }[];
+                    };
+                };
             };
             /** @description Error */
             default: {

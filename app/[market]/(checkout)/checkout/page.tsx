@@ -6,6 +6,7 @@ import { getTranslations } from "next-intl/server";
 import { unwrap } from "@/src/api/errors";
 import { requestContext, serverApi } from "@/src/api/server";
 import { isAddress, type Address } from "@/src/features/checkout/address";
+import { readReferralCookie } from "@/src/features/affiliate/referral-cookie";
 import { CheckoutFlow } from "@/src/features/checkout/checkout-flow";
 import { href } from "@/src/lib/links";
 import { getMarkets } from "@/src/lib/store-data";
@@ -41,6 +42,15 @@ async function Checkout() {
   const api = serverApi(ctx);
   const cart = await unwrap(api.POST("/v1/store/carts"));
   if (!cart.lines.length) redirect(bagHref);
+
+  // Affiliate attribution (?ref= cookie) goes on the cart before the totals are shown, so a
+  // referral-only offer is already in the price the shopper sees. Best effort: never blocks checkout.
+  const referral = await readReferralCookie();
+  if (referral) {
+    await api
+      .PATCH("/v1/store/carts/{id}", { params: { path: { id: cart.id } }, body: { referral } })
+      .catch(() => undefined);
+  }
 
   const [summary, markets, t] = await Promise.all([
     unwrap(api.GET("/v1/store/checkout/{id}", { params: { path: { id: cart.id } } })),

@@ -6,6 +6,7 @@ import { ProductCard, ProductGridSkeleton } from "@/src/blocks/product-shelf/pro
 import { Breadcrumbs, type Crumb } from "@/src/components/storefront/breadcrumbs";
 import { isEmptyRichText, plainText, RichText } from "@/src/components/storefront/rich-text";
 import { ProductView } from "@/src/features/product/product-view";
+import { ProductQuestions, ProductReviews } from "@/src/features/reviews/reviews-section";
 import { getProduct, getRecommendations, type ProductDetail } from "@/src/lib/catalog";
 import { currentMarket } from "@/src/lib/current-market";
 import { env } from "@/src/lib/env";
@@ -81,6 +82,13 @@ export default async function ProductPage({ params }: PageProps<"/[market]/produ
           </div>
         )}
       </ProductView>
+      {/* per-shopper (flags, sign-in state), so streamed in after the cached product */}
+      <Suspense fallback={null}>
+        <ProductReviews market={market} handle={product.handle} />
+      </Suspense>
+      <Suspense fallback={null}>
+        <ProductQuestions market={market} handle={product.handle} />
+      </Suspense>
       <section className="related" aria-labelledby="related-title">
         <h2 id="related-title" className="h3" style={{ marginBottom: "var(--space-6)" }}>
           {t("related")}

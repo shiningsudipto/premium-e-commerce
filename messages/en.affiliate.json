@@ -1,0 +1,211 @@
+{
+  "affiliate": {
+    "loading": "Loading…",
+    "older": "Older entries",
+    "card": {
+      "title": "Affiliate program",
+      "body": "Share the pieces you love and earn a commission on every order your link brings in.",
+      "link": "Affiliate program"
+    },
+    "account": {
+      "title": "Become an affiliate",
+      "intro": "Recommend us to your audience and earn on the orders you send our way.",
+      "point1": "Get your own referral link and QR code, with sub-IDs to see what works.",
+      "point2": "Follow clicks, orders and earnings in your affiliate dashboard.",
+      "point3": "Earnings are confirmed once the return window has passed.",
+      "appliedOn": "Applied on {date}",
+      "tier": "Tier: {tier}",
+      "termsOutdated": "Our affiliate terms have changed. Accept the new terms in your dashboard to keep earning.",
+      "openDashboard": "Open affiliate dashboard"
+    },
+    "profileStatus": {
+      "PENDING": {
+        "label": "Under review",
+        "body": "Thanks for applying. We review every application and will email you once we've decided."
+      },
+      "ACTIVE": {
+        "label": "Active",
+        "body": "You're an affiliate. Make links, follow your results and see your earnings in the dashboard."
+      },
+      "SUSPENDED": {
+        "label": "Suspended",
+        "body": "Your affiliate account is suspended for now. Contact us if you have questions."
+      },
+      "REJECTED": {
+        "label": "Not approved",
+        "body": "We weren't able to approve your application this time. Contact us if you have questions."
+      },
+      "CLOSED": {
+        "label": "Closed",
+        "body": "Your affiliate account is closed."
+      }
+    },
+    "apply": {
+      "optional": "{label} (optional)",
+      "submit": "Send application",
+      "sending": "Sending…",
+      "fields": {
+        "website": {
+          "label": "Website or social profile",
+          "hint": "Where you'll share your links, for example instagram.com/yourname."
+        },
+        "audience_size": {
+          "label": "Audience size",
+          "hint": "Roughly how many followers, subscribers or monthly visitors you have."
+        },
+        "promotion_methods": {
+          "label": "How will you promote us?",
+          "hint": "For example reviews, styling videos or a newsletter."
+        }
+      }
+    },
+    "terms": {
+      "title": "Accept the updated affiliate terms",
+      "body": "Our affiliate terms have changed. Accept the new terms to see your dashboard and keep earning.",
+      "accept": "I accept the affiliate terms (version {version})",
+      "read": "Read the affiliate terms",
+      "newTab": "(opens in a new tab)",
+      "submit": "Accept terms"
+    },
+    "errors": {
+      "termsRequired": "Accept the affiliate terms to continue.",
+      "generic": "Something went wrong. Please try again.",
+      "APPLY_FAILED": "We couldn't send your application. Please try again.",
+      "TERMS_FAILED": "We couldn't record your acceptance. Please try again.",
+      "CUSTOM_FIELDS_INVALID": "Check the highlighted fields and try again.",
+      "CONFLICT": "You've already applied.",
+      "RATE_LIMITED": "Too many attempts. Wait a minute and try again.",
+      "FEATURE_DISABLED": "The affiliate program isn't open right now.",
+      "NOT_FOUND": "The affiliate program isn't open right now."
+    },
+    "nav": {
+      "label": "Affiliate sections",
+      "overview": "Overview",
+      "links": "Links & QR codes",
+      "orders": "Orders",
+      "earnings": "Earnings",
+      "payouts": "Payouts",
+      "account": "Back to account"
+    },
+    "dashboard": {
+      "title": "Affiliate dashboard"
+    },
+    "overview": {
+      "profile": "Your program",
+      "tier": "Tier: {tier}",
+      "rewardAs": "{reward} rewards",
+      "code": "Your referral code:",
+      "makeLink": "Make a link",
+      "last30": "Last 30 days",
+      "clicks": "Clicks",
+      "conversions": "Orders",
+      "conversionRate": "Conversion rate",
+      "sales": "Sales",
+      "balance": "Your balance",
+      "pending": "Pending",
+      "pendingNote": "Waiting for the return window to pass",
+      "payable": "Ready for payout",
+      "payableNote": "Included in your next payout",
+      "inPayout": "In a payout",
+      "paid": "Paid out",
+      "subIds": "By sub-ID",
+      "subIdsCaption": "Clicks and orders in the last 30 days for each sub-ID",
+      "subId": "Sub-ID",
+      "noSubId": "No sub-ID",
+      "noActivity": "No clicks or orders in the last 30 days yet. Share a link to get started."
+    },
+    "rewardType": {
+      "CASH": "Cash",
+      "STORE_CREDIT": "Store credit",
+      "LOYALTY_POINTS": "Loyalty points"
+    },
+    "links": {
+      "title": "Make a link",
+      "intro": "Pick a page, add a sub-ID if you want to tell your channels apart, then copy the link or save the QR code.",
+      "noCodes": "You don't have an active referral code yet.",
+      "codes": "Your referral codes",
+      "code": "Referral code",
+      "label": "Label",
+      "status": "Status",
+      "default": "(default)",
+      "page": "Page (optional)",
+      "pageHint": "A page of the store, starting with /, for example /products/leather-weekender-bag. Leave empty for the home page.",
+      "pageInvalid": "Use a page of this store, starting with /.",
+      "subId": "Sub-ID (optional)",
+      "subIdHint": "A tag for where you share the link, for example instagram-bio. Shown in your stats.",
+      "yourLink": "Your link",
+      "copy": "Copy link",
+      "copied": "Link copied.",
+      "copyFailed": "Couldn't copy. Select the link and copy it yourself.",
+      "qrTitle": "QR code for {link}",
+      "qrCaption": "Scanning this code opens your link.",
+      "downloadQr": "Download QR code"
+    },
+    "linkStatus": {
+      "ACTIVE": "Active",
+      "PENDING_APPROVAL": "Awaiting approval",
+      "DISABLED": "Disabled"
+    },
+    "orders": {
+      "title": "Attributed orders",
+      "privacy": "Orders your links brought in. Shopper details are never shown.",
+      "reference": "Reference",
+      "date": "Date",
+      "status": "Order status",
+      "amount": "Order amount",
+      "subId": "Sub-ID",
+      "commission": "Commission",
+      "empty": "No orders yet. They show up here once someone orders through your link.",
+      "noMore": "No more orders."
+    },
+    "earningStatus": {
+      "PENDING": "Pending",
+      "APPROVED": "Approved",
+      "PAID": "Paid",
+      "REVERSED": "Reversed"
+    },
+    "earningKind": {
+      "COMMISSION": "Commission",
+      "ADJUSTMENT": "Adjustment",
+      "REVERSAL": "Reversal"
+    },
+    "earnings": {
+      "title": "Earnings",
+      "intro": "Every commission, adjustment and reversal on your account.",
+      "date": "Date",
+      "kind": "Type",
+      "status": "Status",
+      "reward": "Paid as",
+      "amount": "Amount",
+      "note": "Note",
+      "approvableAt": "Confirmed after {date}",
+      "empty": "No earnings yet.",
+      "noMore": "No more entries."
+    },
+    "payouts": {
+      "title": "Payouts",
+      "intro": "Payouts of your approved cash earnings.",
+      "date": "Created",
+      "status": "Status",
+      "amount": "Amount",
+      "method": "Method",
+      "reference": "Reference",
+      "paidAt": "Paid on",
+      "empty": "No payouts yet.",
+      "noMore": "No more payouts."
+    },
+    "payoutStatus": {
+      "DRAFT": "Being prepared",
+      "APPROVED": "Approved",
+      "PROCESSING": "Processing",
+      "FAILED": "Failed",
+      "PAID": "Paid",
+      "CANCELLED": "Cancelled"
+    },
+    "payoutMethod": {
+      "bank": "Bank transfer",
+      "mobile_wallet": "Mobile wallet",
+      "manual": "Manual"
+    }
+  }
+}

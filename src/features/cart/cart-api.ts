@@ -193,6 +193,31 @@ export const bagApi = createApi({
         write(baseQuery, { url: lineUrl(cartId, lineId), method: "DELETE" }),
       onQueryStarted: ({ lineId }, api) => settle(api, (bag) => changeLine(bag, lineId, 0)),
     }),
+
+    // Promotion codes. A code the API refuses outright (unknown, expired, used up, too many codes)
+    // fails with its error; one whose conditions aren't met yet stays on the bag, explained in
+    // bag.promotions.codes.
+    applyCode: build.mutation<Bag, { cartId: string; code: string }>({
+      queryFn: ({ cartId, code }, _api, _extra, baseQuery) =>
+        write(baseQuery, {
+          url: `/v1/store/carts/${encodeURIComponent(cartId)}/promotion-codes`,
+          method: "POST",
+          body: { code },
+        }),
+      onQueryStarted: (_arg, api) => settle(api),
+    }),
+
+    removeCode: build.mutation<Bag, { cartId: string; code: string }>({
+      queryFn: ({ cartId, code }, _api, _extra, baseQuery) =>
+        write(baseQuery, {
+          url: `/v1/store/carts/${encodeURIComponent(cartId)}/promotion-codes/${encodeURIComponent(code)}`,
+          method: "DELETE",
+        }),
+      onQueryStarted: ({ code }, api) =>
+        settle(api, (bag) => {
+          bag.promotions.codes = bag.promotions.codes.filter((c) => c.code !== code);
+        }),
+    }),
   }),
 });
 
@@ -247,4 +272,11 @@ async function settle({ dispatch, queryFulfilled }: MutationLifecycle, optimisti
   }
 }
 
-export const { useGetBagQuery, useAddToBagMutation, useSetLineQuantityMutation, useRemoveLineMutation } = bagApi;
+export const {
+  useGetBagQuery,
+  useAddToBagMutation,
+  useSetLineQuantityMutation,
+  useRemoveLineMutation,
+  useApplyCodeMutation,
+  useRemoveCodeMutation,
+} = bagApi;

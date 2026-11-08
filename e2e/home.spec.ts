@@ -88,6 +88,9 @@ test("choosing a colour in the spotlight updates the label and the photo", async
 
 test("adding the featured piece to the bag updates the header count", async ({ page }) => {
   const bag = page.getByTestId("bag-link");
+  // the bag button streams in per shopper; until React swaps it in, a hidden copy sits next to the
+  // placeholder
+  await expect(bag).toHaveCount(1);
   await expect(bag).toHaveAccessibleName(/Bag, empty/);
   await page
     .locator("#spotlight")

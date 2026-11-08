@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { ApiError, unwrap } from "../../api/errors";
 import { requestContext, serverApi } from "../../api/server";
 import { href } from "../../lib/links";
+import { readReferralCookie } from "../affiliate/referral-cookie";
 import type { Bag } from "../cart/types";
 import { readAddress, readEmail, type FieldErrors } from "./address";
 
@@ -47,7 +48,7 @@ export async function saveDetails(cartId: string, _prev: DetailsState, form: For
   if (Object.keys(errors).length) return { ok: false, errors };
 
   try {
-    const ctx = await requestContext();
+    const [ctx, referral] = await Promise.all([requestContext(), readReferralCookie()]);
     const cart = await unwrap(
       serverApi(ctx).PATCH("/v1/store/carts/{id}", {
         params: { path: { id: cartId } },
@@ -56,6 +57,8 @@ export async function saveDetails(cartId: string, _prev: DetailsState, form: For
           shippingAddress: shipping.address,
           billingAddress: billing.address,
           acceptsMarketing: form.get("acceptsMarketing") === "on",
+          // affiliate attribution (?ref= cookie); the API judges it when the order is placed
+          ...(referral ? { referral } : {}),
         },
       }),
     );
@@ -92,6 +95,8 @@ export async function placeOrder(input: {
   notes?: string;
   idempotencyKey: string;
 }): Promise<{ ok: false; message: string }> {
+  // the referral (if any) is already on the cart: saved with the details and when checkout opened,
+  // so the total the shopper confirms is the total they pay
   const ctx = await requestContext();
   let orderId: string;
   try {

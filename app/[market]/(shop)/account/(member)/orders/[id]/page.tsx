@@ -6,6 +6,9 @@ import { ApiError, unwrap } from "@/src/api/errors";
 import { requestContext, serverApi } from "@/src/api/server";
 import { statusKey, statusTone } from "@/src/features/account/order-status";
 import { formatAddress, isAddress } from "@/src/features/checkout/address";
+import { getOrderReturns } from "@/src/features/returns/data";
+import { ReturnList } from "@/src/features/returns/return-list";
+import { canHaveReturns, returnableQuantities } from "@/src/features/returns/returns";
 import { href } from "@/src/lib/links";
 import { formatMoney } from "@/src/lib/money";
 
@@ -14,13 +17,15 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("order"), robots: { index: false } };
 }
 
-// One order: what was bought, where it's going, shipments with tracking, and the timeline.
-export default async function OrderPage({ params }: PageProps<"/[market]/account/orders/[id]">) {
-  const [{ id }, ctx, t, ts] = await Promise.all([
+// One order: what was bought, where it's going, shipments with tracking, returns, and the timeline.
+export default async function OrderPage({ params, searchParams }: PageProps<"/[market]/account/orders/[id]">) {
+  const [{ id }, ctx, t, ts, tr, query] = await Promise.all([
     params,
     requestContext(),
     getTranslations("account"),
     getTranslations("orderStatus"),
+    getTranslations("returns"),
+    searchParams,
   ]);
   const order = await unwrap(serverApi(ctx).GET("/v1/store/orders/{id}", { params: { path: { id } } })).catch(
     (err: unknown) => {
@@ -29,6 +34,11 @@ export default async function OrderPage({ params }: PageProps<"/[market]/account
     },
   );
   if (!order) notFound();
+  // only shipped orders can have returns; a failed read hides the section's actions, not the order
+  const returns = canHaveReturns(order.status) ? await getOrderReturns(ctx, order.id).catch(() => null) : [];
+  const returnable = returns ? returnableQuantities(order.lines, returns) : {};
+  const canRequestReturn = canHaveReturns(order.status) && Object.values(returnable).some((n) => n > 0);
+  const justRequested = query.return === "requested";
   const money = (minor: number) => formatMoney(minor, order.currency, ctx.market.locale);
   const dateTime = new Intl.DateTimeFormat(ctx.market.locale, { dateStyle: "medium", timeStyle: "short" });
   const tone = statusTone(order.status);
@@ -140,6 +150,47 @@ export default async function OrderPage({ params }: PageProps<"/[market]/account
               )}
             </div>
           ))}
+        </section>
+      )}
+
+      {(canHaveReturns(order.status) || justRequested) && (
+        <section id="returns" aria-labelledby="returns-title" className="form-grid" data-testid="order-returns">
+          <h3 id="returns-title" className="eyebrow">
+            {tr("title")}
+          </h3>
+          {justRequested && (
+            <p className="notice" role="status" data-testid="return-requested">
+              {tr("requested")}
+            </p>
+          )}
+          {returns === null ? (
+            <p className="muted">{tr("loadFailed")}</p>
+          ) : (
+            returns.length > 0 && (
+              <ReturnList
+                returns={returns}
+                market={ctx.market}
+                currency={order.currency}
+                lines={Object.fromEntries(
+                  order.lines.map((l) => [
+                    l.id,
+                    { title: l.variantTitle ? `${l.title} · ${l.variantTitle}` : l.title },
+                  ]),
+                )}
+              />
+            )
+          )}
+          {canRequestReturn && (
+            <p>
+              <Link
+                className="btn btn--secondary"
+                href={href(ctx.market, `/account/orders/${order.id}/return`)}
+                data-testid="request-return"
+              >
+                {tr("request")}
+              </Link>
+            </p>
+          )}
         </section>
       )}
 
