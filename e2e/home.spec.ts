@@ -102,6 +102,35 @@ test("adding the featured piece to the bag updates the header count", async ({ p
   await expect(bag.locator(".cart-count")).toHaveText("1");
 });
 
+test("bag changes show in the drawer and the header count without reloading", async ({ page }) => {
+  const bag = page.getByTestId("bag-link");
+  await page
+    .locator("#spotlight")
+    .getByRole("button", { name: /Add to bag/ })
+    .click();
+  const drawer = page.getByTestId("bag-drawer");
+  const line = drawer.getByTestId("bag-line");
+  await expect(line).toHaveCount(1);
+
+  // more of the same piece: the quantity, the drawer title and the header count all follow
+  await line.getByRole("button", { name: "Increase quantity" }).click();
+  await expect(line.locator("output")).toHaveText("2");
+  await expect(drawer.getByRole("heading")).toContainText("(2)");
+  await expect(bag.locator(".cart-count")).toHaveText("2");
+
+  // removing the line empties the bag everywhere
+  const removed = page.waitForResponse((r) => r.request().method() === "DELETE" && /\/lines\//.test(r.url()));
+  await line.getByRole("button", { name: /^Remove/ }).click();
+  await expect(drawer.getByText(/bag is empty/i)).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(bag).toHaveAccessibleName(/Bag, empty/);
+
+  // the server agrees after a reload, once the API has answered
+  expect((await removed).ok()).toBe(true);
+  await page.reload();
+  await expect(page.getByTestId("bag-link")).toHaveAccessibleName(/Bag, empty/);
+});
+
 test("the header condenses once the page scrolls", async ({ page }) => {
   const header = page.locator("header.site-header");
   await expect(header).not.toHaveClass(/is-condensed/);

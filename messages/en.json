@@ -138,6 +138,7 @@
     "title": "Your bag",
     "close": "Close bag",
     "loading": "Loading your bag…",
+    "loadFailed": "We couldn't load your bag. Check your connection and try again.",
     "checkout": "Check out",
     "viewBag": "View bag",
     "summary": "Order summary",

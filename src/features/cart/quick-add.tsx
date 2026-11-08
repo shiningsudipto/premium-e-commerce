@@ -1,10 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useState } from "react";
 import { buttonClass } from "../../components/storefront/primitives";
-import { addToBag } from "./actions";
 import { useBag } from "./bag-provider";
+import { bagErrorCode, bagErrorMessage, useAddToBagMutation } from "./cart-api";
 
 // The "Quick add" button on product cards. Products with several variants go to their page so
 // the shopper can choose; the result is announced to screen readers.
@@ -23,7 +23,7 @@ export function QuickAdd({
 }) {
   const router = useRouter();
   const { openBag } = useBag();
-  const [pending, start] = useTransition();
+  const [addToBag, { isLoading: pending }] = useAddToBagMutation();
   const [status, setStatus] = useState<{ added: boolean; message: string }>({ added: false, message: "" });
 
   useEffect(() => {
@@ -32,15 +32,14 @@ export function QuickAdd({
     return () => clearTimeout(t);
   }, [status.added]);
 
-  const onClick = () =>
-    start(async () => {
-      const result = await addToBag({ handle });
-      if (result.ok) {
-        setStatus({ added: true, message: `${title} added to your bag.` });
-        openBag(result.cart);
-      } else if (result.reason === "choose_options") router.push(productHref);
-      else setStatus({ added: false, message: result.message });
-    });
+  const onClick = async () => {
+    const result = await addToBag({ handle });
+    if (!result.error) {
+      setStatus({ added: true, message: `${title} added to your bag.` });
+      openBag();
+    } else if (bagErrorCode(result.error) === "CHOOSE_OPTIONS") router.push(productHref);
+    else setStatus({ added: false, message: bagErrorMessage(result.error) });
+  };
 
   return (
     <>

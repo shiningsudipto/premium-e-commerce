@@ -4,8 +4,6 @@ import type { paths } from "../../api/schema";
 export type Bag = paths["/v1/store/carts/{id}"]["get"]["responses"]["200"]["content"]["application/json"];
 export type BagLine = Bag["lines"][number];
 
-export type BagResult = { ok: true; cart: Bag } | { ok: false; message: string; cart?: Bag };
-
 // How far the bag is from free shipping, as a fraction for the progress bar.
 export function freeShippingProgress(bag: Pick<Bag, "freeShipping" | "subtotalMinor">) {
   const { thresholdMinor, remainingMinor } = bag.freeShipping;

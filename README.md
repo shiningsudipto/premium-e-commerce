@@ -78,10 +78,13 @@ The home page implements the Premium Touch design (`../Home — Desktop 1440-htm
 - **Listings** (`/products`, `/categories/[handle]`, `/collections/[handle]`, `/search`): filters, sort and page live in the URL (`src/features/catalog/listing-query.ts`), so every state can be linked and is crawlable. Option and attribute facets come from the API. The heading is prerendered, and the products stream in behind `<Suspense>`.
 - **Product page** (`/products/[handle]`): cached per product (tag `product:handle:…`). Stock is fetched by the browser from `/v1/store/products/{handle}/availability`, so the page itself stays static. The variant picker keeps your other choices where that combination exists (`src/features/product/variants.ts`). The page also renders JSON-LD (Product, Offer, AggregateRating, BreadcrumbList) and related products from `/v1/store/recommendations`.
 - **Search typeahead.** The header's search button opens a dialog that asks the API's `/search/suggest` directly, after a short pause in typing. Arrow keys move through suggestions, and Enter opens one or searches.
-- **Bag.** All bag actions are Server Actions in `src/features/cart/actions.ts`:
-  - Add to bag, Quick add and the spotlight start a guest session when needed, then open the bag drawer (`BagProvider` in the shop layout).
-  - Quantity and remove update at once (`useOptimistic`), then settle to the API's repriced cart.
-  - The header's bag button opens the drawer; `/cart` is the full page.
+- **Bag.** Managed in the browser with RTK Query (`src/features/cart/cart-api.ts`), calling the API directly with its session cookies, like the admin:
+  - One Redux store per tab and market (`bag-store.tsx`), provided by `BagProvider` in the shop layout. The cached `getBag` feeds the drawer, the `/cart` page and the header count, and every bag change updates it, so nothing is re-rendered on the server.
+  - Add to bag, Quick add and the spotlight start a guest session (`/v1/store/session/guest`) when there's none, then open the drawer.
+  - Quantity and remove update the cache at once, then settle to the API's repriced cart (rolled back if refused). Writes run one at a time with `keepalive`, so quick changes reach the API in order and finish even if the shopper leaves the page.
+  - An expired customer session is refreshed once and the call retried. The API reports `TOKEN_EXPIRED` in that case rather than falling back to the guest cookie, so items never land in the wrong bag.
+  - The server still reads the bag for the first render (`bag.ts`: header count, `/cart`). The header count switches to the cached bag once the browser has it.
+  - Checkout steps stay Server Actions.
 - **Checkout** (`app/[market]/(checkout)`, a minimal header with no footer):
   - Steps: contact and address, then delivery method, then payment and notes.
   - Place order sends an `Idempotency-Key` made once per attempt, so retries never create two orders. It then redirects to `/checkout/confirmation/[orderId]`, which only the shopper who placed the order can open.

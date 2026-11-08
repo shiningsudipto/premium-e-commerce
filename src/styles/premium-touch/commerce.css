@@ -779,6 +779,8 @@
 .field .select,
 .field textarea {
   width: 100%;
+  /* .input's "flex: 1 1 240px" is for the newsletter row; in a column .field it would set height */
+  flex: none;
 }
 .field textarea {
   min-height: 96px;

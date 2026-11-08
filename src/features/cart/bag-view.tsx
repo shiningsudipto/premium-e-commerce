@@ -1,54 +1,33 @@
 "use client";
 
 import Link from "next/link";
-import { useOptimistic, useState, useTransition } from "react";
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { artFor } from "../../components/storefront/art";
 import { Media } from "../../components/storefront/media";
 import { href } from "../../lib/links";
 import type { MarketRef } from "../../lib/market";
 import { formatMoney } from "../../lib/money";
-import { removeLine, setLineQuantity } from "./actions";
+import { bagErrorMessage, useRemoveLineMutation, useSetLineQuantityMutation } from "./cart-api";
 import { freeShippingProgress, type Bag, type BagLine } from "./types";
 
-type LineChange = { lineId: string; quantity: number };
-
-// The bag's lines, shared by the drawer and the bag page. Quantity changes show at once
-// (useOptimistic) and settle to the API's repriced cart; a failure rolls back with a message.
-export function BagLines({
-  cart,
-  market,
-  onCart,
-  onNavigate,
-}: {
-  cart: Bag;
-  market: MarketRef;
-  onCart: (cart: Bag) => void;
-  onNavigate?: () => void;
-}) {
+// The bag's lines, shared by the drawer and the bag page. `cart` is RTK Query's cached bag:
+// a quantity change updates it at once and settles to the API's repriced cart; a failure rolls
+// it back and says why.
+export function BagLines({ cart, market, onNavigate }: { cart: Bag; market: MarketRef; onNavigate?: () => void }) {
   const t = useTranslations("cart");
   const [error, setError] = useState("");
-  const [, start] = useTransition();
-  const [lines, applyChange] = useOptimistic(cart.lines, (current: BagLine[], change: LineChange) =>
-    change.quantity === 0
-      ? current.filter((l) => l.id !== change.lineId)
-      : current.map((l) =>
-          l.id === change.lineId
-            ? { ...l, quantity: change.quantity, totalMinor: l.unitPriceMinor * change.quantity }
-            : l,
-        ),
-  );
+  const [setQuantity] = useSetLineQuantityMutation();
+  const [remove] = useRemoveLineMutation();
+  const lines = cart.lines;
   const money = (minor: number) => formatMoney(minor, cart.currency, market.locale);
 
-  const change = (line: BagLine, quantity: number) =>
-    start(async () => {
-      setError("");
-      applyChange({ lineId: line.id, quantity });
-      const result =
-        quantity === 0 ? await removeLine(cart.id, line.id) : await setLineQuantity(cart.id, line.id, quantity);
-      if (result.ok) onCart(result.cart);
-      else setError(result.message);
-    });
+  const change = async (line: BagLine, quantity: number) => {
+    setError("");
+    const arg = { cartId: cart.id, lineId: line.id };
+    const result = quantity === 0 ? await remove(arg) : await setQuantity({ ...arg, quantity });
+    if (result.error) setError(bagErrorMessage(result.error));
+  };
 
   return (
     <>

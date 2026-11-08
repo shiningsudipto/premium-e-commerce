@@ -1,12 +1,12 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import type { ArtName } from "../../components/storefront/art";
 import { Media, type MediaImage, type Tone } from "../../components/storefront/media";
 import { swatchColor } from "../../components/storefront/primitives";
-import { addToBag } from "../../features/cart/actions";
 import { useBag } from "../../features/cart/bag-provider";
+import { bagErrorMessage, useAddToBagMutation } from "../../features/cart/cart-api";
 
 export type SpotlightVariant = {
   id: string;
@@ -82,19 +82,20 @@ export function SpotlightBuy({
   after?: React.ReactNode;
 }) {
   const [colour, setColour] = useState(initialColour);
-  const [pending, start] = useTransition();
+  const [addToBag, { isLoading: pending }] = useAddToBagMutation();
   const [message, setMessage] = useState("");
   const { openBag } = useBag();
   const variant = variants.find((v) => v.colour === colour) ?? variants[0];
   const colours = [...new Set(variants.map((v) => v.colour).filter((c): c is string => !!c))];
 
-  const add = () =>
-    start(async () => {
-      if (!variant) return;
-      const result = await addToBag({ variantId: variant.id });
-      setMessage(result.ok ? `${title}${colour ? ` in ${colour}` : ""} added to your bag.` : result.message);
-      if (result.ok) openBag(result.cart);
-    });
+  const add = async () => {
+    if (!variant) return;
+    const result = await addToBag({ variantId: variant.id });
+    setMessage(
+      result.error ? bagErrorMessage(result.error) : `${title}${colour ? ` in ${colour}` : ""} added to your bag.`,
+    );
+    if (!result.error) openBag();
+  };
 
   return (
     <>

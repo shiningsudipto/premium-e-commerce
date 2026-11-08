@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
-import { loadBag } from "@/src/features/cart/actions";
+import { loadBag } from "@/src/features/cart/bag";
 import { CartPageView } from "@/src/features/cart/cart-page-view";
 import { currentMarket } from "@/src/lib/current-market";
 

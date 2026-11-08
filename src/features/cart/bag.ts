@@ -1,16 +1,23 @@
 import "server-only";
 import { unwrap } from "../../api/errors";
 import { requestContext, serverApi } from "../../api/server";
+import type { Bag } from "./types";
 
-// Items in the shopper's bag, for the header. Needs a session, so visitors without one see 0
-// (and no cart is created for them). Reads cookies: render it behind <Suspense>.
-export async function bagCount(): Promise<number> {
+// Server-side reads of the shopper's bag, for the first render (header count, bag page). Changes
+// to the bag happen in the browser through RTK Query (cart-api.ts). Both need a session, so
+// visitors without one see no bag (and none is created for them). They read cookies: render
+// them behind <Suspense>.
+
+export async function loadBag(): Promise<Bag | null> {
   const ctx = await requestContext();
-  if (!ctx.token) return 0;
+  if (!ctx.token) return null;
   try {
-    const cart = await unwrap(serverApi(ctx).POST("/v1/store/carts"));
-    return cart.itemCount;
+    return await unwrap(serverApi(ctx).POST("/v1/store/carts"));
   } catch {
-    return 0;
+    return null;
   }
+}
+
+export async function bagCount(): Promise<number> {
+  return (await loadBag())?.itemCount ?? 0;
 }

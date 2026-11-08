@@ -1,14 +1,14 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { useEffect, useMemo, useState, useSyncExternalStore, useTransition, type ReactNode } from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { artFor } from "../../components/storefront/art";
 import { Media } from "../../components/storefront/media";
 import type { MarketRef } from "../../lib/market";
 import { formatMoney } from "../../lib/money";
-import { addToBag } from "../cart/actions";
 import { useBag } from "../cart/bag-provider";
+import { bagErrorMessage, useAddToBagMutation } from "../cart/cart-api";
 import {
   choose,
   initialVariant,
@@ -69,7 +69,7 @@ export function ProductView({
   const variant = variants.find((v) => v.id === variantId) ?? variants[0];
   const selection = selectionOf(variant);
   const [quantity, setQuantity] = useState(1);
-  const [pending, start] = useTransition();
+  const [addToBag, { isLoading: pending }] = useAddToBagMutation();
   const [message, setMessage] = useState<{ error: boolean; text: string } | null>(null);
 
   useEffect(() => {
@@ -97,15 +97,15 @@ export function ProductView({
     window.history.replaceState(window.history.state, "", url);
   };
 
-  const add = () =>
-    start(async () => {
-      if (!variant) return;
-      const result = await addToBag({ variantId: variant.id, quantity });
-      if (result.ok) {
-        setMessage({ error: false, text: t("addedMessage", { title: product.title }) });
-        openBag(result.cart);
-      } else setMessage({ error: true, text: result.message });
-    });
+  const add = async () => {
+    if (!variant) return;
+    const result = await addToBag({ variantId: variant.id, quantity });
+    if (result.error) setMessage({ error: true, text: bagErrorMessage(result.error) });
+    else {
+      setMessage({ error: false, text: t("addedMessage", { title: product.title }) });
+      openBag();
+    }
+  };
 
   const price = variant?.price;
   const onSale = !!price?.compareAtMinor && price.compareAtMinor > price.amountMinor;

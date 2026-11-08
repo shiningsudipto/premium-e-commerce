@@ -2,7 +2,7 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { requestContext } from "../../api/server";
 import { bagCount } from "../../features/cart/bag";
-import { BagTrigger } from "../../features/cart/bag-trigger";
+import { BagButtonLink } from "../../features/cart/bag-trigger";
 import { href } from "../../lib/links";
 import type { MarketRef } from "../../lib/market";
 import { Icon } from "../storefront/icon";
@@ -24,27 +24,14 @@ export async function AccountButton({ market }: { market: MarketRef }) {
   );
 }
 
+// The count comes from the server first; the browser's cached bag (RTK Query) keeps it current.
 export async function BagButton({ market }: { market: MarketRef }) {
-  const [count, t] = await Promise.all([bagCount(), getTranslations("header")]);
-  return <BagLink market={market} count={count} label={t("bag", { count })} />;
+  const count = await bagCount();
+  return <BagButtonLink href={href(market, "/cart")} initial={count} icon={<Icon name="bag" />} />;
 }
 
-export async function BagButtonFallback({ market }: { market: MarketRef }) {
-  const t = await getTranslations("header");
-  return <BagLink market={market} count={0} label={t("bag", { count: 0 })} />;
-}
-
-function BagLink({ market, count, label }: { market: MarketRef; count: number; label: string }) {
-  return (
-    <BagTrigger className="icon-btn" href={href(market, "/cart")} aria-label={label} data-testid="bag-link">
-      <Icon name="bag" />
-      {count > 0 && (
-        <span className="cart-count" aria-hidden="true">
-          {count > 99 ? "99+" : count}
-        </span>
-      )}
-    </BagTrigger>
-  );
+export function BagButtonFallback({ market }: { market: MarketRef }) {
+  return <BagButtonLink href={href(market, "/cart")} initial={0} icon={<Icon name="bag" />} />;
 }
 
 export function AccountButtonFallback({ market, label }: { market: MarketRef; label: string }) {
