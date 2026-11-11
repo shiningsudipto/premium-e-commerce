@@ -1,7 +1,7 @@
 "use client";
 
-import { useId, useState } from "react";
-import { PlusIcon, XIcon } from "lucide-react";
+import { useId, useState, type ReactNode } from "react";
+import { ArrowDownIcon, ArrowUpIcon, PlusIcon, Trash2Icon, XIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -10,7 +10,16 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { bounds, describeBounds, emptyValue, fieldKind, humanize, type JsonSchema } from "./schema";
+import {
+  bounds,
+  describeBounds,
+  emptyValue,
+  fieldKind,
+  fromLocalDateTime,
+  humanize,
+  toLocalDateTime,
+  type JsonSchema,
+} from "./schema";
 
 // Renders one value of a JSON Schema as form controls (spec: settings, block props and adapter
 // config all describe themselves this way). Controlled: the parent owns the value.
@@ -25,13 +34,41 @@ export type SchemaFieldProps = {
   path?: string;
   disabled?: boolean;
   secret?: boolean;
+  // Lets a screen supply its own control for some fields (e.g. a media picker for "...MediaId"),
+  // at any depth. Return null/undefined to keep the generated control.
+  renderField?: (field: CustomFieldProps) => ReactNode | null | undefined;
+};
+
+export type CustomFieldProps = {
+  schema: JsonSchema;
+  value: unknown;
+  onChange: (value: unknown) => void;
+  label: string;
+  description?: string;
+  // the property name (last path segment), "" at the root
+  name: string;
+  path: string;
+  error?: string;
+  disabled?: boolean;
 };
 
 export function SchemaField(props: SchemaFieldProps) {
-  const { schema, value, onChange, label, description, errors = {}, path = "", disabled, secret } = props;
+  const { schema, value, onChange, label, description, errors = {}, path = "", disabled, secret, renderField } = props;
   const id = useId();
   const kind = fieldKind(schema);
   const error = errors[path];
+  const custom = renderField?.({
+    schema,
+    value,
+    onChange,
+    label,
+    description,
+    name: path.split(".").pop() ?? "",
+    path,
+    error,
+    disabled,
+  });
+  if (custom) return custom;
   const hint = [description ?? schema.description, kind.kind === "number" ? describeBounds(schema) : null]
     .filter(Boolean)
     .join(" · ");
@@ -97,6 +134,24 @@ export function SchemaField(props: SchemaFieldProps) {
         </Field>
       );
     }
+
+    case "datetime":
+      return (
+        <Field data-invalid={invalid}>
+          <FieldLabel htmlFor={id}>{label}</FieldLabel>
+          <Input
+            id={id}
+            type="datetime-local"
+            className="w-full sm:w-64"
+            value={toLocalDateTime(value)}
+            disabled={disabled}
+            aria-invalid={invalid}
+            onChange={(e) => onChange(fromLocalDateTime(e.target.value))}
+          />
+          {hint && <FieldDescription>{hint}</FieldDescription>}
+          <FieldError>{error}</FieldError>
+        </Field>
+      );
 
     case "number": {
       const { min, max } = bounds(schema);
@@ -204,11 +259,23 @@ export function SchemaField(props: SchemaFieldProps) {
                 errors={errors}
                 path={`${path}${path ? "." : ""}${key}`}
                 disabled={disabled}
+                renderField={renderField}
                 onChange={(next) => onChange({ ...record, [key]: next })}
               />
             );
           })}
         </FieldSet>
+      );
+
+    case "object-list":
+      return (
+        <ObjectListField
+          {...props}
+          item={kind.item}
+          hint={hint}
+          error={error}
+          list={Array.isArray(value) ? (value as unknown[]) : []}
+        />
       );
 
     case "json":
@@ -224,6 +291,117 @@ export function SchemaField(props: SchemaFieldProps) {
         />
       );
   }
+}
+
+// A list of objects (carousel slides, FAQ items, ...): one card per item with its own fields,
+// reordered with buttons so it works from the keyboard.
+function ObjectListField(
+  props: SchemaFieldProps & {
+    item: JsonSchema & { properties: Record<string, JsonSchema> };
+    hint: string;
+    error?: string;
+    list: unknown[];
+  },
+) {
+  const { schema, onChange, label, errors = {}, path = "", disabled, renderField, item, hint, error, list } = props;
+  const required = item.required ?? [];
+  const canAdd = schema.maxItems === undefined || list.length < schema.maxItems;
+  const itemLabel = "Item";
+  const move = (from: number, to: number) => {
+    const next = [...list];
+    const [moved] = next.splice(from, 1);
+    next.splice(to, 0, moved);
+    onChange(next);
+  };
+  const limits = [
+    schema.minItems ? `at least ${schema.minItems}` : null,
+    schema.maxItems !== undefined ? `at most ${schema.maxItems}` : null,
+  ]
+    .filter(Boolean)
+    .join(", ");
+  const description = [hint, limits && `${limits} items`].filter(Boolean).join(" · ");
+  return (
+    <FieldSet data-invalid={error ? true : undefined}>
+      <FieldLegend variant="label">{label}</FieldLegend>
+      {description && <FieldDescription>{description}</FieldDescription>}
+      {list.length === 0 && <p className="text-sm text-muted-foreground">No items yet.</p>}
+      <ol className="space-y-3">
+        {list.map((entry, i) => {
+          const record = (entry && typeof entry === "object" ? entry : {}) as Record<string, unknown>;
+          const itemPath = `${path}${path ? "." : ""}${i}`;
+          const name = `${itemLabel} ${i + 1}`;
+          return (
+            <li key={i} className="space-y-3 rounded-lg border p-3" aria-label={`${label}: ${name}`}>
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-sm font-medium">{name}</span>
+                {!disabled && (
+                  <div className="flex gap-1">
+                    <Button
+                      type="button"
+                      size="icon-sm"
+                      variant="ghost"
+                      aria-label={`Move ${name} up`}
+                      disabled={i === 0}
+                      onClick={() => move(i, i - 1)}
+                    >
+                      <ArrowUpIcon />
+                    </Button>
+                    <Button
+                      type="button"
+                      size="icon-sm"
+                      variant="ghost"
+                      aria-label={`Move ${name} down`}
+                      disabled={i === list.length - 1}
+                      onClick={() => move(i, i + 1)}
+                    >
+                      <ArrowDownIcon />
+                    </Button>
+                    <Button
+                      type="button"
+                      size="icon-sm"
+                      variant="ghost"
+                      aria-label={`Remove ${name}`}
+                      onClick={() => onChange(list.filter((_, j) => j !== i))}
+                    >
+                      <Trash2Icon />
+                    </Button>
+                  </div>
+                )}
+              </div>
+              {errors[itemPath] && <p className="text-sm text-destructive">{errors[itemPath]}</p>}
+              {Object.entries(item.properties).map(([key, sub]) => (
+                <SchemaField
+                  key={key}
+                  schema={sub}
+                  value={record[key]}
+                  label={`${sub.title ?? humanize(key)}${required.includes(key) ? "" : " (optional)"}`}
+                  errors={errors}
+                  path={`${itemPath}.${key}`}
+                  disabled={disabled}
+                  renderField={renderField}
+                  onChange={(next) => onChange(list.map((x, j) => (j === i ? { ...record, [key]: next } : x)))}
+                />
+              ))}
+            </li>
+          );
+        })}
+      </ol>
+      {!disabled && (
+        <div>
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            disabled={!canAdd}
+            onClick={() => onChange([...list, emptyValue(item)])}
+          >
+            <PlusIcon /> Add item to {label.replace(/ \(optional\)$/, "").toLowerCase()}
+          </Button>
+        </div>
+      )}
+      <FieldError>{error}</FieldError>
+    </FieldSet>
+  );
 }
 
 type SimpleFieldProps<T> = {

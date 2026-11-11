@@ -930,6 +930,7 @@ const injectedRtkApi = api
             limit: queryArg.limit,
             status: queryArg.status,
             tierId: queryArg.tierId,
+            q: queryArg.q,
           },
         }),
         providesTags: ["Affiliates"],
@@ -1227,6 +1228,8 @@ const injectedRtkApi = api
             cursor: queryArg.cursor,
             limit: queryArg.limit,
             kind: queryArg.kind,
+            status: queryArg.status,
+            q: queryArg.q,
           },
         }),
         providesTags: ["Page builder"],
@@ -3972,7 +3975,18 @@ const injectedRtkApi = api
   });
 export { injectedRtkApi as adminApi };
 export type GetV1AdminAffiliateProgramAffiliatesIdPayoutMethodsApiResponse =
-  unknown;
+  /** status 200 OK */ {
+    id: string;
+    affiliateId: string;
+    type: string;
+    label: string;
+    masked: string;
+    isDefault: boolean;
+    createdAt: string;
+    details?: {
+      [key: string]: string;
+    };
+  }[];
 export type GetV1AdminAffiliateProgramAffiliatesIdPayoutMethodsApiArg = {
   id: string;
   reveal?: string;
@@ -4479,22 +4493,183 @@ export type PostV1AdminWorkflowsTestApiArg = {
     };
   };
 };
-export type GetV1AdminAffiliatesApiResponse = unknown;
+export type GetV1AdminAffiliatesApiResponse = /** status 200 OK */ {
+  items: {
+    id: string;
+    customerId: string;
+    status: "PENDING" | "ACTIVE" | "SUSPENDED" | "REJECTED" | "CLOSED";
+    tierId: string | null;
+    tier: {
+      name: string;
+    } | null;
+    customer: {
+      email: string | null;
+      firstName: string | null;
+      lastName: string | null;
+    };
+    orderCount: number;
+    pendingMinor: number;
+    payableMinor: number;
+    currency: string | null;
+    decidedAt: string | null;
+    createdAt: string;
+  }[];
+  nextCursor: string | null;
+};
 export type GetV1AdminAffiliatesApiArg = {
   cursor?: string;
   limit?: number;
   status?: "PENDING" | "ACTIVE" | "SUSPENDED" | "REJECTED" | "CLOSED";
   tierId?: string;
+  q?: string;
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type GetV1AdminAffiliatesIdApiResponse = unknown;
+export type GetV1AdminAffiliatesIdApiResponse = /** status 200 OK */ {
+  id: string;
+  customerId: string;
+  status: "PENDING" | "ACTIVE" | "SUSPENDED" | "REJECTED" | "CLOSED";
+  tierId: string | null;
+  tier: {
+    id: string;
+    handle: string;
+    name: string;
+    rewardType: "CASH" | "STORE_CREDIT" | "LOYALTY_POINTS";
+    autoApprove: boolean;
+    isDefault: boolean;
+    position: number;
+    minSalesMinor: number | null;
+    createdAt: string;
+    updatedAt: string;
+  } | null;
+  application: {
+    [key: string]: any;
+  };
+  termsVersion: string | null;
+  termsAcceptedAt: string | null;
+  customFields: {
+    [key: string]: any;
+  };
+  notes: string | null;
+  decidedAt: string | null;
+  decisionReason: string | null;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+  customer: {
+    id: string;
+    email: string | null;
+    firstName: string | null;
+    lastName: string | null;
+  };
+  links: {
+    id: string;
+    code: string;
+    label: string | null;
+    targetPath: string | null;
+    status: "ACTIVE" | "PENDING_APPROVAL" | "DISABLED";
+    isDefault: boolean;
+    affiliateId: string;
+    createdAt: string;
+  }[];
+  balances: {
+    currency: string | null;
+    pendingMinor: number;
+    payableMinor: number;
+    inPayoutMinor: number;
+    paidMinor: number;
+    reversedMinor: number;
+  };
+  stats: {
+    clicks: number;
+    conversions: number;
+    conversionRate: number;
+    salesMinor: number;
+    earnings: {
+      [key: string]: number;
+    };
+    subIds: {
+      subId: string | null;
+      clicks: number;
+      conversions: number;
+    }[];
+  };
+};
 export type GetV1AdminAffiliatesIdApiArg = {
   id: string;
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type PatchV1AdminAffiliatesIdApiResponse = unknown;
+export type PatchV1AdminAffiliatesIdApiResponse = /** status 200 OK */ {
+  id: string;
+  customerId: string;
+  status: "PENDING" | "ACTIVE" | "SUSPENDED" | "REJECTED" | "CLOSED";
+  tierId: string | null;
+  tier: {
+    id: string;
+    handle: string;
+    name: string;
+    rewardType: "CASH" | "STORE_CREDIT" | "LOYALTY_POINTS";
+    autoApprove: boolean;
+    isDefault: boolean;
+    position: number;
+    minSalesMinor: number | null;
+    createdAt: string;
+    updatedAt: string;
+  } | null;
+  application: {
+    [key: string]: any;
+  };
+  termsVersion: string | null;
+  termsAcceptedAt: string | null;
+  customFields: {
+    [key: string]: any;
+  };
+  notes: string | null;
+  decidedAt: string | null;
+  decisionReason: string | null;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+  customer: {
+    id: string;
+    email: string | null;
+    firstName: string | null;
+    lastName: string | null;
+  };
+  links: {
+    id: string;
+    code: string;
+    label: string | null;
+    targetPath: string | null;
+    status: "ACTIVE" | "PENDING_APPROVAL" | "DISABLED";
+    isDefault: boolean;
+    affiliateId: string;
+    createdAt: string;
+  }[];
+  balances: {
+    currency: string | null;
+    pendingMinor: number;
+    payableMinor: number;
+    inPayoutMinor: number;
+    paidMinor: number;
+    reversedMinor: number;
+  };
+  stats: {
+    clicks: number;
+    conversions: number;
+    conversionRate: number;
+    salesMinor: number;
+    earnings: {
+      [key: string]: number;
+    };
+    subIds: {
+      subId: string | null;
+      clicks: number;
+      conversions: number;
+    }[];
+  };
+};
 export type PatchV1AdminAffiliatesIdApiArg = {
   id: string;
   "x-market"?: string;
@@ -4508,7 +4683,76 @@ export type PatchV1AdminAffiliatesIdApiArg = {
     };
   };
 };
-export type PostV1AdminAffiliatesIdStatusApiResponse = unknown;
+export type PostV1AdminAffiliatesIdStatusApiResponse = /** status 200 OK */ {
+  id: string;
+  customerId: string;
+  status: "PENDING" | "ACTIVE" | "SUSPENDED" | "REJECTED" | "CLOSED";
+  tierId: string | null;
+  tier: {
+    id: string;
+    handle: string;
+    name: string;
+    rewardType: "CASH" | "STORE_CREDIT" | "LOYALTY_POINTS";
+    autoApprove: boolean;
+    isDefault: boolean;
+    position: number;
+    minSalesMinor: number | null;
+    createdAt: string;
+    updatedAt: string;
+  } | null;
+  application: {
+    [key: string]: any;
+  };
+  termsVersion: string | null;
+  termsAcceptedAt: string | null;
+  customFields: {
+    [key: string]: any;
+  };
+  notes: string | null;
+  decidedAt: string | null;
+  decisionReason: string | null;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+  customer: {
+    id: string;
+    email: string | null;
+    firstName: string | null;
+    lastName: string | null;
+  };
+  links: {
+    id: string;
+    code: string;
+    label: string | null;
+    targetPath: string | null;
+    status: "ACTIVE" | "PENDING_APPROVAL" | "DISABLED";
+    isDefault: boolean;
+    affiliateId: string;
+    createdAt: string;
+  }[];
+  balances: {
+    currency: string | null;
+    pendingMinor: number;
+    payableMinor: number;
+    inPayoutMinor: number;
+    paidMinor: number;
+    reversedMinor: number;
+  };
+  stats: {
+    clicks: number;
+    conversions: number;
+    conversionRate: number;
+    salesMinor: number;
+    earnings: {
+      [key: string]: number;
+    };
+    subIds: {
+      subId: string | null;
+      clicks: number;
+      conversions: number;
+    }[];
+  };
+};
 export type PostV1AdminAffiliatesIdStatusApiArg = {
   id: string;
   "x-market"?: string;
@@ -4518,7 +4762,16 @@ export type PostV1AdminAffiliatesIdStatusApiArg = {
     reason?: string;
   };
 };
-export type PatchV1AdminAffiliatesLinksIdApiResponse = unknown;
+export type PatchV1AdminAffiliatesLinksIdApiResponse = /** status 200 OK */ {
+  id: string;
+  code: string;
+  label: string | null;
+  targetPath: string | null;
+  status: "ACTIVE" | "PENDING_APPROVAL" | "DISABLED";
+  isDefault: boolean;
+  affiliateId: string;
+  createdAt: string;
+};
 export type PatchV1AdminAffiliatesLinksIdApiArg = {
   id: string;
   "x-market"?: string;
@@ -4527,7 +4780,22 @@ export type PatchV1AdminAffiliatesLinksIdApiArg = {
     status: "ACTIVE" | "DISABLED";
   };
 };
-export type GetV1AdminAffiliatesIdEarningsApiResponse = unknown;
+export type GetV1AdminAffiliatesIdEarningsApiResponse = /** status 200 OK */ {
+  items: {
+    id: string;
+    kind: "COMMISSION" | "ADJUSTMENT" | "REVERSAL";
+    status: "PENDING" | "APPROVED" | "PAID" | "REVERSED";
+    rewardType: "CASH" | "STORE_CREDIT" | "LOYALTY_POINTS";
+    amountMinor: number;
+    currency: string;
+    reason: string | null;
+    orderId: string | null;
+    approvableAt: string | null;
+    payoutId: string | null;
+    createdAt: string;
+  }[];
+  nextCursor: string | null;
+};
 export type GetV1AdminAffiliatesIdEarningsApiArg = {
   id: string;
   cursor?: string;
@@ -4535,7 +4803,20 @@ export type GetV1AdminAffiliatesIdEarningsApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type PostV1AdminAffiliatesIdAdjustmentsApiResponse = unknown;
+export type PostV1AdminAffiliatesIdAdjustmentsApiResponse =
+  /** status 201 OK */ {
+    id: string;
+    kind: "COMMISSION" | "ADJUSTMENT" | "REVERSAL";
+    status: "PENDING" | "APPROVED" | "PAID" | "REVERSED";
+    rewardType: "CASH" | "STORE_CREDIT" | "LOYALTY_POINTS";
+    amountMinor: number;
+    currency: string;
+    reason: string | null;
+    orderId: string | null;
+    approvableAt: string | null;
+    payoutId: string | null;
+    createdAt: string;
+  };
 export type PostV1AdminAffiliatesIdAdjustmentsApiArg = {
   id: string;
   "x-market"?: string;
@@ -4546,7 +4827,20 @@ export type PostV1AdminAffiliatesIdAdjustmentsApiArg = {
     reason: string;
   };
 };
-export type GetV1AdminAffiliatesIdPayoutsApiResponse = unknown;
+export type GetV1AdminAffiliatesIdPayoutsApiResponse = /** status 200 OK */ {
+  items: {
+    id: string;
+    status:
+      "DRAFT" | "APPROVED" | "PROCESSING" | "PAID" | "FAILED" | "CANCELLED";
+    amountMinor: number;
+    currency: string;
+    method: string;
+    providerRef: string | null;
+    paidAt: string | null;
+    createdAt: string;
+  }[];
+  nextCursor: string | null;
+};
 export type GetV1AdminAffiliatesIdPayoutsApiArg = {
   id: string;
   cursor?: string;
@@ -4554,7 +4848,16 @@ export type GetV1AdminAffiliatesIdPayoutsApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type PostV1AdminAffiliatesIdPayoutsApiResponse = unknown;
+export type PostV1AdminAffiliatesIdPayoutsApiResponse = /** status 201 OK */ {
+  id: string;
+  status: "DRAFT" | "APPROVED" | "PROCESSING" | "PAID" | "FAILED" | "CANCELLED";
+  amountMinor: number;
+  currency: string;
+  method: string;
+  providerRef: string | null;
+  paidAt: string | null;
+  createdAt: string;
+};
 export type PostV1AdminAffiliatesIdPayoutsApiArg = {
   id: string;
   "x-market"?: string;
@@ -4563,13 +4866,35 @@ export type PostV1AdminAffiliatesIdPayoutsApiArg = {
     method?: "bank" | "mobile_wallet" | "manual";
   };
 };
-export type PostV1AdminAffiliatesPayoutsIdApproveApiResponse = unknown;
+export type PostV1AdminAffiliatesPayoutsIdApproveApiResponse =
+  /** status 200 OK */ {
+    id: string;
+    status:
+      "DRAFT" | "APPROVED" | "PROCESSING" | "PAID" | "FAILED" | "CANCELLED";
+    amountMinor: number;
+    currency: string;
+    method: string;
+    providerRef: string | null;
+    paidAt: string | null;
+    createdAt: string;
+  };
 export type PostV1AdminAffiliatesPayoutsIdApproveApiArg = {
   id: string;
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type PostV1AdminAffiliatesPayoutsIdPaidApiResponse = unknown;
+export type PostV1AdminAffiliatesPayoutsIdPaidApiResponse =
+  /** status 200 OK */ {
+    id: string;
+    status:
+      "DRAFT" | "APPROVED" | "PROCESSING" | "PAID" | "FAILED" | "CANCELLED";
+    amountMinor: number;
+    currency: string;
+    method: string;
+    providerRef: string | null;
+    paidAt: string | null;
+    createdAt: string;
+  };
 export type PostV1AdminAffiliatesPayoutsIdPaidApiArg = {
   id: string;
   "x-market"?: string;
@@ -4578,18 +4903,51 @@ export type PostV1AdminAffiliatesPayoutsIdPaidApiArg = {
     reference: string;
   };
 };
-export type PostV1AdminAffiliatesPayoutsIdCancelApiResponse = unknown;
+export type PostV1AdminAffiliatesPayoutsIdCancelApiResponse =
+  /** status 200 OK */ {
+    id: string;
+    status:
+      "DRAFT" | "APPROVED" | "PROCESSING" | "PAID" | "FAILED" | "CANCELLED";
+    amountMinor: number;
+    currency: string;
+    method: string;
+    providerRef: string | null;
+    paidAt: string | null;
+    createdAt: string;
+  };
 export type PostV1AdminAffiliatesPayoutsIdCancelApiArg = {
   id: string;
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type GetV1AdminAffiliatesConfigTiersApiResponse = unknown;
+export type GetV1AdminAffiliatesConfigTiersApiResponse = /** status 200 OK */ {
+  id: string;
+  handle: string;
+  name: string;
+  rewardType: "CASH" | "STORE_CREDIT" | "LOYALTY_POINTS";
+  autoApprove: boolean;
+  isDefault: boolean;
+  position: number;
+  minSalesMinor: number | null;
+  createdAt: string;
+  updatedAt: string;
+}[];
 export type GetV1AdminAffiliatesConfigTiersApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type PostV1AdminAffiliatesConfigTiersApiResponse = unknown;
+export type PostV1AdminAffiliatesConfigTiersApiResponse = /** status 201 OK */ {
+  id: string;
+  handle: string;
+  name: string;
+  rewardType: "CASH" | "STORE_CREDIT" | "LOYALTY_POINTS";
+  autoApprove: boolean;
+  isDefault: boolean;
+  position: number;
+  minSalesMinor: number | null;
+  createdAt: string;
+  updatedAt: string;
+};
 export type PostV1AdminAffiliatesConfigTiersApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
@@ -4603,7 +4961,19 @@ export type PostV1AdminAffiliatesConfigTiersApiArg = {
     minSalesMinor?: number | null;
   };
 };
-export type PutV1AdminAffiliatesConfigTiersIdApiResponse = unknown;
+export type PutV1AdminAffiliatesConfigTiersIdApiResponse =
+  /** status 200 OK */ {
+    id: string;
+    handle: string;
+    name: string;
+    rewardType: "CASH" | "STORE_CREDIT" | "LOYALTY_POINTS";
+    autoApprove: boolean;
+    isDefault: boolean;
+    position: number;
+    minSalesMinor: number | null;
+    createdAt: string;
+    updatedAt: string;
+  };
 export type PutV1AdminAffiliatesConfigTiersIdApiArg = {
   id: string;
   "x-market"?: string;
@@ -4618,12 +4988,66 @@ export type PutV1AdminAffiliatesConfigTiersIdApiArg = {
     minSalesMinor?: number | null;
   };
 };
-export type GetV1AdminAffiliatesConfigRulesApiResponse = unknown;
+export type GetV1AdminAffiliatesConfigRulesApiResponse = /** status 200 OK */ {
+  id: string;
+  scope:
+    | "affiliate_product"
+    | "product"
+    | "category"
+    | "affiliate"
+    | "tier"
+    | "program";
+  scopeId: string;
+  rule: {
+    type: "percent" | "fixed_per_item" | "fixed_per_order" | "tiered";
+    percent?: number;
+    amountMinor?: number;
+    tiers?: {
+      minSalesMinor: number;
+      percent: number;
+    }[];
+    appliesTo?: "all" | "first_order" | "returning";
+  };
+  priority: number;
+  isActive: boolean;
+  version: number;
+  activeFrom: string | null;
+  activeTo: string | null;
+  createdAt: string;
+  updatedAt: string;
+}[];
 export type GetV1AdminAffiliatesConfigRulesApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type PostV1AdminAffiliatesConfigRulesApiResponse = unknown;
+export type PostV1AdminAffiliatesConfigRulesApiResponse = /** status 201 OK */ {
+  id: string;
+  scope:
+    | "affiliate_product"
+    | "product"
+    | "category"
+    | "affiliate"
+    | "tier"
+    | "program";
+  scopeId: string;
+  rule: {
+    type: "percent" | "fixed_per_item" | "fixed_per_order" | "tiered";
+    percent?: number;
+    amountMinor?: number;
+    tiers?: {
+      minSalesMinor: number;
+      percent: number;
+    }[];
+    appliesTo?: "all" | "first_order" | "returning";
+  };
+  priority: number;
+  isActive: boolean;
+  version: number;
+  activeFrom: string | null;
+  activeTo: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
 export type PostV1AdminAffiliatesConfigRulesApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
@@ -4652,7 +5076,35 @@ export type PostV1AdminAffiliatesConfigRulesApiArg = {
     activeTo?: string | null;
   };
 };
-export type PutV1AdminAffiliatesConfigRulesIdApiResponse = unknown;
+export type PutV1AdminAffiliatesConfigRulesIdApiResponse =
+  /** status 200 OK */ {
+    id: string;
+    scope:
+      | "affiliate_product"
+      | "product"
+      | "category"
+      | "affiliate"
+      | "tier"
+      | "program";
+    scopeId: string;
+    rule: {
+      type: "percent" | "fixed_per_item" | "fixed_per_order" | "tiered";
+      percent?: number;
+      amountMinor?: number;
+      tiers?: {
+        minSalesMinor: number;
+        percent: number;
+      }[];
+      appliesTo?: "all" | "first_order" | "returning";
+    };
+    priority: number;
+    isActive: boolean;
+    version: number;
+    activeFrom: string | null;
+    activeTo: string | null;
+    createdAt: string;
+    updatedAt: string;
+  };
 export type PutV1AdminAffiliatesConfigRulesIdApiArg = {
   id: string;
   "x-market"?: string;
@@ -4694,20 +5146,69 @@ export type PutV1AdminOrdersIdAttributionApiArg = {
     reason: string;
   };
 };
-export type GetV1AdminBlocksApiResponse = unknown;
+export type GetV1AdminBlocksApiResponse = /** status 200 OK */ {
+  type: string;
+  label: string;
+  group: "layout" | "content" | "commerce" | "marketing" | "advanced";
+  container: boolean;
+  permission: string | null;
+  defaults: {
+    [key: string]: any;
+  };
+  schema: {
+    [key: string]: any;
+  };
+}[];
 export type GetV1AdminBlocksApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type GetV1AdminPagesApiResponse = unknown;
+export type GetV1AdminPagesApiResponse = /** status 200 OK */ {
+  items: {
+    id: string;
+    handle: string;
+    title: string;
+    kind: "PAGE" | "SECTION";
+    status: "DRAFT" | "ACTIVE" | "ARCHIVED";
+    publishAt: string | null;
+    publishedAt: string | null;
+    updatedAt: string;
+    createdAt: string;
+    publishedVersionNumber: number | null;
+    hasUnpublishedChanges: boolean;
+  }[];
+  nextCursor: string | null;
+};
 export type GetV1AdminPagesApiArg = {
   cursor?: string;
   limit?: number;
   kind?: "PAGE" | "SECTION";
+  status?: "DRAFT" | "ACTIVE" | "ARCHIVED";
+  q?: string;
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type PostV1AdminPagesApiResponse = unknown;
+export type PostV1AdminPagesApiResponse = /** status 201 OK */ {
+  id: string;
+  handle: string;
+  title: string;
+  kind: "PAGE" | "SECTION";
+  status: "DRAFT" | "ACTIVE" | "ARCHIVED";
+  publishAt: string | null;
+  publishedAt: string | null;
+  updatedAt: string;
+  createdAt: string;
+  blocks: any;
+  seo: any;
+  version: number;
+  publishedVersionId: string | null;
+  published: {
+    id: string;
+    number: number;
+    createdAt: string;
+  } | null;
+  hasUnpublishedChanges: boolean;
+};
 export type PostV1AdminPagesApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
@@ -4726,13 +5227,53 @@ export type PostV1AdminPagesApiArg = {
     publishAt?: string | null;
   };
 };
-export type GetV1AdminPagesIdApiResponse = unknown;
+export type GetV1AdminPagesIdApiResponse = /** status 200 OK */ {
+  id: string;
+  handle: string;
+  title: string;
+  kind: "PAGE" | "SECTION";
+  status: "DRAFT" | "ACTIVE" | "ARCHIVED";
+  publishAt: string | null;
+  publishedAt: string | null;
+  updatedAt: string;
+  createdAt: string;
+  blocks: any;
+  seo: any;
+  version: number;
+  publishedVersionId: string | null;
+  published: {
+    id: string;
+    number: number;
+    createdAt: string;
+  } | null;
+  hasUnpublishedChanges: boolean;
+};
 export type GetV1AdminPagesIdApiArg = {
   id: string;
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type PutV1AdminPagesIdApiResponse = unknown;
+export type PutV1AdminPagesIdApiResponse = /** status 200 OK */ {
+  id: string;
+  handle: string;
+  title: string;
+  kind: "PAGE" | "SECTION";
+  status: "DRAFT" | "ACTIVE" | "ARCHIVED";
+  publishAt: string | null;
+  publishedAt: string | null;
+  updatedAt: string;
+  createdAt: string;
+  blocks: any;
+  seo: any;
+  version: number;
+  publishedVersionId: string | null;
+  published: {
+    id: string;
+    number: number;
+    createdAt: string;
+  } | null;
+  hasUnpublishedChanges: boolean;
+};
 export type PutV1AdminPagesIdApiArg = {
   id: string;
   "x-market"?: string;
@@ -4753,7 +5294,27 @@ export type PutV1AdminPagesIdApiArg = {
     version: number;
   };
 };
-export type PostV1AdminPagesIdPublishApiResponse = unknown;
+export type PostV1AdminPagesIdPublishApiResponse = /** status 200 OK */ {
+  id: string;
+  handle: string;
+  title: string;
+  kind: "PAGE" | "SECTION";
+  status: "DRAFT" | "ACTIVE" | "ARCHIVED";
+  publishAt: string | null;
+  publishedAt: string | null;
+  updatedAt: string;
+  createdAt: string;
+  blocks: any;
+  seo: any;
+  version: number;
+  publishedVersionId: string | null;
+  published: {
+    id: string;
+    number: number;
+    createdAt: string;
+  } | null;
+  hasUnpublishedChanges: boolean;
+};
 export type PostV1AdminPagesIdPublishApiArg = {
   id: string;
   "x-market"?: string;
@@ -4762,7 +5323,27 @@ export type PostV1AdminPagesIdPublishApiArg = {
     note?: string;
   };
 };
-export type PostV1AdminPagesIdUnpublishApiResponse = unknown;
+export type PostV1AdminPagesIdUnpublishApiResponse = /** status 200 OK */ {
+  id: string;
+  handle: string;
+  title: string;
+  kind: "PAGE" | "SECTION";
+  status: "DRAFT" | "ACTIVE" | "ARCHIVED";
+  publishAt: string | null;
+  publishedAt: string | null;
+  updatedAt: string;
+  createdAt: string;
+  blocks: any;
+  seo: any;
+  version: number;
+  publishedVersionId: string | null;
+  published: {
+    id: string;
+    number: number;
+    createdAt: string;
+  } | null;
+  hasUnpublishedChanges: boolean;
+};
 export type PostV1AdminPagesIdUnpublishApiArg = {
   id: string;
   "x-market"?: string;
@@ -4771,13 +5352,40 @@ export type PostV1AdminPagesIdUnpublishApiArg = {
     status?: "DRAFT" | "ARCHIVED";
   };
 };
-export type GetV1AdminPagesIdVersionsApiResponse = unknown;
+export type GetV1AdminPagesIdVersionsApiResponse = /** status 200 OK */ {
+  id: string;
+  number: number;
+  title: string;
+  note: string | null;
+  createdById: string | null;
+  createdAt: string;
+}[];
 export type GetV1AdminPagesIdVersionsApiArg = {
   id: string;
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type PostV1AdminPagesIdRollbackApiResponse = unknown;
+export type PostV1AdminPagesIdRollbackApiResponse = /** status 200 OK */ {
+  id: string;
+  handle: string;
+  title: string;
+  kind: "PAGE" | "SECTION";
+  status: "DRAFT" | "ACTIVE" | "ARCHIVED";
+  publishAt: string | null;
+  publishedAt: string | null;
+  updatedAt: string;
+  createdAt: string;
+  blocks: any;
+  seo: any;
+  version: number;
+  publishedVersionId: string | null;
+  published: {
+    id: string;
+    number: number;
+    createdAt: string;
+  } | null;
+  hasUnpublishedChanges: boolean;
+};
 export type PostV1AdminPagesIdRollbackApiArg = {
   id: string;
   "x-market"?: string;
@@ -4836,12 +5444,67 @@ export type PostV1AdminCustomersIdStoreCreditApiArg = {
     expiresAt?: string | null;
   };
 };
-export type GetV1AdminImportsColumnsApiResponse = unknown;
+export type GetV1AdminImportsColumnsApiResponse = /** status 200 OK */ {
+  columns: (
+    | "handle"
+    | "title"
+    | "description"
+    | "vendor"
+    | "tags"
+    | "status"
+    | "option1_name"
+    | "option1_value"
+    | "option2_name"
+    | "option2_value"
+    | "option3_name"
+    | "option3_value"
+    | "sku"
+    | "price"
+    | "compare_at_price"
+    | "cost"
+    | "weight_grams"
+    | "barcode"
+    | "stock"
+    | "categories"
+  )[];
+};
 export type GetV1AdminImportsColumnsApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type PostV1AdminImportsApiResponse = unknown;
+export type PostV1AdminImportsApiResponse = /** status 202 OK */ {
+  id: string;
+  kind: "IMPORT" | "EXPORT";
+  entity: string;
+  format: string;
+  status: "PENDING" | "RUNNING" | "COMPLETED" | "FAILED";
+  dryRun: boolean;
+  report: {
+    rows?: number;
+    productsToCreate?: number;
+    productsToUpdate?: number;
+    variants?: number;
+    errors?: number;
+    errorList?: {
+      row: number;
+      field?: string;
+      message: string;
+    }[];
+    applied?: boolean;
+    imported?: number;
+    failed?: {
+      handle: string;
+      ok: boolean;
+      error?: string;
+    }[];
+    bytes?: number;
+    error?: string;
+  };
+  createdById: string | null;
+  startedAt: string | null;
+  finishedAt: string | null;
+  createdAt: string;
+};
 export type PostV1AdminImportsApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
@@ -4874,7 +5537,39 @@ export type PostV1AdminImportsApiArg = {
     dryRun?: boolean;
   };
 };
-export type PostV1AdminExportsApiResponse = unknown;
+export type PostV1AdminExportsApiResponse = /** status 202 OK */ {
+  id: string;
+  kind: "IMPORT" | "EXPORT";
+  entity: string;
+  format: string;
+  status: "PENDING" | "RUNNING" | "COMPLETED" | "FAILED";
+  dryRun: boolean;
+  report: {
+    rows?: number;
+    productsToCreate?: number;
+    productsToUpdate?: number;
+    variants?: number;
+    errors?: number;
+    errorList?: {
+      row: number;
+      field?: string;
+      message: string;
+    }[];
+    applied?: boolean;
+    imported?: number;
+    failed?: {
+      handle: string;
+      ok: boolean;
+      error?: string;
+    }[];
+    bytes?: number;
+    error?: string;
+  };
+  createdById: string | null;
+  startedAt: string | null;
+  finishedAt: string | null;
+  createdAt: string;
+};
 export type PostV1AdminExportsApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
@@ -4882,14 +5577,81 @@ export type PostV1AdminExportsApiArg = {
     format?: "csv" | "json";
   };
 };
-export type GetV1AdminDataJobsApiResponse = unknown;
+export type GetV1AdminDataJobsApiResponse = /** status 200 OK */ {
+  items: {
+    id: string;
+    kind: "IMPORT" | "EXPORT";
+    entity: string;
+    format: string;
+    status: "PENDING" | "RUNNING" | "COMPLETED" | "FAILED";
+    dryRun: boolean;
+    report: {
+      rows?: number;
+      productsToCreate?: number;
+      productsToUpdate?: number;
+      variants?: number;
+      errors?: number;
+      errorList?: {
+        row: number;
+        field?: string;
+        message: string;
+      }[];
+      applied?: boolean;
+      imported?: number;
+      failed?: {
+        handle: string;
+        ok: boolean;
+        error?: string;
+      }[];
+      bytes?: number;
+      error?: string;
+    };
+    createdById: string | null;
+    startedAt: string | null;
+    finishedAt: string | null;
+    createdAt: string;
+  }[];
+  nextCursor: string | null;
+};
 export type GetV1AdminDataJobsApiArg = {
   cursor?: string;
   limit?: number;
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type GetV1AdminDataJobsIdApiResponse = unknown;
+export type GetV1AdminDataJobsIdApiResponse = /** status 200 OK */ {
+  id: string;
+  kind: "IMPORT" | "EXPORT";
+  entity: string;
+  format: string;
+  status: "PENDING" | "RUNNING" | "COMPLETED" | "FAILED";
+  dryRun: boolean;
+  report: {
+    rows?: number;
+    productsToCreate?: number;
+    productsToUpdate?: number;
+    variants?: number;
+    errors?: number;
+    errorList?: {
+      row: number;
+      field?: string;
+      message: string;
+    }[];
+    applied?: boolean;
+    imported?: number;
+    failed?: {
+      handle: string;
+      ok: boolean;
+      error?: string;
+    }[];
+    bytes?: number;
+    error?: string;
+  };
+  createdById: string | null;
+  startedAt: string | null;
+  finishedAt: string | null;
+  createdAt: string;
+};
 export type GetV1AdminDataJobsIdApiArg = {
   id: string;
   "x-market"?: string;
@@ -4901,7 +5663,35 @@ export type GetV1AdminDataJobsIdDownloadApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type GetV1AdminPromotionsApiResponse = unknown;
+export type GetV1AdminPromotionsApiResponse = /** status 200 OK */ {
+  items: {
+    id: string;
+    name: string;
+    description: string | null;
+    type: "AUTOMATIC" | "CODE";
+    status: "DRAFT" | "ACTIVE" | "ARCHIVED";
+    effectiveStatus: "DRAFT" | "ACTIVE" | "ARCHIVED" | "SCHEDULED" | "EXPIRED";
+    priority: number;
+    stopFurther: boolean;
+    exclusivityGroup: string | null;
+    combinesWithSalePrices: boolean;
+    conditions: any;
+    actions: any;
+    startsAt: string | null;
+    endsAt: string | null;
+    usageLimit: number | null;
+    usageCount: number;
+    perCustomerLimit: number | null;
+    maxDiscountMinor: number | null;
+    version: number;
+    createdAt: string;
+    updatedAt: string;
+    _count: {
+      codes: number;
+    };
+  }[];
+  nextCursor: string | null;
+};
 export type GetV1AdminPromotionsApiArg = {
   cursor?: string;
   limit?: number;
@@ -4911,7 +5701,29 @@ export type GetV1AdminPromotionsApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type PostV1AdminPromotionsApiResponse = unknown;
+export type PostV1AdminPromotionsApiResponse = /** status 201 OK */ {
+  id: string;
+  name: string;
+  description: string | null;
+  type: "AUTOMATIC" | "CODE";
+  status: "DRAFT" | "ACTIVE" | "ARCHIVED";
+  effectiveStatus: "DRAFT" | "ACTIVE" | "ARCHIVED" | "SCHEDULED" | "EXPIRED";
+  priority: number;
+  stopFurther: boolean;
+  exclusivityGroup: string | null;
+  combinesWithSalePrices: boolean;
+  conditions: any;
+  actions: any;
+  startsAt: string | null;
+  endsAt: string | null;
+  usageLimit: number | null;
+  usageCount: number;
+  perCustomerLimit: number | null;
+  maxDiscountMinor: number | null;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+};
 export type PostV1AdminPromotionsApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
@@ -5010,13 +5822,61 @@ export type PostV1AdminPromotionsApiArg = {
     codes?: string[];
   };
 };
-export type GetV1AdminPromotionsIdApiResponse = unknown;
+export type GetV1AdminPromotionsIdApiResponse = /** status 200 OK */ {
+  id: string;
+  name: string;
+  description: string | null;
+  type: "AUTOMATIC" | "CODE";
+  status: "DRAFT" | "ACTIVE" | "ARCHIVED";
+  effectiveStatus: "DRAFT" | "ACTIVE" | "ARCHIVED" | "SCHEDULED" | "EXPIRED";
+  priority: number;
+  stopFurther: boolean;
+  exclusivityGroup: string | null;
+  combinesWithSalePrices: boolean;
+  conditions: any;
+  actions: any;
+  startsAt: string | null;
+  endsAt: string | null;
+  usageLimit: number | null;
+  usageCount: number;
+  perCustomerLimit: number | null;
+  maxDiscountMinor: number | null;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+  _count: {
+    codes: number;
+    redemptions: number;
+  };
+};
 export type GetV1AdminPromotionsIdApiArg = {
   id: string;
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type PatchV1AdminPromotionsIdApiResponse = unknown;
+export type PatchV1AdminPromotionsIdApiResponse = /** status 200 OK */ {
+  id: string;
+  name: string;
+  description: string | null;
+  type: "AUTOMATIC" | "CODE";
+  status: "DRAFT" | "ACTIVE" | "ARCHIVED";
+  effectiveStatus: "DRAFT" | "ACTIVE" | "ARCHIVED" | "SCHEDULED" | "EXPIRED";
+  priority: number;
+  stopFurther: boolean;
+  exclusivityGroup: string | null;
+  combinesWithSalePrices: boolean;
+  conditions: any;
+  actions: any;
+  startsAt: string | null;
+  endsAt: string | null;
+  usageLimit: number | null;
+  usageCount: number;
+  perCustomerLimit: number | null;
+  maxDiscountMinor: number | null;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+};
 export type PatchV1AdminPromotionsIdApiArg = {
   id: string;
   "x-market"?: string;
@@ -5116,7 +5976,29 @@ export type PatchV1AdminPromotionsIdApiArg = {
     version: number;
   };
 };
-export type PostV1AdminPromotionsIdStatusApiResponse = unknown;
+export type PostV1AdminPromotionsIdStatusApiResponse = /** status 200 OK */ {
+  id: string;
+  name: string;
+  description: string | null;
+  type: "AUTOMATIC" | "CODE";
+  status: "DRAFT" | "ACTIVE" | "ARCHIVED";
+  effectiveStatus: "DRAFT" | "ACTIVE" | "ARCHIVED" | "SCHEDULED" | "EXPIRED";
+  priority: number;
+  stopFurther: boolean;
+  exclusivityGroup: string | null;
+  combinesWithSalePrices: boolean;
+  conditions: any;
+  actions: any;
+  startsAt: string | null;
+  endsAt: string | null;
+  usageLimit: number | null;
+  usageCount: number;
+  perCustomerLimit: number | null;
+  maxDiscountMinor: number | null;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+};
 export type PostV1AdminPromotionsIdStatusApiArg = {
   id: string;
   "x-market"?: string;
@@ -5125,7 +6007,19 @@ export type PostV1AdminPromotionsIdStatusApiArg = {
     status: "DRAFT" | "ACTIVE" | "ARCHIVED";
   };
 };
-export type GetV1AdminPromotionsIdCodesApiResponse = unknown;
+export type GetV1AdminPromotionsIdCodesApiResponse = /** status 200 OK */ {
+  items: {
+    id: string;
+    promotionId: string;
+    code: string;
+    usageLimit: number | null;
+    usageCount: number;
+    isActive: boolean;
+    affiliateId: string | null;
+    createdAt: string;
+  }[];
+  nextCursor: string | null;
+};
 export type GetV1AdminPromotionsIdCodesApiArg = {
   id: string;
   cursor?: string;
@@ -5134,7 +6028,10 @@ export type GetV1AdminPromotionsIdCodesApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type PostV1AdminPromotionsIdCodesApiResponse = unknown;
+export type PostV1AdminPromotionsIdCodesApiResponse = /** status 201 OK */ {
+  created: number;
+  codes?: string[];
+};
 export type PostV1AdminPromotionsIdCodesApiArg = {
   id: string;
   "x-market"?: string;
@@ -5149,7 +6046,16 @@ export type PostV1AdminPromotionsIdCodesApiArg = {
     usageLimit?: number | null;
   };
 };
-export type PatchV1AdminPromotionsCodesIdApiResponse = unknown;
+export type PatchV1AdminPromotionsCodesIdApiResponse = /** status 200 OK */ {
+  id: string;
+  promotionId: string;
+  code: string;
+  usageLimit: number | null;
+  usageCount: number;
+  isActive: boolean;
+  affiliateId: string | null;
+  createdAt: string;
+};
 export type PatchV1AdminPromotionsCodesIdApiArg = {
   id: string;
   "x-market"?: string;
@@ -5158,7 +6064,51 @@ export type PatchV1AdminPromotionsCodesIdApiArg = {
     isActive: boolean;
   };
 };
-export type PostV1AdminPromotionsSimulateApiResponse = unknown;
+export type PostV1AdminPromotionsSimulateApiResponse = /** status 200 OK */ {
+  lines: {
+    key: string;
+    discountMinor: number;
+    allocations: {
+      promotionId: string;
+      amountMinor: number;
+    }[];
+  }[];
+  itemsDiscountMinor: number;
+  shippingDiscountMinor: number;
+  totalDiscountMinor: number;
+  applied: {
+    promotionId: string;
+    name: string;
+    code: string | null;
+    codeId: string | null;
+    itemsMinor: number;
+    shippingMinor: number;
+    amountMinor: number;
+  }[];
+  rejected: {
+    promotionId: string;
+    name: string;
+    code: string | null;
+    reason:
+      | "INACTIVE"
+      | "NOT_STARTED"
+      | "EXPIRED"
+      | "USAGE_LIMIT_REACHED"
+      | "CUSTOMER_LIMIT_REACHED"
+      | "CONDITIONS_NOT_MET"
+      | "NO_ELIGIBLE_ITEMS"
+      | "EXCLUSIVE_GROUP"
+      | "STOPPED_BY_HIGHER_PRIORITY"
+      | "INVALID_RULES";
+    detail?: string;
+  }[];
+  codes: {
+    code: string;
+    status: "applied" | "rejected";
+    reason?: string;
+    detail?: string;
+  }[];
+};
 export type PostV1AdminPromotionsSimulateApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
@@ -5179,7 +6129,14 @@ export type PostV1AdminPromotionsSimulateApiArg = {
     promotionIds?: string[];
   };
 };
-export type GetV1AdminPromotionsIdPerformanceApiResponse = unknown;
+export type GetV1AdminPromotionsIdPerformanceApiResponse =
+  /** status 200 OK */ {
+    uses: number;
+    revenueMinor: number;
+    discountMinor: number;
+    averageOrderMinor: number;
+    storeAverageOrderMinor: number;
+  };
 export type GetV1AdminPromotionsIdPerformanceApiArg = {
   id: string;
   from?: string;
@@ -5187,7 +6144,29 @@ export type GetV1AdminPromotionsIdPerformanceApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type GetV1AdminReportsSalesApiResponse = unknown;
+export type GetV1AdminReportsSalesApiResponse = /** status 200 OK */ {
+  series: {
+    orders: number;
+    grossMinor: number;
+    discountsMinor: number;
+    shippingMinor: number;
+    taxMinor: number;
+    netMinor: number;
+    refundsMinor: number;
+    averageOrderMinor: number;
+    period: string;
+  }[];
+  totals: {
+    orders: number;
+    grossMinor: number;
+    discountsMinor: number;
+    shippingMinor: number;
+    taxMinor: number;
+    netMinor: number;
+    refundsMinor: number;
+    averageOrderMinor: number;
+  };
+};
 export type GetV1AdminReportsSalesApiArg = {
   from?: string;
   to?: string;
@@ -5198,7 +6177,14 @@ export type GetV1AdminReportsSalesApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type GetV1AdminReportsProductsApiResponse = unknown;
+export type GetV1AdminReportsProductsApiResponse = /** status 200 OK */ {
+  productId: string;
+  title: string;
+  units: number;
+  revenueMinor: number;
+  marginMinor: number | null;
+  unitsRefunded: number;
+}[];
 export type GetV1AdminReportsProductsApiArg = {
   from?: string;
   to?: string;
@@ -5209,7 +6195,22 @@ export type GetV1AdminReportsProductsApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type GetV1AdminReportsCustomersApiResponse = unknown;
+export type GetV1AdminReportsCustomersApiResponse = /** status 200 OK */ {
+  series: {
+    period: string;
+    newCustomers: number;
+    firstOrders: number;
+    returningOrders: number;
+  }[];
+  topCustomers: {
+    customerId: string;
+    email?: string | null;
+    firstName?: string | null;
+    lastName?: string | null;
+    orders: number;
+    spentMinor: number;
+  }[];
+};
 export type GetV1AdminReportsCustomersApiArg = {
   from?: string;
   to?: string;
@@ -5220,7 +6221,14 @@ export type GetV1AdminReportsCustomersApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type GetV1AdminReportsPromotionsApiResponse = unknown;
+export type GetV1AdminReportsPromotionsApiResponse = /** status 200 OK */ {
+  promotionId: string;
+  name: string;
+  uses: number;
+  discountMinor: number;
+  revenueMinor: number;
+  averageOrderMinor: number;
+}[];
 export type GetV1AdminReportsPromotionsApiArg = {
   from?: string;
   to?: string;
@@ -5231,7 +6239,19 @@ export type GetV1AdminReportsPromotionsApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type GetV1AdminReportsSearchApiResponse = unknown;
+export type GetV1AdminReportsSearchApiResponse = /** status 200 OK */ {
+  available: boolean;
+  totalSearches: number;
+  topQueries: {
+    query: string;
+    searches: number;
+    averageResults: number;
+  }[];
+  zeroResultQueries: {
+    query: string;
+    searches: number;
+  }[];
+};
 export type GetV1AdminReportsSearchApiArg = {
   from?: string;
   to?: string;
@@ -5242,7 +6262,19 @@ export type GetV1AdminReportsSearchApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type GetV1AdminReportsAffiliatesApiResponse = unknown;
+export type GetV1AdminReportsAffiliatesApiResponse = /** status 200 OK */ {
+  outstandingLiabilityMinor: number;
+  affiliates: {
+    affiliateId: string;
+    email: string | null;
+    clicks: number;
+    conversions: number;
+    conversionRate: number;
+    revenueMinor: number;
+    earningsMinor: number;
+    refundRate: number;
+  }[];
+};
 export type GetV1AdminReportsAffiliatesApiArg = {
   from?: string;
   to?: string;
@@ -5253,7 +6285,51 @@ export type GetV1AdminReportsAffiliatesApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type GetV1AdminReturnsApiResponse = unknown;
+export type GetV1AdminReturnsApiResponse = /** status 200 OK */ {
+  items: {
+    id: string;
+    number: number;
+    orderId: string;
+    customerId: string | null;
+    status:
+      | "REQUESTED"
+      | "APPROVED"
+      | "REJECTED"
+      | "LABEL_ISSUED"
+      | "IN_TRANSIT"
+      | "RECEIVED"
+      | "INSPECTED"
+      | "COMPLETED"
+      | "PARTIALLY_ACCEPTED";
+    resolution: "REFUND" | "STORE_CREDIT" | "EXCHANGE";
+    customerNote: string | null;
+    photoUrls: string[];
+    staffNote: string | null;
+    carrier: string | null;
+    trackingNumber: string | null;
+    labelUrl: string | null;
+    refundId: string | null;
+    creditMinor: number | null;
+    exchangeOrderId: string | null;
+    version: number;
+    createdAt: string;
+    updatedAt: string;
+    lines: {
+      id: string;
+      orderLineId: string;
+      quantity: number;
+      reason: string;
+      exchangeVariantId: string | null;
+      inspection: ("RESTOCK" | "WRITE_OFF" | "REJECT") | null;
+      acceptedQuantity: number | null;
+    }[];
+    order: {
+      number: number;
+      email: string;
+    };
+  }[];
+  nextCursor: string | null;
+};
 export type GetV1AdminReturnsApiArg = {
   cursor?: string;
   limit?: number;
@@ -5270,13 +6346,110 @@ export type GetV1AdminReturnsApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type GetV1AdminReturnsIdApiResponse = unknown;
+export type GetV1AdminReturnsIdApiResponse = /** status 200 OK */ {
+  id: string;
+  number: number;
+  orderId: string;
+  customerId: string | null;
+  status:
+    | "REQUESTED"
+    | "APPROVED"
+    | "REJECTED"
+    | "LABEL_ISSUED"
+    | "IN_TRANSIT"
+    | "RECEIVED"
+    | "INSPECTED"
+    | "COMPLETED"
+    | "PARTIALLY_ACCEPTED";
+  resolution: "REFUND" | "STORE_CREDIT" | "EXCHANGE";
+  customerNote: string | null;
+  photoUrls: string[];
+  staffNote: string | null;
+  carrier: string | null;
+  trackingNumber: string | null;
+  labelUrl: string | null;
+  refundId: string | null;
+  creditMinor: number | null;
+  exchangeOrderId: string | null;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+  lines: {
+    id: string;
+    orderLineId: string;
+    quantity: number;
+    reason: string;
+    exchangeVariantId: string | null;
+    inspection: ("RESTOCK" | "WRITE_OFF" | "REJECT") | null;
+    acceptedQuantity: number | null;
+  }[];
+  order: {
+    id: string;
+    number: number;
+    email: string;
+    currency: string;
+    taxInclusive: boolean;
+    customerId: string | null;
+    lines: {
+      id: string;
+      productId: string;
+      variantId: string;
+      titleSnapshot: string;
+      variantTitle: string;
+      skuSnapshot: string;
+      unitPriceMinor: number;
+      quantity: number;
+      discountMinor: number;
+      taxMinor: number;
+      totalMinor: number;
+      fulfilledQuantity: number;
+      refundedQuantity: number;
+    }[];
+  };
+};
 export type GetV1AdminReturnsIdApiArg = {
   id: string;
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type PostV1AdminReturnsIdDecisionApiResponse = unknown;
+export type PostV1AdminReturnsIdDecisionApiResponse = /** status 200 OK */ {
+  id: string;
+  number: number;
+  orderId: string;
+  customerId: string | null;
+  status:
+    | "REQUESTED"
+    | "APPROVED"
+    | "REJECTED"
+    | "LABEL_ISSUED"
+    | "IN_TRANSIT"
+    | "RECEIVED"
+    | "INSPECTED"
+    | "COMPLETED"
+    | "PARTIALLY_ACCEPTED";
+  resolution: "REFUND" | "STORE_CREDIT" | "EXCHANGE";
+  customerNote: string | null;
+  photoUrls: string[];
+  staffNote: string | null;
+  carrier: string | null;
+  trackingNumber: string | null;
+  labelUrl: string | null;
+  refundId: string | null;
+  creditMinor: number | null;
+  exchangeOrderId: string | null;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+  lines: {
+    id: string;
+    orderLineId: string;
+    quantity: number;
+    reason: string;
+    exchangeVariantId: string | null;
+    inspection: ("RESTOCK" | "WRITE_OFF" | "REJECT") | null;
+    acceptedQuantity: number | null;
+  }[];
+};
 export type PostV1AdminReturnsIdDecisionApiArg = {
   id: string;
   "x-market"?: string;
@@ -5286,7 +6459,44 @@ export type PostV1AdminReturnsIdDecisionApiArg = {
     note?: string;
   };
 };
-export type PostV1AdminReturnsIdShippingApiResponse = unknown;
+export type PostV1AdminReturnsIdShippingApiResponse = /** status 200 OK */ {
+  id: string;
+  number: number;
+  orderId: string;
+  customerId: string | null;
+  status:
+    | "REQUESTED"
+    | "APPROVED"
+    | "REJECTED"
+    | "LABEL_ISSUED"
+    | "IN_TRANSIT"
+    | "RECEIVED"
+    | "INSPECTED"
+    | "COMPLETED"
+    | "PARTIALLY_ACCEPTED";
+  resolution: "REFUND" | "STORE_CREDIT" | "EXCHANGE";
+  customerNote: string | null;
+  photoUrls: string[];
+  staffNote: string | null;
+  carrier: string | null;
+  trackingNumber: string | null;
+  labelUrl: string | null;
+  refundId: string | null;
+  creditMinor: number | null;
+  exchangeOrderId: string | null;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+  lines: {
+    id: string;
+    orderLineId: string;
+    quantity: number;
+    reason: string;
+    exchangeVariantId: string | null;
+    inspection: ("RESTOCK" | "WRITE_OFF" | "REJECT") | null;
+    acceptedQuantity: number | null;
+  }[];
+};
 export type PostV1AdminReturnsIdShippingApiArg = {
   id: string;
   "x-market"?: string;
@@ -5298,7 +6508,44 @@ export type PostV1AdminReturnsIdShippingApiArg = {
     labelUrl?: string;
   };
 };
-export type PostV1AdminReturnsIdInspectionApiResponse = unknown;
+export type PostV1AdminReturnsIdInspectionApiResponse = /** status 200 OK */ {
+  id: string;
+  number: number;
+  orderId: string;
+  customerId: string | null;
+  status:
+    | "REQUESTED"
+    | "APPROVED"
+    | "REJECTED"
+    | "LABEL_ISSUED"
+    | "IN_TRANSIT"
+    | "RECEIVED"
+    | "INSPECTED"
+    | "COMPLETED"
+    | "PARTIALLY_ACCEPTED";
+  resolution: "REFUND" | "STORE_CREDIT" | "EXCHANGE";
+  customerNote: string | null;
+  photoUrls: string[];
+  staffNote: string | null;
+  carrier: string | null;
+  trackingNumber: string | null;
+  labelUrl: string | null;
+  refundId: string | null;
+  creditMinor: number | null;
+  exchangeOrderId: string | null;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+  lines: {
+    id: string;
+    orderLineId: string;
+    quantity: number;
+    reason: string;
+    exchangeVariantId: string | null;
+    inspection: ("RESTOCK" | "WRITE_OFF" | "REJECT") | null;
+    acceptedQuantity: number | null;
+  }[];
+};
 export type PostV1AdminReturnsIdInspectionApiArg = {
   id: string;
   "x-market"?: string;
@@ -5311,7 +6558,44 @@ export type PostV1AdminReturnsIdInspectionApiArg = {
     }[];
   };
 };
-export type PostV1AdminReturnsIdCompleteApiResponse = unknown;
+export type PostV1AdminReturnsIdCompleteApiResponse = /** status 200 OK */ {
+  id: string;
+  number: number;
+  orderId: string;
+  customerId: string | null;
+  status:
+    | "REQUESTED"
+    | "APPROVED"
+    | "REJECTED"
+    | "LABEL_ISSUED"
+    | "IN_TRANSIT"
+    | "RECEIVED"
+    | "INSPECTED"
+    | "COMPLETED"
+    | "PARTIALLY_ACCEPTED";
+  resolution: "REFUND" | "STORE_CREDIT" | "EXCHANGE";
+  customerNote: string | null;
+  photoUrls: string[];
+  staffNote: string | null;
+  carrier: string | null;
+  trackingNumber: string | null;
+  labelUrl: string | null;
+  refundId: string | null;
+  creditMinor: number | null;
+  exchangeOrderId: string | null;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+  lines: {
+    id: string;
+    orderLineId: string;
+    quantity: number;
+    reason: string;
+    exchangeVariantId: string | null;
+    inspection: ("RESTOCK" | "WRITE_OFF" | "REJECT") | null;
+    acceptedQuantity: number | null;
+  }[];
+};
 export type PostV1AdminReturnsIdCompleteApiArg = {
   id: string;
   "Idempotency-Key": string;
@@ -5321,7 +6605,58 @@ export type PostV1AdminReturnsIdCompleteApiArg = {
     reference?: string;
   };
 };
-export type GetV1AdminModerationApiResponse = unknown;
+export type GetV1AdminModerationApiResponse =
+  | /** status 200 OK */ {
+      kind: "reviews";
+      items: {
+        id: string;
+        productId: string;
+        customerId: string;
+        rating: number;
+        title: string | null;
+        body: string;
+        mediaUrls: string[];
+        verifiedBuyer: boolean;
+        status: "PENDING" | "APPROVED" | "REJECTED";
+        helpfulCount: number;
+        reply: string | null;
+        repliedAt: string | null;
+        createdAt: string;
+        updatedAt: string;
+        product: {
+          handle: string;
+          title: string;
+        };
+        customer: {
+          email: string | null;
+          firstName: string | null;
+          lastName: string | null;
+        };
+      }[];
+      nextCursor: string | null;
+    }
+  | {
+      kind: "questions";
+      items: {
+        id: string;
+        productId: string;
+        customerId: string | null;
+        body: string;
+        status: "PENDING" | "APPROVED" | "REJECTED";
+        createdAt: string;
+        answers: {
+          id: string;
+          body: string;
+          authorId: string;
+          createdAt: string;
+        }[];
+        product: {
+          handle: string;
+          title: string;
+        };
+      }[];
+      nextCursor: string | null;
+    };
 export type GetV1AdminModerationApiArg = {
   cursor?: string;
   limit?: number;
@@ -5330,7 +6665,22 @@ export type GetV1AdminModerationApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type PatchV1AdminModerationReviewsIdApiResponse = unknown;
+export type PatchV1AdminModerationReviewsIdApiResponse = /** status 200 OK */ {
+  id: string;
+  productId: string;
+  customerId: string;
+  rating: number;
+  title: string | null;
+  body: string;
+  mediaUrls: string[];
+  verifiedBuyer: boolean;
+  status: "PENDING" | "APPROVED" | "REJECTED";
+  helpfulCount: number;
+  reply: string | null;
+  repliedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
 export type PatchV1AdminModerationReviewsIdApiArg = {
   id: string;
   "x-market"?: string;
@@ -5340,7 +6690,21 @@ export type PatchV1AdminModerationReviewsIdApiArg = {
     reply?: string | null;
   };
 };
-export type PatchV1AdminModerationQuestionsIdApiResponse = unknown;
+export type PatchV1AdminModerationQuestionsIdApiResponse =
+  /** status 200 OK */ {
+    id: string;
+    productId: string;
+    customerId: string | null;
+    body: string;
+    status: "PENDING" | "APPROVED" | "REJECTED";
+    createdAt: string;
+    answers: {
+      id: string;
+      body: string;
+      authorId: string;
+      createdAt: string;
+    }[];
+  };
 export type PatchV1AdminModerationQuestionsIdApiArg = {
   id: string;
   "x-market"?: string;
@@ -5350,12 +6714,114 @@ export type PatchV1AdminModerationQuestionsIdApiArg = {
     answer?: string;
   };
 };
-export type GetV1AdminSegmentsApiResponse = unknown;
+export type GetV1AdminSegmentsApiResponse = /** status 200 OK */ {
+  id: string;
+  handle: string;
+  name: string;
+  rules: {
+    match: "all" | "any";
+    conditions: (
+      | {
+          field:
+            "total_spent" | "order_count" | "last_order_days" | "created_days";
+          op: "gt" | "gte" | "lt" | "lte" | "eq";
+          value: number;
+        }
+      | {
+          field: "tag";
+          op: "has" | "not_has";
+          value: string;
+        }
+      | {
+          field: "group";
+          op: "eq" | "neq";
+          value: string;
+        }
+      | {
+          field: "accepts_marketing";
+          op: "eq";
+          value: boolean;
+        }
+      | {
+          field: "has_account";
+          op: "eq";
+          value: boolean;
+        }
+      | {
+          field: "country";
+          op: "in" | "not_in";
+          value: string[];
+        }
+      | {
+          field: "custom_field";
+          key: string;
+          op: "eq" | "neq";
+          value: string | number | boolean;
+        }
+    )[];
+  };
+  memberCount: number;
+  refreshedAt: string | null;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+}[];
 export type GetV1AdminSegmentsApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type PostV1AdminSegmentsApiResponse = unknown;
+export type PostV1AdminSegmentsApiResponse = /** status 201 OK */ {
+  id: string;
+  handle: string;
+  name: string;
+  rules: {
+    match: "all" | "any";
+    conditions: (
+      | {
+          field:
+            "total_spent" | "order_count" | "last_order_days" | "created_days";
+          op: "gt" | "gte" | "lt" | "lte" | "eq";
+          value: number;
+        }
+      | {
+          field: "tag";
+          op: "has" | "not_has";
+          value: string;
+        }
+      | {
+          field: "group";
+          op: "eq" | "neq";
+          value: string;
+        }
+      | {
+          field: "accepts_marketing";
+          op: "eq";
+          value: boolean;
+        }
+      | {
+          field: "has_account";
+          op: "eq";
+          value: boolean;
+        }
+      | {
+          field: "country";
+          op: "in" | "not_in";
+          value: string[];
+        }
+      | {
+          field: "custom_field";
+          key: string;
+          op: "eq" | "neq";
+          value: string | number | boolean;
+        }
+    )[];
+  };
+  memberCount: number;
+  refreshedAt: string | null;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+};
 export type PostV1AdminSegmentsApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
@@ -5409,7 +6875,15 @@ export type PostV1AdminSegmentsApiArg = {
     };
   };
 };
-export type PostV1AdminSegmentsPreviewApiResponse = unknown;
+export type PostV1AdminSegmentsPreviewApiResponse = /** status 200 OK */ {
+  count: number;
+  sample: {
+    id: string;
+    email: string | null;
+    firstName: string | null;
+    lastName: string | null;
+  }[];
+};
 export type PostV1AdminSegmentsPreviewApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
@@ -5461,7 +6935,58 @@ export type PostV1AdminSegmentsPreviewApiArg = {
     };
   };
 };
-export type PutV1AdminSegmentsIdApiResponse = unknown;
+export type PutV1AdminSegmentsIdApiResponse = /** status 200 OK */ {
+  id: string;
+  handle: string;
+  name: string;
+  rules: {
+    match: "all" | "any";
+    conditions: (
+      | {
+          field:
+            "total_spent" | "order_count" | "last_order_days" | "created_days";
+          op: "gt" | "gte" | "lt" | "lte" | "eq";
+          value: number;
+        }
+      | {
+          field: "tag";
+          op: "has" | "not_has";
+          value: string;
+        }
+      | {
+          field: "group";
+          op: "eq" | "neq";
+          value: string;
+        }
+      | {
+          field: "accepts_marketing";
+          op: "eq";
+          value: boolean;
+        }
+      | {
+          field: "has_account";
+          op: "eq";
+          value: boolean;
+        }
+      | {
+          field: "country";
+          op: "in" | "not_in";
+          value: string[];
+        }
+      | {
+          field: "custom_field";
+          key: string;
+          op: "eq" | "neq";
+          value: string | number | boolean;
+        }
+    )[];
+  };
+  memberCount: number;
+  refreshedAt: string | null;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+};
 export type PutV1AdminSegmentsIdApiArg = {
   id: string;
   "x-market"?: string;
@@ -5523,18 +7048,172 @@ export type DeleteV1AdminSegmentsIdApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type PostV1AdminSegmentsIdRefreshApiResponse = unknown;
+export type PostV1AdminSegmentsIdRefreshApiResponse = /** status 200 OK */ {
+  memberCount: number;
+  entered: number;
+  exited: number;
+};
 export type PostV1AdminSegmentsIdRefreshApiArg = {
   id: string;
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type GetV1AdminThemesApiResponse = unknown;
+export type GetV1AdminThemesApiResponse = /** status 200 OK */ {
+  id: string;
+  handle: string;
+  name: string;
+  tokens: {
+    colors: {
+      background: string;
+      foreground: string;
+      primary: string;
+      primaryForeground: string;
+      secondary: string;
+      secondaryForeground: string;
+      muted: string;
+      mutedForeground: string;
+      accent: string;
+      accentForeground: string;
+      border: string;
+      destructive: string;
+    };
+    dark?: {
+      colors: {
+        background?: string;
+        foreground?: string;
+        primary?: string;
+        primaryForeground?: string;
+        secondary?: string;
+        secondaryForeground?: string;
+        muted?: string;
+        mutedForeground?: string;
+        accent?: string;
+        accentForeground?: string;
+        border?: string;
+        destructive?: string;
+      };
+    };
+    typography: {
+      fontBody: string;
+      fontHeading: string;
+      baseSizePx: number;
+      scale: number;
+    };
+    radius: {
+      sm: number;
+      md: number;
+      lg: number;
+    };
+    spacing: {
+      unitPx: number;
+    };
+    shadows: {
+      [key: string]: string;
+    };
+    buttons: {
+      radius: "none" | "sm" | "md" | "lg" | "full";
+      uppercase: boolean;
+    };
+  };
+  customCss: string | null;
+  logoMediaId: string | null;
+  faviconMediaId: string | null;
+  socialImageMediaId: string | null;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+  channels: {
+    id: string;
+    handle: string;
+  }[];
+  contrastWarnings: {
+    mode: "light" | "dark";
+    foreground: string;
+    background: string;
+    ratio: number;
+    required: number;
+  }[];
+}[];
 export type GetV1AdminThemesApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type PostV1AdminThemesApiResponse = unknown;
+export type PostV1AdminThemesApiResponse = /** status 201 OK */ {
+  id: string;
+  handle: string;
+  name: string;
+  tokens: {
+    colors: {
+      background: string;
+      foreground: string;
+      primary: string;
+      primaryForeground: string;
+      secondary: string;
+      secondaryForeground: string;
+      muted: string;
+      mutedForeground: string;
+      accent: string;
+      accentForeground: string;
+      border: string;
+      destructive: string;
+    };
+    dark?: {
+      colors: {
+        background?: string;
+        foreground?: string;
+        primary?: string;
+        primaryForeground?: string;
+        secondary?: string;
+        secondaryForeground?: string;
+        muted?: string;
+        mutedForeground?: string;
+        accent?: string;
+        accentForeground?: string;
+        border?: string;
+        destructive?: string;
+      };
+    };
+    typography: {
+      fontBody: string;
+      fontHeading: string;
+      baseSizePx: number;
+      scale: number;
+    };
+    radius: {
+      sm: number;
+      md: number;
+      lg: number;
+    };
+    spacing: {
+      unitPx: number;
+    };
+    shadows: {
+      [key: string]: string;
+    };
+    buttons: {
+      radius: "none" | "sm" | "md" | "lg" | "full";
+      uppercase: boolean;
+    };
+  };
+  customCss: string | null;
+  logoMediaId: string | null;
+  faviconMediaId: string | null;
+  socialImageMediaId: string | null;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+  channels: {
+    id: string;
+    handle: string;
+  }[];
+  contrastWarnings: {
+    mode: "light" | "dark";
+    foreground: string;
+    background: string;
+    ratio: number;
+    required: number;
+  }[];
+};
 export type PostV1AdminThemesApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
@@ -5600,13 +7279,163 @@ export type PostV1AdminThemesApiArg = {
     socialImageMediaId?: string | null;
   };
 };
-export type GetV1AdminThemesIdApiResponse = unknown;
+export type GetV1AdminThemesIdApiResponse = /** status 200 OK */ {
+  id: string;
+  handle: string;
+  name: string;
+  tokens: {
+    colors: {
+      background: string;
+      foreground: string;
+      primary: string;
+      primaryForeground: string;
+      secondary: string;
+      secondaryForeground: string;
+      muted: string;
+      mutedForeground: string;
+      accent: string;
+      accentForeground: string;
+      border: string;
+      destructive: string;
+    };
+    dark?: {
+      colors: {
+        background?: string;
+        foreground?: string;
+        primary?: string;
+        primaryForeground?: string;
+        secondary?: string;
+        secondaryForeground?: string;
+        muted?: string;
+        mutedForeground?: string;
+        accent?: string;
+        accentForeground?: string;
+        border?: string;
+        destructive?: string;
+      };
+    };
+    typography: {
+      fontBody: string;
+      fontHeading: string;
+      baseSizePx: number;
+      scale: number;
+    };
+    radius: {
+      sm: number;
+      md: number;
+      lg: number;
+    };
+    spacing: {
+      unitPx: number;
+    };
+    shadows: {
+      [key: string]: string;
+    };
+    buttons: {
+      radius: "none" | "sm" | "md" | "lg" | "full";
+      uppercase: boolean;
+    };
+  };
+  customCss: string | null;
+  logoMediaId: string | null;
+  faviconMediaId: string | null;
+  socialImageMediaId: string | null;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+  channels: {
+    id: string;
+    handle: string;
+  }[];
+  contrastWarnings: {
+    mode: "light" | "dark";
+    foreground: string;
+    background: string;
+    ratio: number;
+    required: number;
+  }[];
+};
 export type GetV1AdminThemesIdApiArg = {
   id: string;
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type PutV1AdminThemesIdApiResponse = unknown;
+export type PutV1AdminThemesIdApiResponse = /** status 200 OK */ {
+  id: string;
+  handle: string;
+  name: string;
+  tokens: {
+    colors: {
+      background: string;
+      foreground: string;
+      primary: string;
+      primaryForeground: string;
+      secondary: string;
+      secondaryForeground: string;
+      muted: string;
+      mutedForeground: string;
+      accent: string;
+      accentForeground: string;
+      border: string;
+      destructive: string;
+    };
+    dark?: {
+      colors: {
+        background?: string;
+        foreground?: string;
+        primary?: string;
+        primaryForeground?: string;
+        secondary?: string;
+        secondaryForeground?: string;
+        muted?: string;
+        mutedForeground?: string;
+        accent?: string;
+        accentForeground?: string;
+        border?: string;
+        destructive?: string;
+      };
+    };
+    typography: {
+      fontBody: string;
+      fontHeading: string;
+      baseSizePx: number;
+      scale: number;
+    };
+    radius: {
+      sm: number;
+      md: number;
+      lg: number;
+    };
+    spacing: {
+      unitPx: number;
+    };
+    shadows: {
+      [key: string]: string;
+    };
+    buttons: {
+      radius: "none" | "sm" | "md" | "lg" | "full";
+      uppercase: boolean;
+    };
+  };
+  customCss: string | null;
+  logoMediaId: string | null;
+  faviconMediaId: string | null;
+  socialImageMediaId: string | null;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+  channels: {
+    id: string;
+    handle: string;
+  }[];
+  contrastWarnings: {
+    mode: "light" | "dark";
+    foreground: string;
+    background: string;
+    ratio: number;
+    required: number;
+  }[];
+};
 export type PutV1AdminThemesIdApiArg = {
   id: string;
   "x-market"?: string;
@@ -5674,7 +7503,82 @@ export type PutV1AdminThemesIdApiArg = {
     version: number;
   };
 };
-export type PostV1AdminThemesIdActivateApiResponse = unknown;
+export type PostV1AdminThemesIdActivateApiResponse = /** status 200 OK */ {
+  id: string;
+  handle: string;
+  name: string;
+  tokens: {
+    colors: {
+      background: string;
+      foreground: string;
+      primary: string;
+      primaryForeground: string;
+      secondary: string;
+      secondaryForeground: string;
+      muted: string;
+      mutedForeground: string;
+      accent: string;
+      accentForeground: string;
+      border: string;
+      destructive: string;
+    };
+    dark?: {
+      colors: {
+        background?: string;
+        foreground?: string;
+        primary?: string;
+        primaryForeground?: string;
+        secondary?: string;
+        secondaryForeground?: string;
+        muted?: string;
+        mutedForeground?: string;
+        accent?: string;
+        accentForeground?: string;
+        border?: string;
+        destructive?: string;
+      };
+    };
+    typography: {
+      fontBody: string;
+      fontHeading: string;
+      baseSizePx: number;
+      scale: number;
+    };
+    radius: {
+      sm: number;
+      md: number;
+      lg: number;
+    };
+    spacing: {
+      unitPx: number;
+    };
+    shadows: {
+      [key: string]: string;
+    };
+    buttons: {
+      radius: "none" | "sm" | "md" | "lg" | "full";
+      uppercase: boolean;
+    };
+  };
+  customCss: string | null;
+  logoMediaId: string | null;
+  faviconMediaId: string | null;
+  socialImageMediaId: string | null;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+  channels: {
+    id: string;
+    handle: string;
+  }[];
+  contrastWarnings: {
+    mode: "light" | "dark";
+    foreground: string;
+    background: string;
+    ratio: number;
+    required: number;
+  }[];
+};
 export type PostV1AdminThemesIdActivateApiArg = {
   id: string;
   "x-market"?: string;
@@ -5683,7 +7587,10 @@ export type PostV1AdminThemesIdActivateApiArg = {
     channelId: string;
   };
 };
-export type PostV1AdminThemesIdPreviewLinkApiResponse = unknown;
+export type PostV1AdminThemesIdPreviewLinkApiResponse = /** status 200 OK */ {
+  token: string;
+  expiresAt: string;
+};
 export type PostV1AdminThemesIdPreviewLinkApiArg = {
   id: string;
   "x-market"?: string;

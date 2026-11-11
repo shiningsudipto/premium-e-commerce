@@ -31,9 +31,11 @@ export type FieldKind =
   | { kind: "boolean" }
   | { kind: "enum"; options: string[] }
   | { kind: "text"; inputType: "text" | "email" | "url"; multiline: boolean }
+  | { kind: "datetime" }
   | { kind: "number"; integer: boolean }
   | { kind: "string-list" }
   | { kind: "enum-list"; options: string[] }
+  | { kind: "object-list"; item: JsonSchema & { properties: Record<string, JsonSchema> } }
   | { kind: "object"; properties: Record<string, JsonSchema>; required: string[] }
   | { kind: "nullable"; inner: JsonSchema }
   | { kind: "json" };
@@ -58,6 +60,7 @@ export function fieldKind(schema: JsonSchema, opts: { multilineKeys?: boolean } 
     case "boolean":
       return { kind: "boolean" };
     case "string":
+      if (schema.format === "date-time") return { kind: "datetime" };
       return {
         kind: "text",
         inputType: schema.format === "email" ? "email" : schema.format === "uri" ? "url" : "text",
@@ -71,6 +74,8 @@ export function fieldKind(schema: JsonSchema, opts: { multilineKeys?: boolean } 
       if (schema.items?.enum?.every((v) => typeof v === "string"))
         return { kind: "enum-list", options: schema.items.enum as string[] };
       if (schema.items?.type === "string") return { kind: "string-list" };
+      if (schema.items?.type === "object" && schema.items.properties)
+        return { kind: "object-list", item: schema.items as JsonSchema & { properties: Record<string, JsonSchema> } };
       return { kind: "json" };
     case "object":
       return schema.properties
@@ -121,6 +126,7 @@ export function validate(schema: JsonSchema, value: unknown, path = ""): Record<
         fail(`At most ${schema.maxLength} characters`);
       else if (schema.format === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) fail("Enter an email address");
       else if (schema.format === "uri" && !URL.canParse(value)) fail("Enter a full URL");
+      else if (schema.format === "date-time" && Number.isNaN(Date.parse(value))) fail("Enter a date and time");
       break;
     }
     case "integer":
@@ -205,4 +211,20 @@ export function humanize(key: string): string {
     .trim()
     .toLowerCase();
   return words.charAt(0).toUpperCase() + words.slice(1);
+}
+
+// <input type="datetime-local"> works in local time without a zone; JSON Schema "date-time"
+// values are ISO instants.
+export function toLocalDateTime(iso: unknown): string {
+  if (typeof iso !== "string" || !iso) return "";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+export function fromLocalDateTime(value: string): string | undefined {
+  if (!value) return undefined;
+  const d = new Date(value);
+  return Number.isNaN(d.getTime()) ? undefined : d.toISOString();
 }

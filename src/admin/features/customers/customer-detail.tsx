@@ -19,6 +19,7 @@ import { formatDateTime } from "../../lib/format";
 import { DEFAULT_CURRENCY, formatMoney } from "../../lib/money";
 import { AddressBlock } from "../orders/address-block";
 import { ORDER_STATUS_LABELS, orderStatusVariant } from "../orders/order-actions";
+import { CustomerPrivacy, CustomerTagsGroup } from "./customer-manage";
 import { customerName } from "./customers-screen";
 
 function Stat({ label, value }: { label: string; value: ReactNode }) {
@@ -30,12 +31,13 @@ function Stat({ label, value }: { label: string; value: ReactNode }) {
   );
 }
 
-// Customer profile (spec §6.6), read-only: contact details, addresses, order stats and the
-// latest orders.
+// Customer profile (spec §6.6): contact details, addresses, order stats and the latest orders.
+// Staff with customers.write can also edit tags and group, export the data or anonymize.
 export function CustomerDetailScreen({ id }: { id: string }) {
   const customer = useGetV1AdminCustomersIdQuery({ id });
   const groups = useGetV1AdminCustomerGroupsQuery({});
   const canReadOrders = useCan("orders.read");
+  const canWrite = useCan("customers.write");
   const orders = useGetV1AdminOrdersQuery({ customerId: id, limit: 10 }, { skip: !canReadOrders });
 
   if (customer.error) {
@@ -180,7 +182,7 @@ export function CustomerDetailScreen({ id }: { id: string }) {
                 </>
               )}
             </dl>
-            {c.tags.length > 0 && (
+            {!canWrite && c.tags.length > 0 && (
               <div className="flex flex-wrap gap-1 pt-1">
                 {c.tags.map((t) => (
                   <Badge key={t} variant="outline">
@@ -190,6 +192,8 @@ export function CustomerDetailScreen({ id }: { id: string }) {
               </div>
             )}
           </section>
+
+          {canWrite && <CustomerTagsGroup key={c.version} customer={c} />}
 
           <section className="space-y-3 rounded-lg border bg-card p-4">
             <h2 className="text-sm font-medium">Addresses</h2>
@@ -205,6 +209,8 @@ export function CustomerDetailScreen({ id }: { id: string }) {
               </div>
             ))}
           </section>
+
+          {canWrite && <CustomerPrivacy customer={c} />}
         </aside>
       </div>
     </>

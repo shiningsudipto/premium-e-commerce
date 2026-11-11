@@ -52,6 +52,9 @@ export type DataTableProps<T> = {
   toolbar?: ReactNode;
 };
 
+const NO_ROWS: never[] = [];
+const NO_SELECTION: RowSelectionState = {};
+
 // Generic admin list (plan B-Phase 0): server data, filters in the URL, saved views, cursor
 // pagination, row selection with bulk actions and optional expandable rows.
 export function DataTable<T>({
@@ -70,10 +73,10 @@ export function DataTable<T>({
 }: DataTableProps<T>) {
   const [selectionState, setSelectionState] = useState<{ data: T[] | undefined; rows: RowSelectionState }>({
     data,
-    rows: {},
+    rows: NO_SELECTION,
   });
   // a new page or new filters clear the selection
-  const selection = selectionState.data === data ? selectionState.rows : {};
+  const selection = selectionState.data === data ? selectionState.rows : NO_SELECTION;
   const setSelection = (next: RowSelectionState | ((old: RowSelectionState) => RowSelectionState)) =>
     setSelectionState({ data, rows: typeof next === "function" ? next(selection) : next });
   const [expanded, setExpanded] = useState<string | null>(null);
@@ -81,7 +84,10 @@ export function DataTable<T>({
   const selectable = bulkActions.length > 0;
 
   const table = useReactTable({
-    data: data ?? [],
+    // a stable empty list while loading: TanStack Table resets its state when `data` changes, so a
+    // fresh `[]` on every render loops forever as soon as anything re-renders the table (opening a
+    // dialog while the list is loading froze the page)
+    data: data ?? (NO_ROWS as T[]),
     columns,
     getRowId,
     getCoreRowModel: getCoreRowModel(),

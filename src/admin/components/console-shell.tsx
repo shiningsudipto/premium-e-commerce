@@ -4,25 +4,34 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
 import {
+  ChartColumnIcon,
   ContactIcon,
   CreditCardIcon,
+  FileSpreadsheetIcon,
   FlagIcon,
   FolderTreeIcon,
+  HandshakeIcon,
   HistoryIcon,
   LayersIcon,
   LayoutDashboardIcon,
   ListTreeIcon,
   LogOutIcon,
   MailIcon,
+  MessageSquareIcon,
   MenuIcon,
   PackageIcon,
+  PaletteIcon,
+  PanelsTopLeftIcon,
   PercentIcon,
   ReceiptIcon,
   ShieldIcon,
   SignpostIcon,
   SlidersHorizontalIcon,
+  TicketPercentIcon,
   TruckIcon,
+  Undo2Icon,
   UsersIcon,
+  UsersRoundIcon,
   WarehouseIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -51,6 +60,9 @@ export const NAV: { heading: string; items: NavItem[] }[] = [
     items: [
       { href: "/admin/orders", label: "Orders", icon: ReceiptIcon, permission: "orders.read" },
       { href: "/admin/customers", label: "Customers", icon: ContactIcon, permission: "customers.read" },
+      { href: "/admin/segments", label: "Segments", icon: UsersRoundIcon, permission: "customers.read" },
+      { href: "/admin/returns", label: "Returns", icon: Undo2Icon, permission: "orders.read" },
+      { href: "/admin/reports", label: "Reports", icon: ChartColumnIcon, permission: "analytics.read" },
     ],
   },
   {
@@ -60,11 +72,22 @@ export const NAV: { heading: string; items: NavItem[] }[] = [
       { href: "/admin/categories", label: "Categories", icon: FolderTreeIcon, permission: "products.read" },
       { href: "/admin/collections", label: "Collections", icon: LayersIcon, permission: "products.read" },
       { href: "/admin/inventory", label: "Inventory", icon: WarehouseIcon, permission: "inventory.read" },
+      { href: "/admin/reviews", label: "Reviews & Q&A", icon: MessageSquareIcon, permission: "reviews.moderate" },
+      { href: "/admin/data", label: "Import & export", icon: FileSpreadsheetIcon, permission: "products.read" },
+    ],
+  },
+  {
+    heading: "Marketing",
+    items: [
+      { href: "/admin/promotions", label: "Promotions", icon: TicketPercentIcon, permission: "promotions.write" },
+      { href: "/admin/affiliates", label: "Affiliates", icon: HandshakeIcon, permission: "affiliates.read" },
     ],
   },
   {
     heading: "Content",
     items: [
+      { href: "/admin/pages", label: "Pages", icon: PanelsTopLeftIcon, permission: "content.pages.write" },
+      { href: "/admin/theme", label: "Theme", icon: PaletteIcon, permission: "theme.write" },
       { href: "/admin/menus", label: "Menus", icon: ListTreeIcon, permission: "content.menus.write" },
       { href: "/admin/redirects", label: "Redirects", icon: SignpostIcon, permission: "redirects.write" },
       {

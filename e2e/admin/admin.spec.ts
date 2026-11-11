@@ -145,6 +145,9 @@ test.describe("feature flags (spec §2.4)", () => {
     const before = await toggle.getAttribute("aria-checked");
     await toggle.click();
     await expect(page.getByText(new RegExp(`product_compare ${before === "true" ? "off" : "on"}`))).toBeVisible();
+    // the switch is disabled while saving and re-rendered when the list refreshes; wait for both
+    await expect(toggle).toHaveAttribute("aria-checked", before === "true" ? "false" : "true");
+    await expect(toggle).not.toHaveAttribute("aria-disabled", "true");
     await toggle.click();
     await expect(toggle).toHaveAttribute("aria-checked", before!);
   });

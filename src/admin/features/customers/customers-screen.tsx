@@ -14,6 +14,7 @@ import { DataTable } from "../../components/data-table/data-table";
 import { useCursorPages } from "../../components/data-table/use-cursor-pages";
 import { useTableFilters, type FilterDef } from "../../components/data-table/use-table-filters";
 import { formatDateTime } from "../../lib/format";
+import { CustomerGroupsButton } from "./customer-groups";
 
 type CustomerRow = GetV1AdminCustomersApiResponse["items"][number];
 
@@ -66,7 +67,7 @@ const columns: ColumnDef<CustomerRow>[] = [
   },
 ];
 
-// Customers (spec §6.6), read-only for now: search, filter by group or tag, open a profile.
+// Customers (spec §6.6): search, filter by group or tag, open a profile; manage customer groups.
 export function CustomersScreen() {
   const groups = useGetV1AdminCustomerGroupsQuery({});
   const filterDefs = useMemo<FilterDef[]>(
@@ -92,7 +93,11 @@ export function CustomersScreen() {
 
   return (
     <>
-      <PageHeader title="Customers" description="Shoppers who placed an order or created an account." />
+      <PageHeader
+        title="Customers"
+        description="Shoppers who placed an order or created an account."
+        actions={<CustomerGroupsButton />}
+      />
       <DataTable
         tableKey="customers"
         columns={columns}

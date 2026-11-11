@@ -1215,7 +1215,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List affiliates (filter PENDING for the applications queue) */
+        /** List affiliates (filter PENDING for the applications queue; q searches name, email and codes) */
         get: operations["get__v1_admin_affiliates"];
         put?: never;
         post?: never;
@@ -5400,7 +5400,21 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        affiliateId: string;
+                        type: string;
+                        label: string;
+                        masked: string;
+                        isDefault: boolean;
+                        /** Format: date-time */
+                        createdAt: string;
+                        details?: {
+                            [key: string]: string;
+                        };
+                    }[];
+                };
             };
             /** @description Error */
             default: {
@@ -8314,6 +8328,7 @@ export interface operations {
                 limit?: number;
                 status?: "PENDING" | "ACTIVE" | "SUSPENDED" | "REJECTED" | "CLOSED";
                 tierId?: string;
+                q?: string;
             };
             header?: {
                 "x-market"?: string;
@@ -8329,7 +8344,33 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        items: {
+                            id: string;
+                            customerId: string;
+                            /** @enum {string} */
+                            status: "PENDING" | "ACTIVE" | "SUSPENDED" | "REJECTED" | "CLOSED";
+                            tierId: string | null;
+                            tier: {
+                                name: string;
+                            } | null;
+                            customer: {
+                                email: string | null;
+                                firstName: string | null;
+                                lastName: string | null;
+                            };
+                            orderCount: number;
+                            pendingMinor: number;
+                            payableMinor: number;
+                            currency: string | null;
+                            decidedAt: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                        }[];
+                        nextCursor: string | null;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -8361,7 +8402,86 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        customerId: string;
+                        /** @enum {string} */
+                        status: "PENDING" | "ACTIVE" | "SUSPENDED" | "REJECTED" | "CLOSED";
+                        tierId: string | null;
+                        tier: {
+                            id: string;
+                            handle: string;
+                            name: string;
+                            /** @enum {string} */
+                            rewardType: "CASH" | "STORE_CREDIT" | "LOYALTY_POINTS";
+                            autoApprove: boolean;
+                            isDefault: boolean;
+                            position: number;
+                            minSalesMinor: number | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                        } | null;
+                        application: {
+                            [key: string]: unknown;
+                        };
+                        termsVersion: string | null;
+                        termsAcceptedAt: string | null;
+                        customFields: {
+                            [key: string]: unknown;
+                        };
+                        notes: string | null;
+                        decidedAt: string | null;
+                        decisionReason: string | null;
+                        version: number;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        customer: {
+                            id: string;
+                            email: string | null;
+                            firstName: string | null;
+                            lastName: string | null;
+                        };
+                        links: {
+                            id: string;
+                            code: string;
+                            label: string | null;
+                            targetPath: string | null;
+                            /** @enum {string} */
+                            status: "ACTIVE" | "PENDING_APPROVAL" | "DISABLED";
+                            isDefault: boolean;
+                            affiliateId: string;
+                            /** Format: date-time */
+                            createdAt: string;
+                        }[];
+                        balances: {
+                            currency: string | null;
+                            pendingMinor: number;
+                            payableMinor: number;
+                            inPayoutMinor: number;
+                            paidMinor: number;
+                            reversedMinor: number;
+                        };
+                        stats: {
+                            clicks: number;
+                            conversions: number;
+                            conversionRate: number;
+                            salesMinor: number;
+                            earnings: {
+                                [key: string]: number;
+                            };
+                            subIds: {
+                                subId: string | null;
+                                clicks: number;
+                                conversions: number;
+                            }[];
+                        };
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -8404,7 +8524,86 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        customerId: string;
+                        /** @enum {string} */
+                        status: "PENDING" | "ACTIVE" | "SUSPENDED" | "REJECTED" | "CLOSED";
+                        tierId: string | null;
+                        tier: {
+                            id: string;
+                            handle: string;
+                            name: string;
+                            /** @enum {string} */
+                            rewardType: "CASH" | "STORE_CREDIT" | "LOYALTY_POINTS";
+                            autoApprove: boolean;
+                            isDefault: boolean;
+                            position: number;
+                            minSalesMinor: number | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                        } | null;
+                        application: {
+                            [key: string]: unknown;
+                        };
+                        termsVersion: string | null;
+                        termsAcceptedAt: string | null;
+                        customFields: {
+                            [key: string]: unknown;
+                        };
+                        notes: string | null;
+                        decidedAt: string | null;
+                        decisionReason: string | null;
+                        version: number;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        customer: {
+                            id: string;
+                            email: string | null;
+                            firstName: string | null;
+                            lastName: string | null;
+                        };
+                        links: {
+                            id: string;
+                            code: string;
+                            label: string | null;
+                            targetPath: string | null;
+                            /** @enum {string} */
+                            status: "ACTIVE" | "PENDING_APPROVAL" | "DISABLED";
+                            isDefault: boolean;
+                            affiliateId: string;
+                            /** Format: date-time */
+                            createdAt: string;
+                        }[];
+                        balances: {
+                            currency: string | null;
+                            pendingMinor: number;
+                            payableMinor: number;
+                            inPayoutMinor: number;
+                            paidMinor: number;
+                            reversedMinor: number;
+                        };
+                        stats: {
+                            clicks: number;
+                            conversions: number;
+                            conversionRate: number;
+                            salesMinor: number;
+                            earnings: {
+                                [key: string]: number;
+                            };
+                            subIds: {
+                                subId: string | null;
+                                clicks: number;
+                                conversions: number;
+                            }[];
+                        };
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -8444,7 +8643,86 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        customerId: string;
+                        /** @enum {string} */
+                        status: "PENDING" | "ACTIVE" | "SUSPENDED" | "REJECTED" | "CLOSED";
+                        tierId: string | null;
+                        tier: {
+                            id: string;
+                            handle: string;
+                            name: string;
+                            /** @enum {string} */
+                            rewardType: "CASH" | "STORE_CREDIT" | "LOYALTY_POINTS";
+                            autoApprove: boolean;
+                            isDefault: boolean;
+                            position: number;
+                            minSalesMinor: number | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                        } | null;
+                        application: {
+                            [key: string]: unknown;
+                        };
+                        termsVersion: string | null;
+                        termsAcceptedAt: string | null;
+                        customFields: {
+                            [key: string]: unknown;
+                        };
+                        notes: string | null;
+                        decidedAt: string | null;
+                        decisionReason: string | null;
+                        version: number;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        customer: {
+                            id: string;
+                            email: string | null;
+                            firstName: string | null;
+                            lastName: string | null;
+                        };
+                        links: {
+                            id: string;
+                            code: string;
+                            label: string | null;
+                            targetPath: string | null;
+                            /** @enum {string} */
+                            status: "ACTIVE" | "PENDING_APPROVAL" | "DISABLED";
+                            isDefault: boolean;
+                            affiliateId: string;
+                            /** Format: date-time */
+                            createdAt: string;
+                        }[];
+                        balances: {
+                            currency: string | null;
+                            pendingMinor: number;
+                            payableMinor: number;
+                            inPayoutMinor: number;
+                            paidMinor: number;
+                            reversedMinor: number;
+                        };
+                        stats: {
+                            clicks: number;
+                            conversions: number;
+                            conversionRate: number;
+                            salesMinor: number;
+                            earnings: {
+                                [key: string]: number;
+                            };
+                            subIds: {
+                                subId: string | null;
+                                clicks: number;
+                                conversions: number;
+                            }[];
+                        };
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -8483,7 +8761,20 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        code: string;
+                        label: string | null;
+                        targetPath: string | null;
+                        /** @enum {string} */
+                        status: "ACTIVE" | "PENDING_APPROVAL" | "DISABLED";
+                        isDefault: boolean;
+                        affiliateId: string;
+                        /** Format: date-time */
+                        createdAt: string;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -8518,7 +8809,28 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        items: {
+                            id: string;
+                            /** @enum {string} */
+                            kind: "COMMISSION" | "ADJUSTMENT" | "REVERSAL";
+                            /** @enum {string} */
+                            status: "PENDING" | "APPROVED" | "PAID" | "REVERSED";
+                            /** @enum {string} */
+                            rewardType: "CASH" | "STORE_CREDIT" | "LOYALTY_POINTS";
+                            amountMinor: number;
+                            currency: string;
+                            reason: string | null;
+                            orderId: string | null;
+                            approvableAt: string | null;
+                            payoutId: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                        }[];
+                        nextCursor: string | null;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -8558,7 +8870,25 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        /** @enum {string} */
+                        kind: "COMMISSION" | "ADJUSTMENT" | "REVERSAL";
+                        /** @enum {string} */
+                        status: "PENDING" | "APPROVED" | "PAID" | "REVERSED";
+                        /** @enum {string} */
+                        rewardType: "CASH" | "STORE_CREDIT" | "LOYALTY_POINTS";
+                        amountMinor: number;
+                        currency: string;
+                        reason: string | null;
+                        orderId: string | null;
+                        approvableAt: string | null;
+                        payoutId: string | null;
+                        /** Format: date-time */
+                        createdAt: string;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -8593,7 +8923,23 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        items: {
+                            id: string;
+                            /** @enum {string} */
+                            status: "DRAFT" | "APPROVED" | "PROCESSING" | "PAID" | "FAILED" | "CANCELLED";
+                            amountMinor: number;
+                            currency: string;
+                            method: string;
+                            providerRef: string | null;
+                            paidAt: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                        }[];
+                        nextCursor: string | null;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -8632,7 +8978,20 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        /** @enum {string} */
+                        status: "DRAFT" | "APPROVED" | "PROCESSING" | "PAID" | "FAILED" | "CANCELLED";
+                        amountMinor: number;
+                        currency: string;
+                        method: string;
+                        providerRef: string | null;
+                        paidAt: string | null;
+                        /** Format: date-time */
+                        createdAt: string;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -8664,7 +9023,20 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        /** @enum {string} */
+                        status: "DRAFT" | "APPROVED" | "PROCESSING" | "PAID" | "FAILED" | "CANCELLED";
+                        amountMinor: number;
+                        currency: string;
+                        method: string;
+                        providerRef: string | null;
+                        paidAt: string | null;
+                        /** Format: date-time */
+                        createdAt: string;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -8702,7 +9074,20 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        /** @enum {string} */
+                        status: "DRAFT" | "APPROVED" | "PROCESSING" | "PAID" | "FAILED" | "CANCELLED";
+                        amountMinor: number;
+                        currency: string;
+                        method: string;
+                        providerRef: string | null;
+                        paidAt: string | null;
+                        /** Format: date-time */
+                        createdAt: string;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -8734,7 +9119,20 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        /** @enum {string} */
+                        status: "DRAFT" | "APPROVED" | "PROCESSING" | "PAID" | "FAILED" | "CANCELLED";
+                        amountMinor: number;
+                        currency: string;
+                        method: string;
+                        providerRef: string | null;
+                        paidAt: string | null;
+                        /** Format: date-time */
+                        createdAt: string;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -8764,7 +9162,23 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        handle: string;
+                        name: string;
+                        /** @enum {string} */
+                        rewardType: "CASH" | "STORE_CREDIT" | "LOYALTY_POINTS";
+                        autoApprove: boolean;
+                        isDefault: boolean;
+                        position: number;
+                        minSalesMinor: number | null;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                    }[];
+                };
             };
             /** @description Error */
             default: {
@@ -8810,7 +9224,23 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        handle: string;
+                        name: string;
+                        /** @enum {string} */
+                        rewardType: "CASH" | "STORE_CREDIT" | "LOYALTY_POINTS";
+                        autoApprove: boolean;
+                        isDefault: boolean;
+                        position: number;
+                        minSalesMinor: number | null;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -8858,7 +9288,23 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        handle: string;
+                        name: string;
+                        /** @enum {string} */
+                        rewardType: "CASH" | "STORE_CREDIT" | "LOYALTY_POINTS";
+                        autoApprove: boolean;
+                        isDefault: boolean;
+                        position: number;
+                        minSalesMinor: number | null;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -8888,7 +9334,35 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        /** @enum {string} */
+                        scope: "affiliate_product" | "product" | "category" | "affiliate" | "tier" | "program";
+                        scopeId: string;
+                        rule: {
+                            /** @enum {string} */
+                            type: "percent" | "fixed_per_item" | "fixed_per_order" | "tiered";
+                            percent?: number;
+                            amountMinor?: number;
+                            tiers?: {
+                                minSalesMinor: number;
+                                percent: number;
+                            }[];
+                            /** @enum {string} */
+                            appliesTo?: "all" | "first_order" | "returning";
+                        };
+                        priority: number;
+                        isActive: boolean;
+                        version: number;
+                        activeFrom: string | null;
+                        activeTo: string | null;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                    }[];
+                };
             };
             /** @description Error */
             default: {
@@ -8948,7 +9422,35 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        /** @enum {string} */
+                        scope: "affiliate_product" | "product" | "category" | "affiliate" | "tier" | "program";
+                        scopeId: string;
+                        rule: {
+                            /** @enum {string} */
+                            type: "percent" | "fixed_per_item" | "fixed_per_order" | "tiered";
+                            percent?: number;
+                            amountMinor?: number;
+                            tiers?: {
+                                minSalesMinor: number;
+                                percent: number;
+                            }[];
+                            /** @enum {string} */
+                            appliesTo?: "all" | "first_order" | "returning";
+                        };
+                        priority: number;
+                        isActive: boolean;
+                        version: number;
+                        activeFrom: string | null;
+                        activeTo: string | null;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -9010,7 +9512,35 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        /** @enum {string} */
+                        scope: "affiliate_product" | "product" | "category" | "affiliate" | "tier" | "program";
+                        scopeId: string;
+                        rule: {
+                            /** @enum {string} */
+                            type: "percent" | "fixed_per_item" | "fixed_per_order" | "tiered";
+                            percent?: number;
+                            amountMinor?: number;
+                            tiers?: {
+                                minSalesMinor: number;
+                                percent: number;
+                            }[];
+                            /** @enum {string} */
+                            appliesTo?: "all" | "first_order" | "returning";
+                        };
+                        priority: number;
+                        isActive: boolean;
+                        version: number;
+                        activeFrom: string | null;
+                        activeTo: string | null;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -9084,7 +9614,22 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        type: string;
+                        label: string;
+                        /** @enum {string} */
+                        group: "layout" | "content" | "commerce" | "marketing" | "advanced";
+                        container: boolean;
+                        permission: string | null;
+                        defaults: {
+                            [key: string]: unknown;
+                        };
+                        schema: {
+                            [key: string]: unknown;
+                        };
+                    }[];
+                };
             };
             /** @description Error */
             default: {
@@ -9103,6 +9648,8 @@ export interface operations {
                 cursor?: string;
                 limit?: number;
                 kind?: "PAGE" | "SECTION";
+                status?: "DRAFT" | "ACTIVE" | "ARCHIVED";
+                q?: string;
             };
             header?: {
                 "x-market"?: string;
@@ -9118,7 +9665,28 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        items: {
+                            id: string;
+                            handle: string;
+                            title: string;
+                            /** @enum {string} */
+                            kind: "PAGE" | "SECTION";
+                            /** @enum {string} */
+                            status: "DRAFT" | "ACTIVE" | "ARCHIVED";
+                            publishAt: string | null;
+                            publishedAt: string | null;
+                            /** Format: date-time */
+                            updatedAt: string;
+                            /** Format: date-time */
+                            createdAt: string;
+                            publishedVersionNumber: number | null;
+                            hasUnpublishedChanges: boolean;
+                        }[];
+                        nextCursor: string | null;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -9167,7 +9735,34 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        handle: string;
+                        title: string;
+                        /** @enum {string} */
+                        kind: "PAGE" | "SECTION";
+                        /** @enum {string} */
+                        status: "DRAFT" | "ACTIVE" | "ARCHIVED";
+                        publishAt: string | null;
+                        publishedAt: string | null;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        /** Format: date-time */
+                        createdAt: string;
+                        blocks: unknown;
+                        seo: unknown;
+                        version: number;
+                        publishedVersionId: string | null;
+                        published: {
+                            id: string;
+                            number: number;
+                            /** Format: date-time */
+                            createdAt: string;
+                        } | null;
+                        hasUnpublishedChanges: boolean;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -9199,7 +9794,34 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        handle: string;
+                        title: string;
+                        /** @enum {string} */
+                        kind: "PAGE" | "SECTION";
+                        /** @enum {string} */
+                        status: "DRAFT" | "ACTIVE" | "ARCHIVED";
+                        publishAt: string | null;
+                        publishedAt: string | null;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        /** Format: date-time */
+                        createdAt: string;
+                        blocks: unknown;
+                        seo: unknown;
+                        version: number;
+                        publishedVersionId: string | null;
+                        published: {
+                            id: string;
+                            number: number;
+                            /** Format: date-time */
+                            createdAt: string;
+                        } | null;
+                        hasUnpublishedChanges: boolean;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -9251,7 +9873,34 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        handle: string;
+                        title: string;
+                        /** @enum {string} */
+                        kind: "PAGE" | "SECTION";
+                        /** @enum {string} */
+                        status: "DRAFT" | "ACTIVE" | "ARCHIVED";
+                        publishAt: string | null;
+                        publishedAt: string | null;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        /** Format: date-time */
+                        createdAt: string;
+                        blocks: unknown;
+                        seo: unknown;
+                        version: number;
+                        publishedVersionId: string | null;
+                        published: {
+                            id: string;
+                            number: number;
+                            /** Format: date-time */
+                            createdAt: string;
+                        } | null;
+                        hasUnpublishedChanges: boolean;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -9289,7 +9938,34 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        handle: string;
+                        title: string;
+                        /** @enum {string} */
+                        kind: "PAGE" | "SECTION";
+                        /** @enum {string} */
+                        status: "DRAFT" | "ACTIVE" | "ARCHIVED";
+                        publishAt: string | null;
+                        publishedAt: string | null;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        /** Format: date-time */
+                        createdAt: string;
+                        blocks: unknown;
+                        seo: unknown;
+                        version: number;
+                        publishedVersionId: string | null;
+                        published: {
+                            id: string;
+                            number: number;
+                            /** Format: date-time */
+                            createdAt: string;
+                        } | null;
+                        hasUnpublishedChanges: boolean;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -9331,7 +10007,34 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        handle: string;
+                        title: string;
+                        /** @enum {string} */
+                        kind: "PAGE" | "SECTION";
+                        /** @enum {string} */
+                        status: "DRAFT" | "ACTIVE" | "ARCHIVED";
+                        publishAt: string | null;
+                        publishedAt: string | null;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        /** Format: date-time */
+                        createdAt: string;
+                        blocks: unknown;
+                        seo: unknown;
+                        version: number;
+                        publishedVersionId: string | null;
+                        published: {
+                            id: string;
+                            number: number;
+                            /** Format: date-time */
+                            createdAt: string;
+                        } | null;
+                        hasUnpublishedChanges: boolean;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -9363,7 +10066,17 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        number: number;
+                        title: string;
+                        note: string | null;
+                        createdById: string | null;
+                        /** Format: date-time */
+                        createdAt: string;
+                    }[];
+                };
             };
             /** @description Error */
             default: {
@@ -9401,7 +10114,34 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        handle: string;
+                        title: string;
+                        /** @enum {string} */
+                        kind: "PAGE" | "SECTION";
+                        /** @enum {string} */
+                        status: "DRAFT" | "ACTIVE" | "ARCHIVED";
+                        publishAt: string | null;
+                        publishedAt: string | null;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        /** Format: date-time */
+                        createdAt: string;
+                        blocks: unknown;
+                        seo: unknown;
+                        version: number;
+                        publishedVersionId: string | null;
+                        published: {
+                            id: string;
+                            number: number;
+                            /** Format: date-time */
+                            createdAt: string;
+                        } | null;
+                        hasUnpublishedChanges: boolean;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -9836,7 +10576,11 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        columns: ("handle" | "title" | "description" | "vendor" | "tags" | "status" | "option1_name" | "option1_value" | "option2_name" | "option2_value" | "option3_name" | "option3_value" | "sku" | "price" | "compare_at_price" | "cost" | "weight_grams" | "barcode" | "stock" | "categories")[];
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -9880,7 +10624,44 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        /** @enum {string} */
+                        kind: "IMPORT" | "EXPORT";
+                        entity: string;
+                        format: string;
+                        /** @enum {string} */
+                        status: "PENDING" | "RUNNING" | "COMPLETED" | "FAILED";
+                        dryRun: boolean;
+                        report: {
+                            rows?: number;
+                            productsToCreate?: number;
+                            productsToUpdate?: number;
+                            variants?: number;
+                            errors?: number;
+                            errorList?: {
+                                row: number;
+                                field?: string;
+                                message: string;
+                            }[];
+                            applied?: boolean;
+                            imported?: number;
+                            failed?: {
+                                handle: string;
+                                ok: boolean;
+                                error?: string;
+                            }[];
+                            bytes?: number;
+                            error?: string;
+                        };
+                        createdById: string | null;
+                        startedAt: string | null;
+                        finishedAt: string | null;
+                        /** Format: date-time */
+                        createdAt: string;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -9920,7 +10701,44 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        /** @enum {string} */
+                        kind: "IMPORT" | "EXPORT";
+                        entity: string;
+                        format: string;
+                        /** @enum {string} */
+                        status: "PENDING" | "RUNNING" | "COMPLETED" | "FAILED";
+                        dryRun: boolean;
+                        report: {
+                            rows?: number;
+                            productsToCreate?: number;
+                            productsToUpdate?: number;
+                            variants?: number;
+                            errors?: number;
+                            errorList?: {
+                                row: number;
+                                field?: string;
+                                message: string;
+                            }[];
+                            applied?: boolean;
+                            imported?: number;
+                            failed?: {
+                                handle: string;
+                                ok: boolean;
+                                error?: string;
+                            }[];
+                            bytes?: number;
+                            error?: string;
+                        };
+                        createdById: string | null;
+                        startedAt: string | null;
+                        finishedAt: string | null;
+                        /** Format: date-time */
+                        createdAt: string;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -9953,7 +10771,47 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        items: {
+                            id: string;
+                            /** @enum {string} */
+                            kind: "IMPORT" | "EXPORT";
+                            entity: string;
+                            format: string;
+                            /** @enum {string} */
+                            status: "PENDING" | "RUNNING" | "COMPLETED" | "FAILED";
+                            dryRun: boolean;
+                            report: {
+                                rows?: number;
+                                productsToCreate?: number;
+                                productsToUpdate?: number;
+                                variants?: number;
+                                errors?: number;
+                                errorList?: {
+                                    row: number;
+                                    field?: string;
+                                    message: string;
+                                }[];
+                                applied?: boolean;
+                                imported?: number;
+                                failed?: {
+                                    handle: string;
+                                    ok: boolean;
+                                    error?: string;
+                                }[];
+                                bytes?: number;
+                                error?: string;
+                            };
+                            createdById: string | null;
+                            startedAt: string | null;
+                            finishedAt: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                        }[];
+                        nextCursor: string | null;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -9985,7 +10843,44 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        /** @enum {string} */
+                        kind: "IMPORT" | "EXPORT";
+                        entity: string;
+                        format: string;
+                        /** @enum {string} */
+                        status: "PENDING" | "RUNNING" | "COMPLETED" | "FAILED";
+                        dryRun: boolean;
+                        report: {
+                            rows?: number;
+                            productsToCreate?: number;
+                            productsToUpdate?: number;
+                            variants?: number;
+                            errors?: number;
+                            errorList?: {
+                                row: number;
+                                field?: string;
+                                message: string;
+                            }[];
+                            applied?: boolean;
+                            imported?: number;
+                            failed?: {
+                                handle: string;
+                                ok: boolean;
+                                error?: string;
+                            }[];
+                            bytes?: number;
+                            error?: string;
+                        };
+                        createdById: string | null;
+                        startedAt: string | null;
+                        finishedAt: string | null;
+                        /** Format: date-time */
+                        createdAt: string;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -10053,7 +10948,42 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        items: {
+                            id: string;
+                            name: string;
+                            description: string | null;
+                            /** @enum {string} */
+                            type: "AUTOMATIC" | "CODE";
+                            /** @enum {string} */
+                            status: "DRAFT" | "ACTIVE" | "ARCHIVED";
+                            /** @enum {string} */
+                            effectiveStatus: "DRAFT" | "ACTIVE" | "ARCHIVED" | "SCHEDULED" | "EXPIRED";
+                            priority: number;
+                            stopFurther: boolean;
+                            exclusivityGroup: string | null;
+                            combinesWithSalePrices: boolean;
+                            conditions: unknown;
+                            actions: unknown;
+                            startsAt: string | null;
+                            endsAt: string | null;
+                            usageLimit: number | null;
+                            usageCount: number;
+                            perCustomerLimit: number | null;
+                            maxDiscountMinor: number | null;
+                            version: number;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                            _count: {
+                                codes: number;
+                            };
+                        }[];
+                        nextCursor: string | null;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -10194,7 +11124,36 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        name: string;
+                        description: string | null;
+                        /** @enum {string} */
+                        type: "AUTOMATIC" | "CODE";
+                        /** @enum {string} */
+                        status: "DRAFT" | "ACTIVE" | "ARCHIVED";
+                        /** @enum {string} */
+                        effectiveStatus: "DRAFT" | "ACTIVE" | "ARCHIVED" | "SCHEDULED" | "EXPIRED";
+                        priority: number;
+                        stopFurther: boolean;
+                        exclusivityGroup: string | null;
+                        combinesWithSalePrices: boolean;
+                        conditions: unknown;
+                        actions: unknown;
+                        startsAt: string | null;
+                        endsAt: string | null;
+                        usageLimit: number | null;
+                        usageCount: number;
+                        perCustomerLimit: number | null;
+                        maxDiscountMinor: number | null;
+                        version: number;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -10226,7 +11185,40 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        name: string;
+                        description: string | null;
+                        /** @enum {string} */
+                        type: "AUTOMATIC" | "CODE";
+                        /** @enum {string} */
+                        status: "DRAFT" | "ACTIVE" | "ARCHIVED";
+                        /** @enum {string} */
+                        effectiveStatus: "DRAFT" | "ACTIVE" | "ARCHIVED" | "SCHEDULED" | "EXPIRED";
+                        priority: number;
+                        stopFurther: boolean;
+                        exclusivityGroup: string | null;
+                        combinesWithSalePrices: boolean;
+                        conditions: unknown;
+                        actions: unknown;
+                        startsAt: string | null;
+                        endsAt: string | null;
+                        usageLimit: number | null;
+                        usageCount: number;
+                        perCustomerLimit: number | null;
+                        maxDiscountMinor: number | null;
+                        version: number;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        _count: {
+                            codes: number;
+                            redemptions: number;
+                        };
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -10369,7 +11361,36 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        name: string;
+                        description: string | null;
+                        /** @enum {string} */
+                        type: "AUTOMATIC" | "CODE";
+                        /** @enum {string} */
+                        status: "DRAFT" | "ACTIVE" | "ARCHIVED";
+                        /** @enum {string} */
+                        effectiveStatus: "DRAFT" | "ACTIVE" | "ARCHIVED" | "SCHEDULED" | "EXPIRED";
+                        priority: number;
+                        stopFurther: boolean;
+                        exclusivityGroup: string | null;
+                        combinesWithSalePrices: boolean;
+                        conditions: unknown;
+                        actions: unknown;
+                        startsAt: string | null;
+                        endsAt: string | null;
+                        usageLimit: number | null;
+                        usageCount: number;
+                        perCustomerLimit: number | null;
+                        maxDiscountMinor: number | null;
+                        version: number;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -10408,7 +11429,36 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        name: string;
+                        description: string | null;
+                        /** @enum {string} */
+                        type: "AUTOMATIC" | "CODE";
+                        /** @enum {string} */
+                        status: "DRAFT" | "ACTIVE" | "ARCHIVED";
+                        /** @enum {string} */
+                        effectiveStatus: "DRAFT" | "ACTIVE" | "ARCHIVED" | "SCHEDULED" | "EXPIRED";
+                        priority: number;
+                        stopFurther: boolean;
+                        exclusivityGroup: string | null;
+                        combinesWithSalePrices: boolean;
+                        conditions: unknown;
+                        actions: unknown;
+                        startsAt: string | null;
+                        endsAt: string | null;
+                        usageLimit: number | null;
+                        usageCount: number;
+                        perCustomerLimit: number | null;
+                        maxDiscountMinor: number | null;
+                        version: number;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -10444,7 +11494,22 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        items: {
+                            id: string;
+                            promotionId: string;
+                            code: string;
+                            usageLimit: number | null;
+                            usageCount: number;
+                            isActive: boolean;
+                            affiliateId: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                        }[];
+                        nextCursor: string | null;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -10489,7 +11554,12 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        created: number;
+                        codes?: string[];
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -10527,7 +11597,19 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        promotionId: string;
+                        code: string;
+                        usageLimit: number | null;
+                        usageCount: number;
+                        isActive: boolean;
+                        affiliateId: string | null;
+                        /** Format: date-time */
+                        createdAt: string;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -10578,7 +11660,45 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        lines: {
+                            key: string;
+                            discountMinor: number;
+                            allocations: {
+                                promotionId: string;
+                                amountMinor: number;
+                            }[];
+                        }[];
+                        itemsDiscountMinor: number;
+                        shippingDiscountMinor: number;
+                        totalDiscountMinor: number;
+                        applied: {
+                            promotionId: string;
+                            name: string;
+                            code: string | null;
+                            codeId: string | null;
+                            itemsMinor: number;
+                            shippingMinor: number;
+                            amountMinor: number;
+                        }[];
+                        rejected: {
+                            promotionId: string;
+                            name: string;
+                            code: string | null;
+                            /** @enum {string} */
+                            reason: "INACTIVE" | "NOT_STARTED" | "EXPIRED" | "USAGE_LIMIT_REACHED" | "CUSTOMER_LIMIT_REACHED" | "CONDITIONS_NOT_MET" | "NO_ELIGIBLE_ITEMS" | "EXCLUSIVE_GROUP" | "STOPPED_BY_HIGHER_PRIORITY" | "INVALID_RULES";
+                            detail?: string;
+                        }[];
+                        codes: {
+                            code: string;
+                            /** @enum {string} */
+                            status: "applied" | "rejected";
+                            reason?: string;
+                            detail?: string;
+                        }[];
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -10613,7 +11733,15 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        uses: number;
+                        revenueMinor: number;
+                        discountMinor: number;
+                        averageOrderMinor: number;
+                        storeAverageOrderMinor: number;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -10650,7 +11778,31 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        series: {
+                            orders: number;
+                            grossMinor: number;
+                            discountsMinor: number;
+                            shippingMinor: number;
+                            taxMinor: number;
+                            netMinor: number;
+                            refundsMinor: number;
+                            averageOrderMinor: number;
+                            period: string;
+                        }[];
+                        totals: {
+                            orders: number;
+                            grossMinor: number;
+                            discountsMinor: number;
+                            shippingMinor: number;
+                            taxMinor: number;
+                            netMinor: number;
+                            refundsMinor: number;
+                            averageOrderMinor: number;
+                        };
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -10687,7 +11839,16 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        productId: string;
+                        title: string;
+                        units: number;
+                        revenueMinor: number;
+                        marginMinor: number | null;
+                        unitsRefunded: number;
+                    }[];
+                };
             };
             /** @description Error */
             default: {
@@ -10724,7 +11885,24 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        series: {
+                            period: string;
+                            newCustomers: number;
+                            firstOrders: number;
+                            returningOrders: number;
+                        }[];
+                        topCustomers: {
+                            customerId: string;
+                            email?: string | null;
+                            firstName?: string | null;
+                            lastName?: string | null;
+                            orders: number;
+                            spentMinor: number;
+                        }[];
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -10761,7 +11939,16 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        promotionId: string;
+                        name: string;
+                        uses: number;
+                        discountMinor: number;
+                        revenueMinor: number;
+                        averageOrderMinor: number;
+                    }[];
+                };
             };
             /** @description Error */
             default: {
@@ -10798,7 +11985,21 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        available: boolean;
+                        totalSearches: number;
+                        topQueries: {
+                            query: string;
+                            searches: number;
+                            averageResults: number;
+                        }[];
+                        zeroResultQueries: {
+                            query: string;
+                            searches: number;
+                        }[];
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -10835,7 +12036,21 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        outstandingLiabilityMinor: number;
+                        affiliates: {
+                            affiliateId: string;
+                            email: string | null;
+                            clicks: number;
+                            conversions: number;
+                            conversionRate: number;
+                            revenueMinor: number;
+                            earningsMinor: number;
+                            refundRate: number;
+                        }[];
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -11073,7 +12288,48 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        items: {
+                            id: string;
+                            number: number;
+                            orderId: string;
+                            customerId: string | null;
+                            /** @enum {string} */
+                            status: "REQUESTED" | "APPROVED" | "REJECTED" | "LABEL_ISSUED" | "IN_TRANSIT" | "RECEIVED" | "INSPECTED" | "COMPLETED" | "PARTIALLY_ACCEPTED";
+                            /** @enum {string} */
+                            resolution: "REFUND" | "STORE_CREDIT" | "EXCHANGE";
+                            customerNote: string | null;
+                            photoUrls: string[];
+                            staffNote: string | null;
+                            carrier: string | null;
+                            trackingNumber: string | null;
+                            labelUrl: string | null;
+                            refundId: string | null;
+                            creditMinor: number | null;
+                            exchangeOrderId: string | null;
+                            version: number;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                            lines: {
+                                id: string;
+                                orderLineId: string;
+                                quantity: number;
+                                reason: string;
+                                exchangeVariantId: string | null;
+                                inspection: ("RESTOCK" | "WRITE_OFF" | "REJECT") | null;
+                                acceptedQuantity: number | null;
+                            }[];
+                            order: {
+                                number: number;
+                                email: string;
+                            };
+                        }[];
+                        nextCursor: string | null;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -11105,7 +12361,64 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        number: number;
+                        orderId: string;
+                        customerId: string | null;
+                        /** @enum {string} */
+                        status: "REQUESTED" | "APPROVED" | "REJECTED" | "LABEL_ISSUED" | "IN_TRANSIT" | "RECEIVED" | "INSPECTED" | "COMPLETED" | "PARTIALLY_ACCEPTED";
+                        /** @enum {string} */
+                        resolution: "REFUND" | "STORE_CREDIT" | "EXCHANGE";
+                        customerNote: string | null;
+                        photoUrls: string[];
+                        staffNote: string | null;
+                        carrier: string | null;
+                        trackingNumber: string | null;
+                        labelUrl: string | null;
+                        refundId: string | null;
+                        creditMinor: number | null;
+                        exchangeOrderId: string | null;
+                        version: number;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        lines: {
+                            id: string;
+                            orderLineId: string;
+                            quantity: number;
+                            reason: string;
+                            exchangeVariantId: string | null;
+                            inspection: ("RESTOCK" | "WRITE_OFF" | "REJECT") | null;
+                            acceptedQuantity: number | null;
+                        }[];
+                        order: {
+                            id: string;
+                            number: number;
+                            email: string;
+                            currency: string;
+                            taxInclusive: boolean;
+                            customerId: string | null;
+                            lines: {
+                                id: string;
+                                productId: string;
+                                variantId: string;
+                                titleSnapshot: string;
+                                variantTitle: string;
+                                skuSnapshot: string;
+                                unitPriceMinor: number;
+                                quantity: number;
+                                discountMinor: number;
+                                taxMinor: number;
+                                totalMinor: number;
+                                fulfilledQuantity: number;
+                                refundedQuantity: number;
+                            }[];
+                        };
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -11145,7 +12458,41 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        number: number;
+                        orderId: string;
+                        customerId: string | null;
+                        /** @enum {string} */
+                        status: "REQUESTED" | "APPROVED" | "REJECTED" | "LABEL_ISSUED" | "IN_TRANSIT" | "RECEIVED" | "INSPECTED" | "COMPLETED" | "PARTIALLY_ACCEPTED";
+                        /** @enum {string} */
+                        resolution: "REFUND" | "STORE_CREDIT" | "EXCHANGE";
+                        customerNote: string | null;
+                        photoUrls: string[];
+                        staffNote: string | null;
+                        carrier: string | null;
+                        trackingNumber: string | null;
+                        labelUrl: string | null;
+                        refundId: string | null;
+                        creditMinor: number | null;
+                        exchangeOrderId: string | null;
+                        version: number;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        lines: {
+                            id: string;
+                            orderLineId: string;
+                            quantity: number;
+                            reason: string;
+                            exchangeVariantId: string | null;
+                            inspection: ("RESTOCK" | "WRITE_OFF" | "REJECT") | null;
+                            acceptedQuantity: number | null;
+                        }[];
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -11188,7 +12535,41 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        number: number;
+                        orderId: string;
+                        customerId: string | null;
+                        /** @enum {string} */
+                        status: "REQUESTED" | "APPROVED" | "REJECTED" | "LABEL_ISSUED" | "IN_TRANSIT" | "RECEIVED" | "INSPECTED" | "COMPLETED" | "PARTIALLY_ACCEPTED";
+                        /** @enum {string} */
+                        resolution: "REFUND" | "STORE_CREDIT" | "EXCHANGE";
+                        customerNote: string | null;
+                        photoUrls: string[];
+                        staffNote: string | null;
+                        carrier: string | null;
+                        trackingNumber: string | null;
+                        labelUrl: string | null;
+                        refundId: string | null;
+                        creditMinor: number | null;
+                        exchangeOrderId: string | null;
+                        version: number;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        lines: {
+                            id: string;
+                            orderLineId: string;
+                            quantity: number;
+                            reason: string;
+                            exchangeVariantId: string | null;
+                            inspection: ("RESTOCK" | "WRITE_OFF" | "REJECT") | null;
+                            acceptedQuantity: number | null;
+                        }[];
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -11231,7 +12612,41 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        number: number;
+                        orderId: string;
+                        customerId: string | null;
+                        /** @enum {string} */
+                        status: "REQUESTED" | "APPROVED" | "REJECTED" | "LABEL_ISSUED" | "IN_TRANSIT" | "RECEIVED" | "INSPECTED" | "COMPLETED" | "PARTIALLY_ACCEPTED";
+                        /** @enum {string} */
+                        resolution: "REFUND" | "STORE_CREDIT" | "EXCHANGE";
+                        customerNote: string | null;
+                        photoUrls: string[];
+                        staffNote: string | null;
+                        carrier: string | null;
+                        trackingNumber: string | null;
+                        labelUrl: string | null;
+                        refundId: string | null;
+                        creditMinor: number | null;
+                        exchangeOrderId: string | null;
+                        version: number;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        lines: {
+                            id: string;
+                            orderLineId: string;
+                            quantity: number;
+                            reason: string;
+                            exchangeVariantId: string | null;
+                            inspection: ("RESTOCK" | "WRITE_OFF" | "REJECT") | null;
+                            acceptedQuantity: number | null;
+                        }[];
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -11270,7 +12685,41 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        number: number;
+                        orderId: string;
+                        customerId: string | null;
+                        /** @enum {string} */
+                        status: "REQUESTED" | "APPROVED" | "REJECTED" | "LABEL_ISSUED" | "IN_TRANSIT" | "RECEIVED" | "INSPECTED" | "COMPLETED" | "PARTIALLY_ACCEPTED";
+                        /** @enum {string} */
+                        resolution: "REFUND" | "STORE_CREDIT" | "EXCHANGE";
+                        customerNote: string | null;
+                        photoUrls: string[];
+                        staffNote: string | null;
+                        carrier: string | null;
+                        trackingNumber: string | null;
+                        labelUrl: string | null;
+                        refundId: string | null;
+                        creditMinor: number | null;
+                        exchangeOrderId: string | null;
+                        version: number;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        lines: {
+                            id: string;
+                            orderLineId: string;
+                            quantity: number;
+                            reason: string;
+                            exchangeVariantId: string | null;
+                            inspection: ("RESTOCK" | "WRITE_OFF" | "REJECT") | null;
+                            acceptedQuantity: number | null;
+                        }[];
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -11560,7 +13009,66 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        kind: "reviews";
+                        items: {
+                            id: string;
+                            productId: string;
+                            customerId: string;
+                            rating: number;
+                            title: string | null;
+                            body: string;
+                            mediaUrls: string[];
+                            verifiedBuyer: boolean;
+                            /** @enum {string} */
+                            status: "PENDING" | "APPROVED" | "REJECTED";
+                            helpfulCount: number;
+                            reply: string | null;
+                            repliedAt: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                            product: {
+                                handle: string;
+                                title: string;
+                            };
+                            customer: {
+                                email: string | null;
+                                firstName: string | null;
+                                lastName: string | null;
+                            };
+                        }[];
+                        nextCursor: string | null;
+                    } | {
+                        /** @constant */
+                        kind: "questions";
+                        items: {
+                            id: string;
+                            productId: string;
+                            customerId: string | null;
+                            body: string;
+                            /** @enum {string} */
+                            status: "PENDING" | "APPROVED" | "REJECTED";
+                            /** Format: date-time */
+                            createdAt: string;
+                            answers: {
+                                id: string;
+                                body: string;
+                                authorId: string;
+                                /** Format: date-time */
+                                createdAt: string;
+                            }[];
+                            product: {
+                                handle: string;
+                                title: string;
+                            };
+                        }[];
+                        nextCursor: string | null;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -11600,7 +13108,27 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        productId: string;
+                        customerId: string;
+                        rating: number;
+                        title: string | null;
+                        body: string;
+                        mediaUrls: string[];
+                        verifiedBuyer: boolean;
+                        /** @enum {string} */
+                        status: "PENDING" | "APPROVED" | "REJECTED";
+                        helpfulCount: number;
+                        reply: string | null;
+                        repliedAt: string | null;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -11640,7 +13168,25 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        productId: string;
+                        customerId: string | null;
+                        body: string;
+                        /** @enum {string} */
+                        status: "PENDING" | "APPROVED" | "REJECTED";
+                        /** Format: date-time */
+                        createdAt: string;
+                        answers: {
+                            id: string;
+                            body: string;
+                            authorId: string;
+                            /** Format: date-time */
+                            createdAt: string;
+                        }[];
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -11670,7 +13216,71 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        handle: string;
+                        name: string;
+                        rules: {
+                            /**
+                             * @default all
+                             * @enum {string}
+                             */
+                            match: "all" | "any";
+                            conditions: ({
+                                /** @enum {string} */
+                                field: "total_spent" | "order_count" | "last_order_days" | "created_days";
+                                /** @enum {string} */
+                                op: "gt" | "gte" | "lt" | "lte" | "eq";
+                                value: number;
+                            } | {
+                                /** @constant */
+                                field: "tag";
+                                /** @enum {string} */
+                                op: "has" | "not_has";
+                                value: string;
+                            } | {
+                                /** @constant */
+                                field: "group";
+                                /** @enum {string} */
+                                op: "eq" | "neq";
+                                value: string;
+                            } | {
+                                /** @constant */
+                                field: "accepts_marketing";
+                                /** @constant */
+                                op: "eq";
+                                value: boolean;
+                            } | {
+                                /** @constant */
+                                field: "has_account";
+                                /** @constant */
+                                op: "eq";
+                                value: boolean;
+                            } | {
+                                /** @constant */
+                                field: "country";
+                                /** @enum {string} */
+                                op: "in" | "not_in";
+                                value: string[];
+                            } | {
+                                /** @constant */
+                                field: "custom_field";
+                                key: string;
+                                /** @enum {string} */
+                                op: "eq" | "neq";
+                                value: string | number | boolean;
+                            })[];
+                        };
+                        memberCount: number;
+                        refreshedAt: string | null;
+                        version: number;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                    }[];
+                };
             };
             /** @description Error */
             default: {
@@ -11758,7 +13368,71 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        handle: string;
+                        name: string;
+                        rules: {
+                            /**
+                             * @default all
+                             * @enum {string}
+                             */
+                            match: "all" | "any";
+                            conditions: ({
+                                /** @enum {string} */
+                                field: "total_spent" | "order_count" | "last_order_days" | "created_days";
+                                /** @enum {string} */
+                                op: "gt" | "gte" | "lt" | "lte" | "eq";
+                                value: number;
+                            } | {
+                                /** @constant */
+                                field: "tag";
+                                /** @enum {string} */
+                                op: "has" | "not_has";
+                                value: string;
+                            } | {
+                                /** @constant */
+                                field: "group";
+                                /** @enum {string} */
+                                op: "eq" | "neq";
+                                value: string;
+                            } | {
+                                /** @constant */
+                                field: "accepts_marketing";
+                                /** @constant */
+                                op: "eq";
+                                value: boolean;
+                            } | {
+                                /** @constant */
+                                field: "has_account";
+                                /** @constant */
+                                op: "eq";
+                                value: boolean;
+                            } | {
+                                /** @constant */
+                                field: "country";
+                                /** @enum {string} */
+                                op: "in" | "not_in";
+                                value: string[];
+                            } | {
+                                /** @constant */
+                                field: "custom_field";
+                                key: string;
+                                /** @enum {string} */
+                                op: "eq" | "neq";
+                                value: string | number | boolean;
+                            })[];
+                        };
+                        memberCount: number;
+                        refreshedAt: string | null;
+                        version: number;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -11844,7 +13518,17 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        count: number;
+                        sample: {
+                            id: string;
+                            email: string | null;
+                            firstName: string | null;
+                            lastName: string | null;
+                        }[];
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -11935,7 +13619,71 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        handle: string;
+                        name: string;
+                        rules: {
+                            /**
+                             * @default all
+                             * @enum {string}
+                             */
+                            match: "all" | "any";
+                            conditions: ({
+                                /** @enum {string} */
+                                field: "total_spent" | "order_count" | "last_order_days" | "created_days";
+                                /** @enum {string} */
+                                op: "gt" | "gte" | "lt" | "lte" | "eq";
+                                value: number;
+                            } | {
+                                /** @constant */
+                                field: "tag";
+                                /** @enum {string} */
+                                op: "has" | "not_has";
+                                value: string;
+                            } | {
+                                /** @constant */
+                                field: "group";
+                                /** @enum {string} */
+                                op: "eq" | "neq";
+                                value: string;
+                            } | {
+                                /** @constant */
+                                field: "accepts_marketing";
+                                /** @constant */
+                                op: "eq";
+                                value: boolean;
+                            } | {
+                                /** @constant */
+                                field: "has_account";
+                                /** @constant */
+                                op: "eq";
+                                value: boolean;
+                            } | {
+                                /** @constant */
+                                field: "country";
+                                /** @enum {string} */
+                                op: "in" | "not_in";
+                                value: string[];
+                            } | {
+                                /** @constant */
+                                field: "custom_field";
+                                key: string;
+                                /** @enum {string} */
+                                op: "eq" | "neq";
+                                value: string | number | boolean;
+                            })[];
+                        };
+                        memberCount: number;
+                        refreshedAt: string | null;
+                        version: number;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -11999,7 +13747,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        memberCount: number;
+                        entered: number;
+                        exited: number;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -12029,7 +13783,102 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        handle: string;
+                        name: string;
+                        tokens: {
+                            colors: {
+                                background: string;
+                                foreground: string;
+                                primary: string;
+                                primaryForeground: string;
+                                secondary: string;
+                                secondaryForeground: string;
+                                muted: string;
+                                mutedForeground: string;
+                                accent: string;
+                                accentForeground: string;
+                                border: string;
+                                destructive: string;
+                            };
+                            dark?: {
+                                colors: {
+                                    background?: string;
+                                    foreground?: string;
+                                    primary?: string;
+                                    primaryForeground?: string;
+                                    secondary?: string;
+                                    secondaryForeground?: string;
+                                    muted?: string;
+                                    mutedForeground?: string;
+                                    accent?: string;
+                                    accentForeground?: string;
+                                    border?: string;
+                                    destructive?: string;
+                                };
+                            };
+                            typography: {
+                                fontBody: string;
+                                fontHeading: string;
+                                /** @default 16 */
+                                baseSizePx: number;
+                                /** @default 1.25 */
+                                scale: number;
+                            };
+                            radius: {
+                                sm: number;
+                                md: number;
+                                lg: number;
+                            };
+                            spacing: {
+                                /** @default 4 */
+                                unitPx: number;
+                            };
+                            /** @default {} */
+                            shadows: {
+                                [key: string]: string;
+                            };
+                            /**
+                             * @default {
+                             *       "radius": "md",
+                             *       "uppercase": false
+                             *     }
+                             */
+                            buttons: {
+                                /**
+                                 * @default md
+                                 * @enum {string}
+                                 */
+                                radius: "none" | "sm" | "md" | "lg" | "full";
+                                /** @default false */
+                                uppercase: boolean;
+                            };
+                        };
+                        customCss: string | null;
+                        logoMediaId: string | null;
+                        faviconMediaId: string | null;
+                        socialImageMediaId: string | null;
+                        version: number;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        channels: {
+                            id: string;
+                            handle: string;
+                        }[];
+                        contrastWarnings: {
+                            /** @enum {string} */
+                            mode: "light" | "dark";
+                            foreground: string;
+                            background: string;
+                            ratio: number;
+                            required: number;
+                        }[];
+                    }[];
+                };
             };
             /** @description Error */
             default: {
@@ -12138,7 +13987,102 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        handle: string;
+                        name: string;
+                        tokens: {
+                            colors: {
+                                background: string;
+                                foreground: string;
+                                primary: string;
+                                primaryForeground: string;
+                                secondary: string;
+                                secondaryForeground: string;
+                                muted: string;
+                                mutedForeground: string;
+                                accent: string;
+                                accentForeground: string;
+                                border: string;
+                                destructive: string;
+                            };
+                            dark?: {
+                                colors: {
+                                    background?: string;
+                                    foreground?: string;
+                                    primary?: string;
+                                    primaryForeground?: string;
+                                    secondary?: string;
+                                    secondaryForeground?: string;
+                                    muted?: string;
+                                    mutedForeground?: string;
+                                    accent?: string;
+                                    accentForeground?: string;
+                                    border?: string;
+                                    destructive?: string;
+                                };
+                            };
+                            typography: {
+                                fontBody: string;
+                                fontHeading: string;
+                                /** @default 16 */
+                                baseSizePx: number;
+                                /** @default 1.25 */
+                                scale: number;
+                            };
+                            radius: {
+                                sm: number;
+                                md: number;
+                                lg: number;
+                            };
+                            spacing: {
+                                /** @default 4 */
+                                unitPx: number;
+                            };
+                            /** @default {} */
+                            shadows: {
+                                [key: string]: string;
+                            };
+                            /**
+                             * @default {
+                             *       "radius": "md",
+                             *       "uppercase": false
+                             *     }
+                             */
+                            buttons: {
+                                /**
+                                 * @default md
+                                 * @enum {string}
+                                 */
+                                radius: "none" | "sm" | "md" | "lg" | "full";
+                                /** @default false */
+                                uppercase: boolean;
+                            };
+                        };
+                        customCss: string | null;
+                        logoMediaId: string | null;
+                        faviconMediaId: string | null;
+                        socialImageMediaId: string | null;
+                        version: number;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        channels: {
+                            id: string;
+                            handle: string;
+                        }[];
+                        contrastWarnings: {
+                            /** @enum {string} */
+                            mode: "light" | "dark";
+                            foreground: string;
+                            background: string;
+                            ratio: number;
+                            required: number;
+                        }[];
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -12170,7 +14114,102 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        handle: string;
+                        name: string;
+                        tokens: {
+                            colors: {
+                                background: string;
+                                foreground: string;
+                                primary: string;
+                                primaryForeground: string;
+                                secondary: string;
+                                secondaryForeground: string;
+                                muted: string;
+                                mutedForeground: string;
+                                accent: string;
+                                accentForeground: string;
+                                border: string;
+                                destructive: string;
+                            };
+                            dark?: {
+                                colors: {
+                                    background?: string;
+                                    foreground?: string;
+                                    primary?: string;
+                                    primaryForeground?: string;
+                                    secondary?: string;
+                                    secondaryForeground?: string;
+                                    muted?: string;
+                                    mutedForeground?: string;
+                                    accent?: string;
+                                    accentForeground?: string;
+                                    border?: string;
+                                    destructive?: string;
+                                };
+                            };
+                            typography: {
+                                fontBody: string;
+                                fontHeading: string;
+                                /** @default 16 */
+                                baseSizePx: number;
+                                /** @default 1.25 */
+                                scale: number;
+                            };
+                            radius: {
+                                sm: number;
+                                md: number;
+                                lg: number;
+                            };
+                            spacing: {
+                                /** @default 4 */
+                                unitPx: number;
+                            };
+                            /** @default {} */
+                            shadows: {
+                                [key: string]: string;
+                            };
+                            /**
+                             * @default {
+                             *       "radius": "md",
+                             *       "uppercase": false
+                             *     }
+                             */
+                            buttons: {
+                                /**
+                                 * @default md
+                                 * @enum {string}
+                                 */
+                                radius: "none" | "sm" | "md" | "lg" | "full";
+                                /** @default false */
+                                uppercase: boolean;
+                            };
+                        };
+                        customCss: string | null;
+                        logoMediaId: string | null;
+                        faviconMediaId: string | null;
+                        socialImageMediaId: string | null;
+                        version: number;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        channels: {
+                            id: string;
+                            handle: string;
+                        }[];
+                        contrastWarnings: {
+                            /** @enum {string} */
+                            mode: "light" | "dark";
+                            foreground: string;
+                            background: string;
+                            ratio: number;
+                            required: number;
+                        }[];
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -12282,7 +14321,102 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        handle: string;
+                        name: string;
+                        tokens: {
+                            colors: {
+                                background: string;
+                                foreground: string;
+                                primary: string;
+                                primaryForeground: string;
+                                secondary: string;
+                                secondaryForeground: string;
+                                muted: string;
+                                mutedForeground: string;
+                                accent: string;
+                                accentForeground: string;
+                                border: string;
+                                destructive: string;
+                            };
+                            dark?: {
+                                colors: {
+                                    background?: string;
+                                    foreground?: string;
+                                    primary?: string;
+                                    primaryForeground?: string;
+                                    secondary?: string;
+                                    secondaryForeground?: string;
+                                    muted?: string;
+                                    mutedForeground?: string;
+                                    accent?: string;
+                                    accentForeground?: string;
+                                    border?: string;
+                                    destructive?: string;
+                                };
+                            };
+                            typography: {
+                                fontBody: string;
+                                fontHeading: string;
+                                /** @default 16 */
+                                baseSizePx: number;
+                                /** @default 1.25 */
+                                scale: number;
+                            };
+                            radius: {
+                                sm: number;
+                                md: number;
+                                lg: number;
+                            };
+                            spacing: {
+                                /** @default 4 */
+                                unitPx: number;
+                            };
+                            /** @default {} */
+                            shadows: {
+                                [key: string]: string;
+                            };
+                            /**
+                             * @default {
+                             *       "radius": "md",
+                             *       "uppercase": false
+                             *     }
+                             */
+                            buttons: {
+                                /**
+                                 * @default md
+                                 * @enum {string}
+                                 */
+                                radius: "none" | "sm" | "md" | "lg" | "full";
+                                /** @default false */
+                                uppercase: boolean;
+                            };
+                        };
+                        customCss: string | null;
+                        logoMediaId: string | null;
+                        faviconMediaId: string | null;
+                        socialImageMediaId: string | null;
+                        version: number;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        channels: {
+                            id: string;
+                            handle: string;
+                        }[];
+                        contrastWarnings: {
+                            /** @enum {string} */
+                            mode: "light" | "dark";
+                            foreground: string;
+                            background: string;
+                            ratio: number;
+                            required: number;
+                        }[];
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -12320,7 +14454,102 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        handle: string;
+                        name: string;
+                        tokens: {
+                            colors: {
+                                background: string;
+                                foreground: string;
+                                primary: string;
+                                primaryForeground: string;
+                                secondary: string;
+                                secondaryForeground: string;
+                                muted: string;
+                                mutedForeground: string;
+                                accent: string;
+                                accentForeground: string;
+                                border: string;
+                                destructive: string;
+                            };
+                            dark?: {
+                                colors: {
+                                    background?: string;
+                                    foreground?: string;
+                                    primary?: string;
+                                    primaryForeground?: string;
+                                    secondary?: string;
+                                    secondaryForeground?: string;
+                                    muted?: string;
+                                    mutedForeground?: string;
+                                    accent?: string;
+                                    accentForeground?: string;
+                                    border?: string;
+                                    destructive?: string;
+                                };
+                            };
+                            typography: {
+                                fontBody: string;
+                                fontHeading: string;
+                                /** @default 16 */
+                                baseSizePx: number;
+                                /** @default 1.25 */
+                                scale: number;
+                            };
+                            radius: {
+                                sm: number;
+                                md: number;
+                                lg: number;
+                            };
+                            spacing: {
+                                /** @default 4 */
+                                unitPx: number;
+                            };
+                            /** @default {} */
+                            shadows: {
+                                [key: string]: string;
+                            };
+                            /**
+                             * @default {
+                             *       "radius": "md",
+                             *       "uppercase": false
+                             *     }
+                             */
+                            buttons: {
+                                /**
+                                 * @default md
+                                 * @enum {string}
+                                 */
+                                radius: "none" | "sm" | "md" | "lg" | "full";
+                                /** @default false */
+                                uppercase: boolean;
+                            };
+                        };
+                        customCss: string | null;
+                        logoMediaId: string | null;
+                        faviconMediaId: string | null;
+                        socialImageMediaId: string | null;
+                        version: number;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        channels: {
+                            id: string;
+                            handle: string;
+                        }[];
+                        contrastWarnings: {
+                            /** @enum {string} */
+                            mode: "light" | "dark";
+                            foreground: string;
+                            background: string;
+                            ratio: number;
+                            required: number;
+                        }[];
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -12359,7 +14588,12 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        token: string;
+                        expiresAt: string;
+                    };
+                };
             };
             /** @description Error */
             default: {
