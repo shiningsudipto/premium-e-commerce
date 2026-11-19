@@ -1,10 +1,11 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { buttonClass } from "../../components/storefront/primitives";
 import { useBag } from "./bag-provider";
-import { bagErrorCode, bagErrorMessage, useAddToBagMutation } from "./cart-api";
+import { bagErrorCode, useAddToBagMutation, useBagErrorMessage } from "./cart-api";
 
 // The "Quick add" button on product cards. Products with several variants go to their page so
 // the shopper can choose; the result is announced to screen readers.
@@ -21,6 +22,8 @@ export function QuickAdd({
   soldOut: boolean;
   labels: { add: string; added: string; soldOut: string; addAria: string; soldOutAria: string };
 }) {
+  const t = useTranslations("product");
+  const bagErrorMessage = useBagErrorMessage();
   const router = useRouter();
   const { openBag } = useBag();
   const [addToBag, { isLoading: pending }] = useAddToBagMutation();
@@ -35,7 +38,7 @@ export function QuickAdd({
   const onClick = async () => {
     const result = await addToBag({ handle });
     if (!result.error) {
-      setStatus({ added: true, message: `${title} added to your bag.` });
+      setStatus({ added: true, message: t("addedMessage", { title }) });
       openBag();
     } else if (bagErrorCode(result.error) === "CHOOSE_OPTIONS") router.push(productHref);
     else setStatus({ added: false, message: bagErrorMessage(result.error) });

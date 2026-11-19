@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import type {
   craft as CraftContent,
   faq as FaqContent,
@@ -28,6 +29,7 @@ export function PromoSplit({
   currency: string;
   content: typeof GiftSetContent;
 }) {
+  const t = useTranslations("editorial");
   const price = formatMoney(content.priceMinor, currency, market.locale);
   const was = formatMoney(content.compareAtMinor, currency, market.locale);
   const saving = formatMoney(content.compareAtMinor - content.priceMinor, currency, market.locale);
@@ -55,12 +57,10 @@ export function PromoSplit({
             </h2>
             <p className="muted">{content.body}</p>
             <p className="promo-price">
-              <span className="sr-only">
-                Bundle price {price}, was {was} if bought separately.
-              </span>
+              <span className="sr-only">{t("bundlePrice", { price, was })}</span>
               <strong aria-hidden="true">{price}</strong>
               <s aria-hidden="true">{was}</s>
-              <span className="save">Save {saving}</span>
+              <span className="save">{t("save", { amount: saving })}</span>
             </p>
             <ul className="promo-list">
               {content.points.map((point) => (
@@ -131,27 +131,12 @@ export function Craft({ market, content }: { market: MarketRef; content: typeof 
   );
 }
 
-const NUMBER_WORDS = [
-  "",
-  "One",
-  "Two",
-  "Three",
-  "Four",
-  "Five",
-  "Six",
-  "Seven",
-  "Eight",
-  "Nine",
-  "Ten",
-  "Eleven",
-  "Twelve",
-];
-
 // Our story · story_cards: a snap carousel on phones and tablets; on desktop the section pins
 // and the track slides with the page scroll (pure CSS scroll-driven animation, see story.css).
 export function Story({ market, content }: { market: MarketRef; content: typeof StoryContent }) {
+  const t = useTranslations("editorial");
   const count = content.chapters.length;
-  const countLabel = `${NUMBER_WORDS[count] ?? count} chapters`;
+  const countLabel = t("chapters", { count });
   return (
     <section
       className="section story"
@@ -175,7 +160,7 @@ export function Story({ market, content }: { market: MarketRef; content: typeof 
               <span className="story__progress" aria-hidden="true">
                 <span />
               </span>
-              <span className="story-hint story-hint--swipe">Swipe to read on</span>
+              <span className="story-hint story-hint--swipe">{t("swipeStory")}</span>
             </div>
           </div>
           {/* focusable so keyboard users can scroll the carousel */}
@@ -244,6 +229,7 @@ export function PromoCards({ market, content }: { market: MarketRef; content: ty
 
 // 6 · testimonial_carousel: swipeable cards on phones, three columns from 1024px.
 export function Testimonials({ content }: { content: typeof ReviewsContent }) {
+  const t = useTranslations("editorial");
   const average = content.score.average.toFixed(1);
   return (
     <section className="section" id="reviews" data-block="testimonial_carousel" aria-labelledby="reviews-title">
@@ -258,15 +244,17 @@ export function Testimonials({ content }: { content: typeof ReviewsContent }) {
           <div className="score">
             <span className="score__num">{average}</span>
             <div className="score__meta">
-              <Stars label={`Rated ${average} out of 5`} />
-              <span className="muted score__count">from {content.score.count.toLocaleString("en")} reviews</span>
+              <Stars label={t("rated", { rating: average })} />
+              <span className="muted score__count">
+                {t("fromReviews", { count: content.score.count.toLocaleString("en") })}
+              </span>
             </div>
           </div>
         </div>
-        <ul className="carousel" tabIndex={0} role="region" aria-label="Customer reviews, scroll horizontally">
+        <ul className="carousel" tabIndex={0} role="region" aria-label={t("reviewsRegion")}>
           {content.items.map((review) => (
             <li key={review.name} className="review">
-              <Stars label={`Rated ${review.rating} out of 5`} size="sm" />
+              <Stars label={t("rated", { rating: review.rating })} size="sm" />
               <blockquote>“{review.quote}”</blockquote>
               <div className="review__by">
                 <span>
@@ -275,14 +263,14 @@ export function Testimonials({ content }: { content: typeof ReviewsContent }) {
                 </span>
                 <span className="verified">
                   <Icon name="check" size="sm" />
-                  Verified buyer
+                  {t("verified")}
                 </span>
-                <span className="muted">Bought: {review.product}</span>
+                <span className="muted">{t("bought", { product: review.product })}</span>
               </div>
             </li>
           ))}
         </ul>
-        <p className="carousel-hint">Swipe or use arrow keys to see more reviews</p>
+        <p className="carousel-hint">{t("reviewsHint")}</p>
       </div>
     </section>
   );

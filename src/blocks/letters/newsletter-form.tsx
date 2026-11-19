@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useActionState, useId } from "react";
 import { Icon } from "../../components/storefront/icon";
 import { subscribeToLetter, type SubscribeState } from "./actions";
@@ -11,6 +12,7 @@ export function NewsletterForm({ consent }: { consent: React.ReactNode }) {
     status: "idle",
     email: "",
   });
+  const t = useTranslations("newsletter");
   const id = useId();
   const invalid = state.status === "invalid";
 
@@ -18,7 +20,7 @@ export function NewsletterForm({ consent }: { consent: React.ReactNode }) {
     return (
       <p className="success" role="status">
         <Icon name="check" />
-        You’re on the list. The next letter arrives at the start of the month.
+        {t("subscribed")}
       </p>
     );
   }
@@ -26,7 +28,7 @@ export function NewsletterForm({ consent }: { consent: React.ReactNode }) {
   return (
     <form action={action} noValidate className="newsletter__form">
       <div className="field">
-        <label htmlFor={`${id}-email`}>Email address</label>
+        <label htmlFor={`${id}-email`}>{t("email")}</label>
         <div className="field-row">
           <input
             className="input"
@@ -34,24 +36,24 @@ export function NewsletterForm({ consent }: { consent: React.ReactNode }) {
             type="email"
             name="email"
             autoComplete="email"
-            placeholder="you@example.com"
+            placeholder={t("placeholder")}
             defaultValue={state.email}
             required
             aria-invalid={invalid}
             aria-describedby={`${id}-consent${invalid ? ` ${id}-error` : ""}`}
           />
           <button className="btn btn--primary" type="submit" disabled={pending}>
-            Subscribe
+            {t("subscribe")}
           </button>
         </div>
         {invalid && (
           <p className="consent consent--error" id={`${id}-error`}>
-            Enter an email address like name@example.com.
+            {t("invalid")}
           </p>
         )}
         {state.status === "unavailable" && (
           <p className="consent" role="status">
-            Sign-ups open soon. Thank you for your interest; please check back shortly.
+            {t("unavailable")}
           </p>
         )}
       </div>

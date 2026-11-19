@@ -1,10 +1,12 @@
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { env } from "../../lib/env";
 
 export type Crumb = { label: string; href?: string };
 
 // Breadcrumbs with their BreadcrumbList structured data. The last crumb is the current page.
-export function Breadcrumbs({ items, label = "Breadcrumb" }: { items: Crumb[]; label?: string }) {
+export function Breadcrumbs({ items, label }: { items: Crumb[]; label?: string }) {
+  const t = useTranslations("product");
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -16,7 +18,7 @@ export function Breadcrumbs({ items, label = "Breadcrumb" }: { items: Crumb[]; l
     })),
   };
   return (
-    <nav aria-label={label}>
+    <nav aria-label={label ?? t("breadcrumbs")}>
       <ol className="crumbs">
         {items.map((item, i) => (
           <li key={`${item.label}-${i}`}>

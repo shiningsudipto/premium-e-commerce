@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { cacheLife } from "next/cache";
 import { getTranslations } from "next-intl/server";
-import { brandBlurb, brandTagline, footerColumns, paymentMarks, socials } from "../../content/site";
+import { siteContent } from "../../content";
 import { href } from "../../lib/links";
 import type { MarketRef } from "../../lib/market";
 import type { StoreConfig } from "../../lib/store-data";
+import { marketLanguages } from "../../i18n/languages";
+import { LanguageSwitcher } from "../header/language-switcher";
 import { marketLabel } from "../header/site-header";
 import { Icon } from "../storefront/icon";
 import { Logo } from "../storefront/primitives";
@@ -19,6 +21,7 @@ async function currentYear() {
 export async function SiteFooter({ market, config }: { market: MarketRef; config: StoreConfig }) {
   const [t, year] = await Promise.all([getTranslations("footer"), currentYear()]);
   const locale = marketLabel(market, config);
+  const { brandBlurb, brandTagline, footerColumns, paymentMarks, socials } = siteContent(market.locale);
   return (
     <footer className="footer on-dark" data-block="footer">
       <div className="pt-container">
@@ -67,12 +70,20 @@ export async function SiteFooter({ market, config }: { market: MarketRef; config
               </li>
             ))}
           </ul>
-          {/* the market switcher arrives with multi-market support; for now this shows the current one */}
-          <p className="locale">
-            <span className="sr-only">{t("marketLabel", { market: locale })}</span>
-            <Icon name="globe" size="sm" />
-            <span aria-hidden="true">{locale}</span>
-          </p>
+          {/* the current language and currency, and the same page in the market's other languages */}
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="locale">
+              <span className="sr-only">{t("marketLabel", { market: locale })}</span>
+              <Icon name="globe" size="sm" />
+              <span aria-hidden="true">{locale}</span>
+            </p>
+            <LanguageSwitcher
+              locale={market.locale}
+              market={market.market}
+              languages={marketLanguages(config.market.locales)}
+              placement="footer"
+            />
+          </div>
           <p>{t("rights", { year, store: config.storeName, tagline: brandTagline })}</p>
         </div>
       </div>

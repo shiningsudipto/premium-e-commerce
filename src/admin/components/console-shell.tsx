@@ -4,6 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
 import {
+  ActivityIcon,
+  BanknoteIcon,
   ChartColumnIcon,
   ContactIcon,
   CreditCardIcon,
@@ -11,9 +13,13 @@ import {
   FlagIcon,
   FolderTreeIcon,
   HandshakeIcon,
+  ImagesIcon,
+  KeyRoundIcon,
+  LanguagesIcon,
   HistoryIcon,
   LayersIcon,
   LayoutDashboardIcon,
+  ListChecksIcon,
   ListTreeIcon,
   LogOutIcon,
   MailIcon,
@@ -24,6 +30,7 @@ import {
   PanelsTopLeftIcon,
   PercentIcon,
   ReceiptIcon,
+  ShieldAlertIcon,
   ShieldIcon,
   SignpostIcon,
   SlidersHorizontalIcon,
@@ -32,6 +39,8 @@ import {
   Undo2Icon,
   UsersIcon,
   UsersRoundIcon,
+  WebhookIcon,
+  WorkflowIcon,
   WarehouseIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -81,6 +90,9 @@ export const NAV: { heading: string; items: NavItem[] }[] = [
     items: [
       { href: "/admin/promotions", label: "Promotions", icon: TicketPercentIcon, permission: "promotions.write" },
       { href: "/admin/affiliates", label: "Affiliates", icon: HandshakeIcon, permission: "affiliates.read" },
+      { href: "/admin/affiliates/fraud", label: "Fraud review", icon: ShieldAlertIcon, permission: "affiliates.read" },
+      { href: "/admin/affiliates/payouts", label: "Payout batches", icon: BanknoteIcon, permission: "affiliates.read" },
+      { href: "/admin/affiliates/assets", label: "Marketing assets", icon: ImagesIcon, permission: "affiliates.read" },
     ],
   },
   {
@@ -88,6 +100,19 @@ export const NAV: { heading: string; items: NavItem[] }[] = [
     items: [
       { href: "/admin/pages", label: "Pages", icon: PanelsTopLeftIcon, permission: "content.pages.write" },
       { href: "/admin/theme", label: "Theme", icon: PaletteIcon, permission: "theme.write" },
+      {
+        href: "/admin/translations",
+        label: "Translations",
+        icon: LanguagesIcon,
+        // each kind of content needs its own permission; the screen shows the kinds a role can edit
+        permission: [
+          "products.write",
+          "categories.write",
+          "collections.write",
+          "content.pages.write",
+          "content.menus.write",
+        ],
+      },
       { href: "/admin/menus", label: "Menus", icon: ListTreeIcon, permission: "content.menus.write" },
       { href: "/admin/redirects", label: "Redirects", icon: SignpostIcon, permission: "redirects.write" },
       {
@@ -107,6 +132,11 @@ export const NAV: { heading: string; items: NavItem[] }[] = [
       { href: "/admin/tax", label: "Tax", icon: PercentIcon, permission: "settings.read" },
       { href: "/admin/payments", label: "Payments", icon: CreditCardIcon, permission: "settings.read" },
       { href: "/admin/flags", label: "Feature flags", icon: FlagIcon, permission: "settings.read" },
+      { href: "/admin/workflows", label: "Workflows", icon: WorkflowIcon, permission: "workflows.write" },
+      { href: "/admin/webhooks", label: "Webhooks", icon: WebhookIcon, permission: "webhooks.manage" },
+      { href: "/admin/api-keys", label: "API keys", icon: KeyRoundIcon, permission: "api_keys.manage" },
+      { href: "/admin/jobs", label: "Jobs", icon: ListChecksIcon, permission: "settings.read" },
+      { href: "/admin/integrations", label: "Integrations", icon: ActivityIcon, permission: "settings.read" },
     ],
   },
   {

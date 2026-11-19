@@ -88,3 +88,258 @@
   border: var(--hairline);
   background: #ffffff;
 }
+
+/* ── B-Phase 3: tiers, sub-IDs, payout methods and requests, marketing assets ── */
+
+.affiliate-notice {
+  padding: var(--space-3) var(--space-4);
+  border: var(--hairline);
+  border-left: 3px solid var(--color-success, var(--color-primary));
+  background: var(--color-surface);
+  font-size: var(--text-sm);
+}
+
+/* tier card and progress */
+.affiliate-tier__name {
+  font-size: var(--text-xl);
+  font-weight: var(--weight-semibold);
+  margin-bottom: var(--space-2);
+}
+.affiliate-tier__next {
+  margin-top: var(--space-5);
+  display: grid;
+  gap: var(--space-2);
+}
+.affiliate-tier__subtitle {
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+}
+.affiliate-progress {
+  display: grid;
+  gap: var(--space-2);
+}
+.affiliate-progress__track {
+  height: 10px;
+  border: var(--hairline);
+  border-radius: var(--radius-pill);
+  background: var(--color-muted);
+  overflow: hidden;
+}
+.affiliate-progress__fill {
+  display: block;
+  height: 100%;
+  background: var(--color-primary);
+}
+.affiliate-progress__text {
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+/* period picker beside the section title */
+.affiliate-section-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.affiliate-periods .chip[aria-current="true"] {
+  border-color: var(--color-foreground);
+  background: var(--color-foreground);
+  color: var(--color-background) !important;
+}
+
+/* sub-ID table: sortable headers and a share bar per row */
+.affiliate-sort {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: inherit;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.affiliate-sort:hover,
+.affiliate-sort:focus-visible {
+  text-decoration: underline;
+}
+.affiliate-sort__icon {
+  font-size: var(--text-2xs, 0.625rem);
+  color: var(--color-muted-foreground);
+}
+.affiliate-subids th[aria-sort] .affiliate-sort__icon {
+  color: var(--color-foreground);
+}
+.affiliate-subids td {
+  font-variant-numeric: tabular-nums;
+}
+.affiliate-share {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 140px;
+}
+.affiliate-share__bar {
+  flex: 1;
+  height: 8px;
+  background: var(--color-muted);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+.affiliate-share__bar > span {
+  display: block;
+  height: 100%;
+  background: var(--color-accent, var(--color-primary));
+}
+.affiliate-share__value {
+  min-width: 3.5em;
+  text-align: right;
+}
+@media (forced-colors: active) {
+  .affiliate-progress__fill,
+  .affiliate-share__bar > span {
+    background: CanvasText;
+  }
+}
+
+/* payout request */
+.affiliate-request__form {
+  display: grid;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+/* payout methods */
+.affiliate-methods {
+  display: grid;
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+}
+.affiliate-method {
+  padding: var(--space-4) var(--space-5);
+  border: var(--hairline);
+  background: var(--color-surface);
+  display: grid;
+  gap: var(--space-2);
+}
+.affiliate-method__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+.affiliate-method__meta {
+  font-size: var(--text-sm);
+}
+.affiliate-method__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+.affiliate-disclosure {
+  flex-basis: 100%;
+}
+.affiliate-disclosure > summary {
+  cursor: pointer;
+  width: fit-content;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.affiliate-disclosure[open] > summary {
+  margin-bottom: var(--space-3);
+}
+.affiliate-confirm {
+  display: grid;
+  gap: var(--space-3);
+  justify-items: start;
+}
+.affiliate-danger {
+  border-color: var(--color-destructive);
+  color: var(--color-destructive);
+}
+.affiliate-choice {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: var(--space-2);
+}
+.affiliate-choice legend {
+  font-weight: var(--weight-semibold);
+  margin-bottom: var(--space-2);
+}
+/* the add form shows the chosen type's fields (CSS, so it works before JavaScript loads) */
+.affiliate-method-form:has(input[name="type"][value="bank"]:checked) .affiliate-method-form__wallet,
+.affiliate-method-form:has(input[name="type"][value="mobile_wallet"]:checked) .affiliate-method-form__bank {
+  display: none;
+}
+
+/* marketing assets */
+.affiliate-assets {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--space-5);
+  margin-top: var(--space-4);
+}
+.affiliate-asset > article {
+  height: 100%;
+  padding: var(--space-4);
+  border: var(--hairline);
+  background: var(--color-surface);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.affiliate-asset__preview {
+  aspect-ratio: 4 / 3;
+  display: grid;
+  place-items: center;
+  background: var(--color-muted);
+  overflow: hidden;
+}
+.affiliate-asset__preview img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+.affiliate-asset__copy {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border-left: 3px solid var(--color-border-strong, currentColor);
+  font-size: var(--text-sm);
+  white-space: pre-line;
+}
+.affiliate-asset__title {
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+}
+.affiliate-asset__meta,
+.affiliate-asset__stats {
+  font-size: var(--text-xs);
+}
+.affiliate-asset__actions {
+  margin-top: auto;
+}
+.affiliate-asset__share {
+  display: grid;
+  gap: var(--space-2);
+}
+.affiliate-snippet {
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  border: var(--hairline-strong);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: var(--text-xs);
+  resize: vertical;
+}
+.affiliate-assets__note {
+  margin-top: var(--space-5);
+  font-size: var(--text-sm);
+}

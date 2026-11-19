@@ -10,7 +10,7 @@ import { formatMoney } from "../../lib/money";
 import { href } from "../../lib/links";
 import { HeartButton } from "../wishlist/heart-button";
 import { useBag } from "../cart/bag-provider";
-import { bagErrorMessage, useAddToBagMutation } from "../cart/cart-api";
+import { useAddToBagMutation, useBagErrorMessage } from "../cart/cart-api";
 import {
   choose,
   initialVariant,
@@ -73,6 +73,7 @@ export function ProductView({
   const selection = selectionOf(variant);
   const [quantity, setQuantity] = useState(1);
   const [addToBag, { isLoading: pending }] = useAddToBagMutation();
+  const bagErrorMessage = useBagErrorMessage();
   const [message, setMessage] = useState<{ error: boolean; text: string } | null>(null);
 
   useEffect(() => {

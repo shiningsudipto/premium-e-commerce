@@ -6,8 +6,15 @@ import { ProductCard, ProductGridSkeleton } from "@/src/blocks/product-shelf/pro
 import { Breadcrumbs, type Crumb } from "@/src/components/storefront/breadcrumbs";
 import { isEmptyRichText, plainText, RichText } from "@/src/components/storefront/rich-text";
 import { ProductView } from "@/src/features/product/product-view";
+import { RecentlyViewed } from "@/src/features/recommendations/recently-viewed";
 import { ProductQuestions, ProductReviews } from "@/src/features/reviews/reviews-section";
-import { getProduct, getRecommendations, type ProductDetail } from "@/src/lib/catalog";
+import {
+  getProduct,
+  getRecommendations,
+  type ProductDetail,
+  type ProductSummary,
+  type RecommendationPlacement,
+} from "@/src/lib/catalog";
 import { currentMarket } from "@/src/lib/current-market";
 import { env } from "@/src/lib/env";
 import { href } from "@/src/lib/links";
@@ -97,6 +104,12 @@ export default async function ProductPage({ params }: PageProps<"/[market]/produ
           <Related market={market} productId={product.id} />
         </Suspense>
       </section>
+      {/* below the related shelf, and only when the API has picks (cached like it) */}
+      <Suspense fallback={null}>
+        <MoreRecommendations market={market} productId={product.id} />
+      </Suspense>
+      {/* this browser's history, filled in after load at the very end of the page */}
+      <RecentlyViewed market={market} productId={product.id} limit={4} />
     </div>
   );
 }
@@ -114,6 +127,47 @@ async function Related({ market, productId }: { market: MarketRef; productId: st
       ))}
     </ul>
   );
+}
+
+// "Complete the look" and "Frequently bought together". Both fall back to algorithmic picks, so
+// pieces already shown in an earlier shelf on this page are left out; a shelf with nothing new
+// isn't shown. All three reads share the related shelf's cache entries and tags.
+async function MoreRecommendations({ market, productId }: { market: MarketRef; productId: string }) {
+  const [related, look, together, t] = await Promise.all([
+    getRecommendations(market, "related", productId, 4),
+    getRecommendations(market, "complete_the_look", productId, 8),
+    getRecommendations(market, "frequently_bought_together", productId, 8),
+    getTranslations("recommendations"),
+  ]);
+  const shown = new Set(related.map((p) => p.id));
+  const fresh = (items: ProductSummary[]) => {
+    const out = items.filter((p) => !shown.has(p.id)).slice(0, 4);
+    out.forEach((p) => shown.add(p.id));
+    return out;
+  };
+  const shelves = [
+    { placement: "complete_the_look", title: t("completeTheLook"), items: fresh(look) },
+    { placement: "frequently_bought_together", title: t("frequentlyBoughtTogether"), items: fresh(together) },
+  ] satisfies { placement: RecommendationPlacement; title: string; items: ProductSummary[] }[];
+  return shelves
+    .filter((s) => s.items.length)
+    .map((s) => (
+      <section
+        key={s.placement}
+        className="related"
+        aria-labelledby={`${s.placement}-title`}
+        data-testid={`recs-${s.placement}`}
+      >
+        <h2 id={`${s.placement}-title`} className="h3" style={{ marginBottom: "var(--space-6)" }}>
+          {s.title}
+        </h2>
+        <ul className="product-grid">
+          {s.items.map((p, i) => (
+            <ProductCard key={p.id} product={p} market={market} index={i} />
+          ))}
+        </ul>
+      </section>
+    ));
 }
 
 // Product, Offer and AggregateRating for rich results. Availability here is the cached view;

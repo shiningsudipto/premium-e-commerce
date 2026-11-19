@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import type { letters as LettersContent } from "../../content/home";
 import { ButtonLink, EmText, Eyebrow } from "../../components/storefront/primitives";
 import { href } from "../../lib/links";
@@ -15,6 +16,7 @@ export function Letters({
   storeName: string;
   content: typeof LettersContent;
 }) {
+  const t = useTranslations("newsletter");
   const { newsletter, partner } = content;
   return (
     <section
@@ -35,8 +37,11 @@ export function Letters({
             <NewsletterForm
               consent={
                 <>
-                  By subscribing you agree to receive emails from {storeName}. Unsubscribe any time. See our{" "}
-                  <Link href={href(market, newsletter.privacy.path)}>{newsletter.privacy.label}</Link>.
+                  {t.rich("consent", {
+                    store: storeName,
+                    label: newsletter.privacy.label,
+                    privacy: (chunks) => <Link href={href(market, newsletter.privacy.path)}>{chunks}</Link>,
+                  })}
                 </>
               }
             />

@@ -1,5 +1,5 @@
 import { market } from "next/root-params";
-import { announcement } from "@/src/content/home";
+import { homeContent } from "@/src/content";
 import { SiteFooter } from "@/src/components/footer/site-footer";
 import { AnnouncementBar, SiteHeader } from "@/src/components/header/site-header";
 import { BagProvider } from "@/src/features/cart/bag-provider";
@@ -14,7 +14,7 @@ export default async function AffiliateChromeLayout({ children }: LayoutProps<"/
   const config = await getStoreConfig(ref);
   return (
     <BagProvider market={ref}>
-      <AnnouncementBar messages={announcement} />
+      <AnnouncementBar messages={homeContent(ref.locale).announcement} />
       <SiteHeader market={ref} config={config} />
       <main id="main" tabIndex={-1} className="flex-1 outline-none">
         {children}

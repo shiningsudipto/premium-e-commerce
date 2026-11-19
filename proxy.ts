@@ -1,6 +1,7 @@
 import { NextResponse, type NextFetchEvent, type NextRequest } from "next/server";
 import { adminProxy, isAdminPath } from "./src/admin/lib/session/proxy";
 import { clientIpOf, contextHeaders, newRequestId, proxyMarkets, proxyRedirects } from "./src/api/upstream";
+import { isVisitorId, newVisitorId, visitorCookie, VISITOR_COOKIE } from "./src/blocks/cms/visitor-id";
 import { affiliateRefRedirect } from "./src/features/affiliate/proxy-ref";
 import { env, isProduction } from "./src/lib/env";
 import { parseMarketSegment, pickSegment, resolveSegment } from "./src/lib/market";
@@ -17,7 +18,8 @@ import { refreshOnce } from "./src/lib/session/refresh";
 // 4. an expired access token is refreshed here through the API (which sets the new cookies), so
 //    Server Components always see a live session;
 // 5. an affiliate link (?ref=CODE&sub=…) sets the attribution cookie, reports the click in the
-//    background and redirects to the same URL without those parameters.
+//    background and redirects to the same URL without those parameters;
+// 6. every visitor gets a stable anonymous ID cookie (pe_vid) for A/B buckets and analytics.
 
 const GEO_HEADERS = ["x-vercel-ip-country", "cf-ipcountry", "cloudfront-viewer-country"];
 
@@ -80,6 +82,9 @@ export async function proxy(request: NextRequest, event?: NextFetchEvent) {
     if (c.value) request.cookies.set(c.name, c.value);
     else request.cookies.delete(c.name);
   }
+  // a first visit gets its ID now, and this render sees it too (variant blocks decide on it)
+  const visitorId = isVisitorId(request.cookies.get(VISITOR_COOKIE)?.value) ? null : newVisitorId();
+  if (visitorId) request.cookies.set(VISITOR_COOKIE, visitorId);
   const headers = new Headers(request.headers);
   headers.set("x-market-segment", current.segment);
   headers.set("x-market", current.market);
@@ -90,6 +95,10 @@ export async function proxy(request: NextRequest, event?: NextFetchEvent) {
   const response = NextResponse.next({ request: { headers } });
   response.headers.set("x-request-id", requestId);
   for (const c of sessionCookies) response.cookies.set(c.name, c.value, c.options);
+  if (visitorId) {
+    const { name, value, ...options } = visitorCookie(visitorId, isProduction);
+    response.cookies.set(name, value, options);
+  }
   if (request.cookies.get(COOKIE.market)?.value !== current.segment) {
     const { name, value, ...options } = marketCookie(current.segment, isProduction);
     response.cookies.set(name, value, options);

@@ -119,6 +119,32 @@ The home page implements the Premium Touch design (`../Home — Desktop 1440-htm
 - **Wishlists** (`src/features/wishlist`): a heart on product cards and pages saves to the customer's default list; `/account/wishlists` manages named lists, sharing and moving pieces to the bag; `/wishlists/shared/[token]` shows a shared list read-only. Browser state uses RTK Query on the bag's store. Hearts only query the API once the header reports a signed-in customer (`shopper-session.tsx`), so cached pages never depend on the session.
 - **Affiliate program** (flag `affiliates`): `proxy.ts` turns `?ref=CODE&sub=…` into the httpOnly `pe_ref` cookie (first and last click), redirects to the clean URL and sends the click beacon. The referral goes on the cart with the checkout details and when checkout opens, so the total shown already includes it. Customers apply at `/account/affiliate`; approved affiliates get the dashboard at `/affiliate` (stats, link and QR builder, orders without buyer details, earnings, payouts).
 
+## Premium (B-Phase 3) — Bangladesh, English and Bangla
+
+- **Bangla everywhere shoppers look.**
+  - Messages are split per area (`messages/{en,bn}{,.growth,.affiliate,.community}.json`). `node scripts/check-messages.mjs` checks that Bangla covers every English key with matching placeholders, plurals and rich-text tags.
+  - Home page and site chrome content has Bangla versions typed against the English ones (`src/content/*.bn.ts`, picked by `homeContent(locale)` / `siteContent(locale)`).
+  - Server Actions answer in the shopper's language using the `x-market-segment` header from `proxy.ts`.
+  - Prices keep Latin digits. Bangla pages add Noto Sans Bengali after the theme fonts.
+- **Language switcher** (`src/components/header/language-switcher.tsx`): EN / বাংলা in the header and footer, linking to the same page in the other language. Before hydration, or without JavaScript, the links go through `/api/language?locale=…`, which redirects to the same page using the Referer.
+- **Translated catalogue and content.** Store reads send `x-locale`. The API lays Bangla translations (from `/admin/translations`) over products, categories, collections, pages and menus, falling back to English per field. Pages are cached per locale and refreshed when a translation is saved.
+- **Recommendations** (`src/features/recommendations`):
+  - Product page: "Complete the look" and "Frequently bought together", cached with the product.
+  - `/cart`: "You may also like", fetched in the browser.
+  - "Recently viewed": IDs in localStorage, shown on product pages and the home page.
+  - A `recommendations` CMS block (trending or recently viewed).
+- **A/B tests.** `proxy.ts` sets an httpOnly `pe_vid` visitor cookie. CMS blocks with `settings.experiment` render only for visitors assigned that variant (`GET /v1/store/experiments`, once per request) and send an exposure event.
+- **Affiliate dashboard:** tier and progress, sortable sub-ID breakdown, payout methods (bKash, Nagad, Rocket, Upay or a bank account, always masked), payout requests, coupon codes, and marketing assets. Downloads go through `/[market]/affiliate/assets/[id]/download` with the shopper's session.
+- **Admin:**
+  - `/admin/translations`: English next to Bangla per field; page blocks by text prop.
+  - `/admin/workflows`: rule builder with a dry-run test and run history.
+  - `/admin/webhooks`: endpoints, event picker, one-time secret, delivery log with replay.
+  - `/admin/api-keys`: scopes and expiry, one-time key, revoke by typing the name.
+  - `/admin/jobs`: pg-boss queues, jobs, retry and cancel.
+  - `/admin/integrations`: status cards; live checks only on demand.
+  - `/admin/affiliates/fraud`, `/payouts` (batches with Owner approval and CSV export) and `/assets`.
+- **Testing note.** The backend integration suites, the API worker and the end-to-end suite share one database. Run the integration suites on their own, since a running worker would process their queued jobs a second time. On Windows, run Vitest from an upper-case `C:\` path: a lower-case `c:` working directory loads Vitest twice and every file fails at `describe`.
+
 ## Layout
 
 ```

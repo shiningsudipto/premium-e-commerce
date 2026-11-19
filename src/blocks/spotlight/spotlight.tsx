@@ -12,7 +12,11 @@ import { SpotlightBuy, type SpotlightVariant } from "./spotlight-buy";
 // bag". The product comes from the catalog (cached, revalidated with product:handle:…); the
 // section is left out when the product doesn't exist or isn't for sale in this market.
 export async function Spotlight({ market, content }: { market: MarketRef; content: typeof SpotlightContent }) {
-  const [product, t] = await Promise.all([getProduct(market, content.productHandle), getTranslations("product")]);
+  const [product, t, ts] = await Promise.all([
+    getProduct(market, content.productHandle),
+    getTranslations("product"),
+    getTranslations("spotlight"),
+  ]);
   if (!product) return null;
 
   const colourOption = product.options.find((o) => /^colou?r$/i.test(o.name))?.name;
@@ -33,9 +37,9 @@ export async function Spotlight({ market, content }: { market: MarketRef; conten
   const art = artFor(product.title, ...product.tags);
   const media = product.media.filter((m) => m.mimeType.startsWith("image/"));
   const shots = [
-    { image: media[0] ?? null, art, caption: "Front", label: "front view" },
-    { image: media[1] ?? null, art, flip: true, caption: "Side", label: "side view" },
-    { image: media[2] ?? null, art: "stitch" as const, caption: "Detail", label: "stitching detail" },
+    { image: media[0] ?? null, art, caption: ts("front"), label: ts("frontView") },
+    { image: media[1] ?? null, art, flip: true, caption: ts("side"), label: ts("sideView") },
+    { image: media[2] ?? null, art: "stitch" as const, caption: ts("detail"), label: ts("detailView") },
   ];
   const colours = colourValues(product);
   const initialColour = variants.find((v) => v.available)?.colour ?? colours[0] ?? null;

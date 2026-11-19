@@ -76,7 +76,21 @@
       "CONFLICT": "You've already applied.",
       "RATE_LIMITED": "Too many attempts. Wait a minute and try again.",
       "FEATURE_DISABLED": "The affiliate program isn't open right now.",
-      "NOT_FOUND": "The affiliate program isn't open right now."
+      "NOT_FOUND": "The affiliate program isn't open right now.",
+      "walletNumberInvalid": "Enter an 11-digit Bangladeshi mobile number, for example 01712345678.",
+      "accountNumberInvalid": "Enter the account number using digits only (6 to 20 digits).",
+      "routingNumberInvalid": "A routing number has 9 digits.",
+      "PAYOUT_METHOD_INVALID": "We couldn't check that account. Check the number and try again.",
+      "PAYOUT_METHOD_FAILED": "We couldn't save your payout method. Please try again.",
+      "PAYOUT_METHOD_GONE": "That payout method has already been removed.",
+      "TOO_MANY_METHODS": "You can save up to 5 payout methods. Remove one to add another.",
+      "PAYOUT_BELOW_MINIMUM": "Your balance ready for payout is below the minimum payout amount.",
+      "NO_PAYOUT_METHOD": "Add a payout method before asking for a payout.",
+      "PAYOUT_IN_PROGRESS": "You already have a payout in progress. You can ask for the next one once it's paid.",
+      "PAYOUT_SCHEDULED": "Payouts are sent on a schedule, so they can't be requested right now.",
+      "PAYOUT_REQUEST_FAILED": "We couldn't send your payout request. Please try again.",
+      "ASSET_GONE": "This asset is no longer available.",
+      "ASSET_FAILED": "We couldn't get your link. Please try again."
     },
     "nav": {
       "label": "Affiliate sections",
@@ -85,18 +99,17 @@
       "orders": "Orders",
       "earnings": "Earnings",
       "payouts": "Payouts",
-      "account": "Back to account"
+      "account": "Back to account",
+      "payoutMethods": "Payout methods",
+      "assets": "Marketing assets"
     },
     "dashboard": {
       "title": "Affiliate dashboard"
     },
     "overview": {
       "profile": "Your program",
-      "tier": "Tier: {tier}",
-      "rewardAs": "{reward} rewards",
       "code": "Your referral code:",
       "makeLink": "Make a link",
-      "last30": "Last 30 days",
       "clicks": "Clicks",
       "conversions": "Orders",
       "conversionRate": "Conversion rate",
@@ -109,10 +122,20 @@
       "inPayout": "In a payout",
       "paid": "Paid out",
       "subIds": "By sub-ID",
-      "subIdsCaption": "Clicks and orders in the last 30 days for each sub-ID",
       "subId": "Sub-ID",
       "noSubId": "No sub-ID",
-      "noActivity": "No clicks or orders in the last 30 days yet. Share a link to get started."
+      "lastDays": "Last {days} days",
+      "periodLabel": "Reporting period",
+      "days": "{days} days",
+      "toPayouts": "Payouts and requests",
+      "subIdsCaption": "Clicks, orders and conversion rate for each sub-ID over the last {days} days.",
+      "sortedBy": "Sorted by {column}, {direction}.",
+      "sort": {
+        "asc": "ascending",
+        "desc": "descending"
+      },
+      "share": "Share of clicks",
+      "noActivityDays": "No clicks or orders in the last {days} days. Share a link to get started."
     },
     "rewardType": {
       "CASH": "Cash",
@@ -204,8 +227,144 @@
     },
     "payoutMethod": {
       "bank": "Bank transfer",
-      "mobile_wallet": "Mobile wallet",
+      "mobile_wallet": "Mobile wallet (bKash, Nagad, Rocket)",
       "manual": "Manual"
+    },
+    "copy": {
+      "copied": "Copied",
+      "copiedNote": "Copied to the clipboard.",
+      "failed": "Couldn't copy. Select the text and copy it yourself."
+    },
+    "tier": {
+      "title": "Your tier",
+      "none": "You don't have a tier yet.",
+      "rewardAs": "Paid as {reward}",
+      "percent": "{rate} commission",
+      "perItem": "{amount} commission per item",
+      "perOrder": "{amount} commission per order",
+      "tiered": "Commission that rises with your sales",
+      "appliesTo": {
+        "first_order": "on first orders",
+        "returning": "on repeat orders"
+      },
+      "nextTitle": "Next tier: {tier}",
+      "progressLabel": "Progress to {tier}",
+      "progress": "{sales} of {target} in sales over the last {days} days",
+      "toGo": "{amount} more in sales to get there.",
+      "reached": "You've reached it. Your tier is updated at the next review.",
+      "nextBenefits": "It comes with: {benefits}.",
+      "top": "You're on the top tier, with {sales} in sales over the last {days} days."
+    },
+    "coupons": {
+      "title": "Your coupon codes",
+      "intro": "Share these codes with your audience. When a shopper uses one at checkout, the order is credited to you.",
+      "code": "Code",
+      "promotion": "Offer",
+      "uses": "Uses",
+      "usesOf": "{used} of {limit}",
+      "status": "Status",
+      "actions": "Actions",
+      "copy": "Copy code {code}",
+      "empty": "You don't have any coupon codes yet. Ask us if you'd like one for your audience."
+    },
+    "couponStatus": {
+      "ACTIVE": "Active",
+      "DRAFT": "Not live yet",
+      "ARCHIVED": "Ended",
+      "DISABLED": "Disabled"
+    },
+    "methods": {
+      "title": "Payout methods",
+      "intro": "Where we send your payouts. Payouts go to your default method. For your security we only ever show the last 4 digits of an account.",
+      "empty": "You haven't added a payout method yet. Add one below so we can pay you.",
+      "default": "Default",
+      "addedOn": "Added {date}",
+      "addTitle": "Add a payout method",
+      "limit": "You've saved the maximum of {max} payout methods. Remove one to add another.",
+      "type": "Payout type",
+      "types": {
+        "mobile_wallet": {
+          "label": "Mobile wallet",
+          "hint": "bKash, Nagad, Rocket or Upay"
+        },
+        "bank": {
+          "label": "Bank account",
+          "hint": "Transfer to a Bangladeshi bank account"
+        }
+      },
+      "provider": "Wallet provider",
+      "providerPick": "Choose a provider",
+      "walletNumber": "Wallet number",
+      "walletNumberHint": "The mobile number of your personal wallet account, for example 01712345678.",
+      "bankName": "Bank name",
+      "bankNameHint": "For example City Bank or Dutch-Bangla Bank.",
+      "accountNumber": "Account number",
+      "branch": "Branch",
+      "routingNumber": "Routing number",
+      "routingNumberHint": "9 digits. You can find it on a cheque or ask your branch.",
+      "accountName": "Account holder name",
+      "accountNameHint": "As it appears on the account.",
+      "optional": "{label} (optional)",
+      "makeDefault": "Use this for my payouts (make it the default)",
+      "privacy": "Account details are stored encrypted. After saving you'll only see the last 4 digits.",
+      "add": "Save payout method",
+      "saving": "Saving…",
+      "added": "Payout method saved.",
+      "setDefault": "Make default",
+      "edit": "Edit",
+      "editNote": "To change the account or wallet number, add the new account and remove this one.",
+      "save": "Save changes",
+      "saved": "Changes saved.",
+      "remove": "Remove",
+      "removeConfirm": "Remove {name}? You can add it again later.",
+      "removeDefaultConfirm": "Remove {name}? It's your default; your oldest remaining method becomes the default.",
+      "removeYes": "Yes, remove it"
+    },
+    "request": {
+      "title": "Request a payout",
+      "payable": "Ready for payout",
+      "minimum": "Minimum payout",
+      "noMinimum": "No minimum",
+      "paidTo": "Paid to",
+      "noMethod": "No payout method yet",
+      "manageMethods": "Manage payout methods",
+      "addMethod": "Add a payout method",
+      "schedule": {
+        "weekly": "Payouts are sent every week: we pay your approved balance to your default payout method, no request needed.",
+        "monthly": "Payouts are sent every month: we pay your approved balance to your default payout method, no request needed.",
+        "on_request": "Ask for a payout whenever your balance reaches the minimum."
+      },
+      "inProgress": "A payout of {amount} is in progress. You can ask for the next one once it's paid.",
+      "needMethod": "Add a payout method before asking for a payout.",
+      "belowMinimum": "You need {amount} more in approved earnings to reach the minimum payout.",
+      "nothingPayable": "You don't have approved earnings ready for payout yet.",
+      "submit": "Request payout of {amount}",
+      "sending": "Sending request…",
+      "requested": "Payout requested. We'll let you know once it's been sent."
+    },
+    "assets": {
+      "title": "Marketing assets",
+      "intro": "Banners, product images and ready-made posts. Download them, or get your tracked link so every click and order is credited to you.",
+      "empty": "No marketing assets yet. Check back soon.",
+      "kind": {
+        "banner": "Banner",
+        "image": "Image",
+        "copy": "Post text"
+      },
+      "dimensions": "{w} × {h} px",
+      "previewAlt": "Preview: {title}",
+      "stats": "Last 30 days: {downloads} downloads, {clicks} clicks, {orders} orders",
+      "revenue": "{amount} in sales",
+      "statsNote": "Each download or tracked link you get is counted for that asset.",
+      "download": "Download",
+      "getLink": "Get tracked link",
+      "gettingLink": "Getting link…",
+      "trackedLink": "Your tracked link",
+      "copyLink": "Copy link",
+      "postText": "Post text with your link",
+      "copyText": "Copy text",
+      "htmlSnippet": "HTML for your website",
+      "copySnippet": "Copy HTML"
     }
   }
 }

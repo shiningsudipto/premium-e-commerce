@@ -3,6 +3,7 @@
 import { refresh } from "next/cache";
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { ApiError, unwrap } from "../../api/errors";
 import { requestContext, serverApi } from "../../api/server";
 import { clientIpOf, contextHeaders, newRequestId } from "../../api/upstream";
@@ -20,25 +21,32 @@ import { safeNext } from "./next-path";
 
 export type FormState = { ok: boolean; errors: FieldErrors; message?: string; values?: Record<string, string> };
 
-const MESSAGES: Partial<Record<string, string>> = {
-  INVALID_CREDENTIALS: "That email and password don't match an account.",
-  ALREADY_EXISTS: "There's already an account with that email. Sign in instead.",
-  ACCOUNT_DISABLED: "This account is disabled. Contact us for help.",
-  RATE_LIMITED: "Too many attempts. Wait a minute and try again.",
-  TOKEN_EXPIRED: "This link has expired. Ask for a new one.",
-  UNAUTHENTICATED: "This link isn't valid any more. Ask for a new one.",
-};
+// API codes with their own message in account.errors (messages/en.json), in the shopper's language.
+const MESSAGE_CODES = new Set([
+  "INVALID_CREDENTIALS",
+  "ALREADY_EXISTS",
+  "ACCOUNT_DISABLED",
+  "RATE_LIMITED",
+  "TOKEN_EXPIRED",
+  "UNAUTHENTICATED",
+]);
+
+async function messages() {
+  const t = await getTranslations("account.errors");
+  return { t, forCode: (code: string | undefined) => (code && MESSAGE_CODES.has(code) ? t(code) : undefined) };
+}
 
 const field = (form: FormData, name: string) => {
   const v = form.get(name);
   return typeof v === "string" ? v.trim() : "";
 };
 
-function messageFor(body: unknown, fallback = "Something went wrong. Please try again.") {
+async function messageFor(body: unknown, fallbackKey = "generic") {
+  const { t, forCode } = await messages();
   const b = body as { code?: string; message?: string; details?: { fieldErrors?: Record<string, string[]> } };
   const errors: FieldErrors = {};
   for (const [k, v] of Object.entries(b?.details?.fieldErrors ?? {})) errors[k] = v[0];
-  return { message: (b?.code && MESSAGES[b.code]) ?? b?.message ?? fallback, errors };
+  return { message: forCode(b?.code) ?? b?.message ?? t(fallbackKey), errors };
 }
 
 async function forwardHeaders(market: MarketRef) {
@@ -83,7 +91,7 @@ async function startSession(action: "login" | "register", body: Record<string, u
     headers: await forwardHeaders(ctx.market),
     body,
   });
-  if (!result.ok) return { ok: false as const, ...messageFor(result.body) };
+  if (!result.ok) return { ok: false as const, ...(await messageFor(result.body)) };
   await setCookies(result.cookies);
   await mergeGuestBag(ctx.market, guestToken, result.cookies);
   refresh();
@@ -154,7 +162,7 @@ export async function requestPasswordReset(_prev: FormState, form: FormData): Pr
     await unwrap(serverApi({ market: ctx.market }).POST("/v1/store/auth/password-reset", { body: { email } }));
   } catch (err) {
     if (err instanceof ApiError && err.code === "RATE_LIMITED")
-      return { ok: false, errors: {}, message: MESSAGES.RATE_LIMITED };
+      return { ok: false, errors: {}, message: (await messages()).t("RATE_LIMITED") };
   }
   return { ok: true, errors: {}, values: { email } };
 }
@@ -162,7 +170,7 @@ export async function requestPasswordReset(_prev: FormState, form: FormData): Pr
 export async function resetPassword(_prev: FormState, form: FormData): Promise<FormState> {
   const token = field(form, "token");
   const password = typeof form.get("password") === "string" ? (form.get("password") as string) : "";
-  if (!token) return { ok: false, errors: {}, message: MESSAGES.UNAUTHENTICATED };
+  if (!token) return { ok: false, errors: {}, message: (await messages()).t("UNAUTHENTICATED") };
   if (password.length < 8) return { ok: false, errors: { password: "passwordShort" } };
   if (password !== form.get("confirm")) return { ok: false, errors: { confirm: "passwordMismatch" } };
   try {
@@ -172,8 +180,9 @@ export async function resetPassword(_prev: FormState, form: FormData): Promise<F
     );
     return { ok: true, errors: {} };
   } catch (err) {
-    const message = err instanceof ApiError ? (MESSAGES[err.code] ?? err.message) : undefined;
-    return { ok: false, errors: {}, message: message ?? "We couldn't change your password. Ask for a new link." };
+    const { t, forCode } = await messages();
+    const message = err instanceof ApiError ? (forCode(err.code) ?? err.message) : undefined;
+    return { ok: false, errors: {}, message: message ?? t("resetFailed") };
   }
 }
 
@@ -201,13 +210,10 @@ export async function updateProfile(_prev: FormState, form: FormData): Promise<F
     refresh();
     return { ok: true, errors: {}, values, message: "saved" };
   } catch (err) {
+    const { t } = await messages();
     const message =
-      err instanceof ApiError
-        ? err.code === "ALREADY_EXISTS"
-          ? "That phone number is used by another account."
-          : err.message
-        : undefined;
-    return { ok: false, errors: {}, values, message: message ?? "We couldn't save your details." };
+      err instanceof ApiError ? (err.code === "ALREADY_EXISTS" ? t("phoneTaken") : err.message) : undefined;
+    return { ok: false, errors: {}, values, message: message ?? t("profileFailed") };
   }
 }
 
@@ -222,7 +228,8 @@ export async function changePassword(_prev: FormState, form: FormData): Promise<
     await unwrap(serverApi(ctx).POST("/v1/store/auth/password", { body: { currentPassword, newPassword } }));
     return { ok: true, errors: {}, message: "passwordChanged" };
   } catch (err) {
-    const message = err instanceof ApiError ? (MESSAGES[err.code] ?? err.message) : undefined;
+    const { forCode } = await messages();
+    const message = err instanceof ApiError ? (forCode(err.code) ?? err.message) : undefined;
     return {
       ok: false,
       errors: err instanceof ApiError && err.code === "INVALID_CREDENTIALS" ? { currentPassword: "wrongPassword" } : {},
@@ -250,9 +257,9 @@ export async function saveAddress(_prev: FormState, form: FormData): Promise<For
     refresh();
     return { ok: true, errors: {} };
   } catch (err) {
-    const { message, errors: apiErrors } = messageFor(
+    const { message, errors: apiErrors } = await messageFor(
       err instanceof ApiError ? { code: err.code, message: err.message, details: err.details } : null,
-      "We couldn't save that address.",
+      "addressFailed",
     );
     const mapped: FieldErrors = {};
     for (const [k, v] of Object.entries(apiErrors)) mapped[`address.${k}`] = v;
@@ -267,6 +274,6 @@ export async function deleteAddress(id: string): Promise<{ ok: boolean; message?
     refresh();
     return { ok: true };
   } catch {
-    return { ok: false, message: "We couldn't delete that address." };
+    return { ok: false, message: (await messages()).t("deleteAddressFailed") };
   }
 }

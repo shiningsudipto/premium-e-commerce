@@ -11,7 +11,7 @@ import { APPLICATION_FIELDS } from "./application";
 
 // Affiliate program forms. They post to Server Actions, so they work before JavaScript loads.
 
-function useErrorText(state: FormState) {
+export function useErrorText(state: FormState) {
   const tf = useTranslations("forms");
   const t = useTranslations("affiliate");
   return (name: string) => {
@@ -22,7 +22,7 @@ function useErrorText(state: FormState) {
   };
 }
 
-function FormMessage({ state }: { state: FormState }) {
+export function FormMessage({ state }: { state: FormState }) {
   const t = useTranslations("affiliate");
   if (!state.message || state.ok) return null;
   return (

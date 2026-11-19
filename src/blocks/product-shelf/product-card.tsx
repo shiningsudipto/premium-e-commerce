@@ -15,15 +15,24 @@ const TONES: Tone[] = ["mid", "warm", "light"];
 const NEXT_TONE: Record<Tone, Tone> = { light: "mid", mid: "warm", warm: "light", dark: "mid" };
 
 type Badge = { label: string; kind: "sale" | "low" | "new" | "out" };
+export type BadgeLabels = { soldOut: string; new: string; sale: (percent: number) => string };
+
+// The badge labels in the page's language, from a translator for the "product" namespace.
+export const badgeLabels = (t: (key: "soldOut" | "badgeNew" | "badgeSale", values?: { percent: number }) => string) =>
+  ({
+    soldOut: t("soldOut"),
+    new: t("badgeNew"),
+    sale: (percent) => t("badgeSale", { percent }),
+  }) satisfies BadgeLabels;
 
 // Badges from what the listing knows: sold out, on sale (compare-at price), or tagged "new".
-export function badgeFor(product: ProductSummary): Badge | null {
-  if (!product.availableForSale) return { label: "Sold out", kind: "out" };
+export function badgeFor(product: ProductSummary, labels: BadgeLabels): Badge | null {
+  if (!product.availableForSale) return { label: labels.soldOut, kind: "out" };
   const price = product.price;
   if (price?.compareAtMinor && price.compareAtMinor > price.minMinor) {
-    return { label: `−${Math.round((1 - price.minMinor / price.compareAtMinor) * 100)}%`, kind: "sale" };
+    return { label: labels.sale(Math.round((1 - price.minMinor / price.compareAtMinor) * 100)), kind: "sale" };
   }
-  if (product.tags.some((t) => t.toLowerCase() === "new")) return { label: "New", kind: "new" };
+  if (product.tags.some((t) => t.toLowerCase() === "new")) return { label: labels.new, kind: "new" };
   return null;
 }
 
@@ -42,7 +51,7 @@ export async function ProductCard({
   const productHref = href(market, `/products/${product.handle}`);
   const art = artFor(product.title, ...product.tags);
   const tone = TONES[index % TONES.length]!;
-  const badge = badgeFor(product);
+  const badge = badgeFor(product, badgeLabels(t));
   const price = product.price;
   const onSale = !!price?.compareAtMinor && price.compareAtMinor > price.minMinor;
   const fmt = (minor: number) => formatMoney(minor, price!.currency, market.locale);
@@ -52,7 +61,9 @@ export async function ProductCard({
       : t("from", { price: fmt(price.minMinor) })
     : null;
   const colour = product.swatches[0];
-  const alt = `${product.title}${colour ? ` in ${colour.toLowerCase()}` : ""}, front view`;
+  const alt = colour
+    ? t("cardAltColour", { title: product.title, colour: colour.toLowerCase() })
+    : t("cardAlt", { title: product.title });
 
   return (
     <li className="card">

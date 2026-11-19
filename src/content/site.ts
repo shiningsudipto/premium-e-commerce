@@ -1,5 +1,9 @@
 // Site-wide editorial content for the header drawer and footer (Premium Touch design). Header
 // navigation itself comes from the "main" menu in the admin. Paths are relative to the market prefix.
+// This file is the English edition; site.bn.ts is the Bangla one, typed against SiteContent. Pick
+// one with siteContent(locale) from ./index.
+
+import type { IconName } from "../components/storefront/icon";
 
 export const brandTagline = "Handcrafted in Bangladesh.";
 
@@ -56,4 +60,15 @@ export const socials = [
   { label: "Instagram", icon: "camera", url: "https://www.instagram.com/" },
   { label: "Facebook", icon: "chat", url: "https://www.facebook.com/" },
   { label: "YouTube", icon: "play", url: "https://www.youtube.com/" },
-] as const;
+] satisfies { label: string; icon: IconName; url: string }[];
+
+export type SiteContent = {
+  brandTagline: string;
+  brandBlurb: string;
+  drawerLinks: typeof drawerLinks;
+  footerColumns: typeof footerColumns;
+  paymentMarks: string[];
+  socials: typeof socials;
+};
+
+export const siteEn: SiteContent = { brandTagline, brandBlurb, drawerLinks, footerColumns, paymentMarks, socials };

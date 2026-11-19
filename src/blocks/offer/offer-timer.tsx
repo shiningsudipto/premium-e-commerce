@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { Icon } from "../../components/storefront/icon";
 
@@ -35,21 +36,18 @@ export function remaining(endsAt: string, now: number) {
 const pad = (n: number) => String(n).padStart(2, "0");
 
 export function OfferTimer({ endsAt, endedLabel }: { endsAt: string; endedLabel: string }) {
+  const t = useTranslations("offer");
   const now = useSyncExternalStore(subscribe, nowMinute, () => null);
   const left = now === null ? null : remaining(endsAt, now);
   if (left?.over) return <p className="h3 offer__ended">{endedLabel}</p>;
   const units: [string, number | null][] = [
-    ["Days", left?.days ?? null],
-    ["Hours", left?.hours ?? null],
-    ["Minutes", left?.minutes ?? null],
+    [t("days"), left?.days ?? null],
+    [t("hours"), left?.hours ?? null],
+    [t("minutes"), left?.minutes ?? null],
   ];
   return (
     <div className="timer" role="timer" aria-live="off" aria-atomic="true">
-      {left && (
-        <p className="sr-only">
-          Offer ends in {left.days} days, {left.hours} hours and {left.minutes} minutes.
-        </p>
-      )}
+      {left && <p className="sr-only">{t("endsIn", { days: left.days, hours: left.hours, minutes: left.minutes })}</p>}
       {units.map(([label, value]) => (
         <div key={label} className="timer__unit" aria-hidden="true">
           <span className="timer__num">{value === null ? "––" : pad(value)}</span>
@@ -62,6 +60,7 @@ export function OfferTimer({ endsAt, endedLabel }: { endsAt: string; endedLabel:
 
 // The promo code with a copy button that confirms for a moment, visually and to screen readers.
 export function CopyCode({ code }: { code: string }) {
+  const t = useTranslations("offer");
   const [copied, setCopied] = useState(false);
   useEffect(() => {
     if (!copied) return;
@@ -74,17 +73,17 @@ export function CopyCode({ code }: { code: string }) {
       <button
         className="code-chip__btn"
         type="button"
-        aria-label={`Copy promo code ${code}`}
+        aria-label={t("copyAria", { code })}
         onClick={() => {
           navigator.clipboard?.writeText(code).catch(() => undefined);
           setCopied(true);
         }}
       >
         <Icon name={copied ? "check" : "copy"} size="sm" />
-        {copied ? "Copied" : "Copy"}
+        {copied ? t("copied") : t("copy")}
       </button>
       <span className="sr-only" aria-live="polite">
-        {copied ? `Code ${code} copied to clipboard.` : ""}
+        {copied ? t("copiedNote", { code }) : ""}
       </span>
     </div>
   );

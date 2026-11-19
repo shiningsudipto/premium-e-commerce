@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import type { offer as OfferContent } from "../../content/home";
 import { ButtonLink, EmText, Eyebrow } from "../../components/storefront/primitives";
 import { href } from "../../lib/links";
@@ -6,6 +7,7 @@ import { CopyCode, OfferTimer } from "./offer-timer";
 
 // 7 · countdown: a limited offer with a live timer and a copyable code, framed by a stitched border.
 export function Offer({ market, content }: { market: MarketRef; content: typeof OfferContent }) {
+  const t = useTranslations("offer");
   return (
     <section className="section section--flush-top" id="offer" data-block="countdown" aria-labelledby="offer-title">
       <div className="pt-container">
@@ -17,7 +19,7 @@ export function Offer({ market, content }: { market: MarketRef; content: typeof 
             </h2>
             <p className="muted">{content.body}</p>
           </div>
-          <OfferTimer endsAt={content.endsAt} endedLabel="This offer has ended." />
+          <OfferTimer endsAt={content.endsAt} endedLabel={t("ended")} />
           <div className="offer__actions">
             <CopyCode code={content.code} />
             <ButtonLink href={href(market, content.cta.path)} arrow>

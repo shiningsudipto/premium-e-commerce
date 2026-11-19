@@ -63,17 +63,22 @@ describe("product cards", () => {
   });
 
   it("badges sold-out, sale and new products, in that order", () => {
-    expect(badgeFor(product())).toBeNull();
-    expect(badgeFor(product({ tags: ["New"] }))).toEqual({ label: "New", kind: "new" });
+    const labels = { soldOut: "Sold out", new: "New", sale: (percent: number) => `−${percent}%` };
+    expect(badgeFor(product(), labels)).toBeNull();
+    expect(badgeFor(product({ tags: ["New"] }), labels)).toEqual({ label: "New", kind: "new" });
     expect(
       badgeFor(
         product({
           price: { currency: "BDT", minMinor: 323000, maxMinor: 323000, compareAtMinor: 380000 },
           tags: ["new"],
         }),
+        labels,
       ),
     ).toEqual({ label: "−15%", kind: "sale" });
-    expect(badgeFor(product({ availableForSale: false, tags: ["new"] }))).toEqual({ label: "Sold out", kind: "out" });
+    expect(badgeFor(product({ availableForSale: false, tags: ["new"] }), labels)).toEqual({
+      label: "Sold out",
+      kind: "out",
+    });
   });
 
   it("colours catalog swatch names, with a neutral for unknown ones", () => {

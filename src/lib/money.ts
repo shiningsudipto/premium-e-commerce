@@ -1,5 +1,8 @@
 // Money arrives from the API in minor units with an ISO currency. The design writes prices as
 // "৳ 18,900": symbol, a space, whole units when there are no paisa.
+// Prices always use Latin digits, also in Bangla ("৳ 18,900", not "৳ ১৮,৯০০"), the way shops in
+// Bangladesh print them. Grouping still follows the locale, so Bangla shows lakh grouping for large
+// amounts ("৳ 1,89,000") as Bangladeshi readers expect.
 
 const symbolCache = new Map<string, string>();
 
@@ -21,6 +24,7 @@ export function formatMoney(minor: number, currency: string, locale = "en"): str
     new Intl.NumberFormat(locale, { style: "currency", currency }).resolvedOptions().maximumFractionDigits ?? 2;
   const amount = minor / 10 ** digits;
   const number = new Intl.NumberFormat(locale, {
+    numberingSystem: "latn",
     minimumFractionDigits: Number.isInteger(amount) ? 0 : digits,
     maximumFractionDigits: digits,
   }).format(amount);

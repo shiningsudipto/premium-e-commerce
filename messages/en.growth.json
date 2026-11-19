@@ -74,5 +74,33 @@
     "unavailable": "This piece is no longer available.",
     "sharedTitle": "A shared wishlist",
     "sharedEyebrow": "Shared wishlist"
+  },
+  "recommendations": {
+    "completeTheLook": "Complete the look",
+    "frequentlyBoughtTogether": "Frequently bought together",
+    "youMayAlsoLike": "You may also like",
+    "recentlyViewed": "Recently viewed",
+    "trending": "Trending now",
+    "loading": "Loading suggestions…"
+  },
+  "offer": {
+    "ended": "This offer has ended.",
+    "days": "Days",
+    "hours": "Hours",
+    "minutes": "Minutes",
+    "endsIn": "Offer ends in {days} days, {hours} hours and {minutes} minutes.",
+    "copyAria": "Copy promo code {code}",
+    "copy": "Copy",
+    "copied": "Copied",
+    "copiedNote": "Code {code} copied to clipboard."
+  },
+  "newsletter": {
+    "subscribed": "You’re on the list. The next letter arrives at the start of the month.",
+    "email": "Email address",
+    "placeholder": "you@example.com",
+    "subscribe": "Subscribe",
+    "invalid": "Enter an email address like name@example.com.",
+    "unavailable": "Sign-ups open soon. Thank you for your interest; please check back shortly.",
+    "consent": "By subscribing you agree to receive emails from {store}. Unsubscribe any time. See our <privacy>{label}</privacy>."
   }
 }

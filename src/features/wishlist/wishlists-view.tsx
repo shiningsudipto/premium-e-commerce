@@ -9,7 +9,7 @@ import { href } from "../../lib/links";
 import type { MarketRef } from "../../lib/market";
 import { formatMoney } from "../../lib/money";
 import { useBag } from "../cart/bag-provider";
-import { bagErrorMessage, useAddToBagMutation } from "../cart/cart-api";
+import { useAddToBagMutation, useBagErrorMessage } from "../cart/cart-api";
 import {
   useCreateWishlistMutation,
   useDeleteWishlistMutation,
@@ -252,6 +252,7 @@ function Item({ item, listId, market }: { item: WishlistItem; listId: string; ma
   const t = useTranslations("wishlist");
   const { openBag } = useBag();
   const [addToBag, { isLoading: adding }] = useAddToBagMutation();
+  const bagErrorMessage = useBagErrorMessage();
   const [removeItem] = useRemoveWishlistItemMutation();
   const [message, setMessage] = useState("");
   const product = item.product;

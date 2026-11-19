@@ -2,6 +2,7 @@
 
 import { refresh } from "next/cache";
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { ApiError, unwrap } from "../../api/errors";
 import { requestContext, serverApi } from "../../api/server";
 import { href } from "../../lib/links";
@@ -14,18 +15,21 @@ import { readAddress, readEmail, type FieldErrors } from "./address";
 
 export type DetailsState = { ok: boolean; cart?: Bag; errors: FieldErrors; message?: string };
 
-const API_MESSAGES: Partial<Record<string, string>> = {
-  CART_NOT_ACTIVE: "This bag has already been checked out.",
-  CART_EMPTY: "Your bag is empty.",
-  CART_INVALID: "Check your details and delivery method, then try again.",
-  SHIPPING_UNAVAILABLE: "We can't deliver to that address yet.",
-  INSUFFICIENT_STOCK: "Something in your bag has sold out. Check your bag and try again.",
-  PAYMENT_PROVIDER_UNAVAILABLE: "That payment method isn't available. Choose another.",
-  PAYMENT_FAILED: "The payment didn't go through. Try again or choose another method.",
-  GUEST_CHECKOUT_DISABLED: "Sign in to check out.",
-};
+// API codes with their own message in checkout.errors (messages/en.json), in the shopper's language.
+const API_MESSAGE_CODES = new Set([
+  "CART_NOT_ACTIVE",
+  "CART_EMPTY",
+  "CART_INVALID",
+  "SHIPPING_UNAVAILABLE",
+  "INSUFFICIENT_STOCK",
+  "PAYMENT_PROVIDER_UNAVAILABLE",
+  "PAYMENT_FAILED",
+  "GUEST_CHECKOUT_DISABLED",
+]);
 
-function apiFailure(err: unknown, fallback = "Something went wrong. Please try again.") {
+async function apiFailure(err: unknown, fallbackKey = "generic") {
+  const t = await getTranslations("checkout.errors");
+  const fallback = t(fallbackKey);
   if (err instanceof ApiError) {
     // the API names fields as in its body ("shippingAddress.city"); the form uses "shipping.city"
     const details = err.details as { fieldErrors?: Record<string, string[]> } | undefined;
@@ -33,7 +37,7 @@ function apiFailure(err: unknown, fallback = "Something went wrong. Please try a
     for (const [path, messages] of Object.entries(details?.fieldErrors ?? {})) {
       fields[path.replace(/^(shipping|billing)Address./, "$1.")] = messages[0];
     }
-    return { message: API_MESSAGES[err.code] ?? err.message ?? fallback, fields };
+    return { message: (API_MESSAGE_CODES.has(err.code) ? t(err.code) : err.message) ?? fallback, fields };
   }
   return { message: fallback, fields: {} as FieldErrors };
 }
@@ -64,7 +68,7 @@ export async function saveDetails(cartId: string, _prev: DetailsState, form: For
     );
     return { ok: true, cart, errors: {} };
   } catch (err) {
-    const { message, fields } = apiFailure(err);
+    const { message, fields } = await apiFailure(err);
     return { ok: false, errors: fields, message };
   }
 }
@@ -83,7 +87,7 @@ export async function chooseShipping(
     );
     return { ok: true, cart };
   } catch (err) {
-    return { ok: false, message: apiFailure(err).message };
+    return { ok: false, message: (await apiFailure(err)).message };
   }
 }
 
@@ -111,7 +115,7 @@ export async function placeOrder(input: {
     );
     orderId = result.orderId;
   } catch (err) {
-    return { ok: false, message: apiFailure(err, "We couldn't place your order. Please try again.").message };
+    return { ok: false, message: (await apiFailure(err, "placeOrderFailed")).message };
   }
   // the bag count in the header is now zero
   refresh();

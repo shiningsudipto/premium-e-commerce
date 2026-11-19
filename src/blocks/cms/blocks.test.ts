@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { matchesAudience, personalAudience, visibleBlocks, type Visitor } from "./blocks";
+import {
+  experimentOf,
+  matchesAudience,
+  matchesExperiment,
+  personalAudience,
+  visibleBlocks,
+  type Visitor,
+} from "./blocks";
 
 const now = new Date("2026-11-06T12:00:00Z");
 
@@ -24,15 +31,30 @@ describe("visibleBlocks", () => {
     expect(visibleBlocks(blocks, { market: "bd", now }).map((b) => b.type)).toEqual(["b", "e"]);
   });
 
-  it("keeps per-visitor blocks for the render to decide, drops experiment variants, filters children", () => {
+  it("keeps per-visitor blocks and experiment variants for the render to decide, filters children", () => {
     const blocks = [
       { type: "a", settings: { audience: { loggedIn: true } } },
       { type: "b", settings: { experiment: { key: "x", variant: "1" } } },
-      { type: "columns", children: [{ type: "spacer" }, { type: "c", settings: { audience: { segmentIds: ["s"] } } }] },
+      {
+        type: "columns",
+        children: [
+          { type: "spacer" },
+          { type: "c", settings: { audience: { segmentIds: ["s"] } } },
+          { type: "d", settings: { experiment: { key: "x", variant: "2" } } },
+        ],
+      },
     ];
     const out = visibleBlocks(blocks, { market: "bd", now });
-    expect(out.map((b) => b.type)).toEqual(["a", "columns"]);
-    expect(out[1]!.children!.map((b) => b.type)).toEqual(["spacer", "c"]);
+    expect(out.map((b) => b.type)).toEqual(["a", "b", "columns"]);
+    expect(out[2]!.children!.map((b) => b.type)).toEqual(["spacer", "c", "d"]);
+  });
+
+  it("still applies market and schedule rules to experiment variants", () => {
+    const blocks = [
+      { type: "a", settings: { experiment: { key: "x", variant: "1" }, audience: { markets: ["us"] } } },
+      { type: "b", settings: { experiment: { key: "x", variant: "1" }, schedule: { endsAt: "2026-11-01T00:00:00Z" } } },
+    ];
+    expect(visibleBlocks(blocks, { market: "bd", now })).toEqual([]);
   });
 });
 
@@ -68,5 +90,30 @@ describe("matchesAudience", () => {
     expect(matchesAudience({ segmentIds: ["other", "vip"] }, vip)).toBe(true);
     expect(matchesAudience({ segmentIds: ["vip"] }, guest)).toBe(false);
     expect(matchesAudience({ segmentIds: ["vip"], newVisitors: true }, vip)).toBe(false);
+  });
+});
+
+describe("experimentOf", () => {
+  it("reads a block's variant, ignoring incomplete settings", () => {
+    expect(experimentOf({ type: "a" })).toBeNull();
+    expect(experimentOf({ type: "a", settings: { experiment: { key: "", variant: "b" } } })).toBeNull();
+    expect(experimentOf({ type: "a", settings: { experiment: { key: "hero", variant: "b" } } })).toEqual({
+      key: "hero",
+      variant: "b",
+    });
+  });
+});
+
+describe("matchesExperiment", () => {
+  const block = { key: "hero", variant: "b" };
+
+  it("shows the variant only to visitors bucketed into it", () => {
+    expect(matchesExperiment(block, { hero: "b" })).toBe(true);
+    expect(matchesExperiment(block, { hero: "a" })).toBe(false);
+  });
+
+  it("shows nothing to unassigned visitors or when the experiment isn't running", () => {
+    expect(matchesExperiment(block, {})).toBe(false);
+    expect(matchesExperiment(block, { other: "b" })).toBe(false);
   });
 });

@@ -142,7 +142,8 @@ export type Recommendations =
   paths["/v1/store/recommendations"]["get"]["responses"]["200"]["content"]["application/json"];
 export type RecommendationPlacement = paths["/v1/store/recommendations"]["get"]["parameters"]["query"]["placement"];
 
-// Related products for a product page. Shared by every visitor, so cached with the catalog;
+// Recommendations for a product page (related, complete the look, frequently bought together).
+// Shared by every visitor, so cached with the catalog under the product's tags;
 // an API failure leaves the shelf out rather than breaking the page.
 export async function getRecommendations(
   market: MarketRef,
@@ -156,6 +157,22 @@ export async function getRecommendations(
   try {
     const result = await unwrap(
       serverApi({ market }).GET("/v1/store/recommendations", { params: { query: { placement, productId, limit } } }),
+    );
+    return result.items;
+  } catch {
+    return [];
+  }
+}
+
+// What's selling now (last 7 days), for the CMS "Recommendations" block. The same for every
+// visitor, so cached with the catalog; an API failure leaves the block out.
+export async function getTrendingProducts(market: MarketRef, limit = 8): Promise<ProductSummary[]> {
+  "use cache";
+  cacheTag("products");
+  cacheLife("hours");
+  try {
+    const result = await unwrap(
+      serverApi({ market }).GET("/v1/store/recommendations", { params: { query: { placement: "trending", limit } } }),
     );
     return result.items;
   } catch {

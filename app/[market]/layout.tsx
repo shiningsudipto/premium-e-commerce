@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Figtree, Fraunces } from "next/font/google";
+import { Figtree, Fraunces, Noto_Sans_Bengali } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getTranslations } from "next-intl/server";
 import { market } from "next/root-params";
@@ -7,7 +7,7 @@ import { env } from "@/src/lib/env";
 import { FlagsProvider } from "@/src/lib/flags-client";
 import { allSegments, parseMarketSegment } from "@/src/lib/market";
 import { getMarketFlags, getMarkets, getStoreConfig, getTheme } from "@/src/lib/store-data";
-import { fontStackCss, googleFontsUrl, inlineCss, webFontFamilies } from "@/src/lib/theme";
+import { DEFAULT_FONT_STACKS, fontStackCss, googleFontsUrl, inlineCss, webFontFamilies } from "@/src/lib/theme";
 import "../globals.css";
 
 // The design's typefaces, self-hosted by next/font (no layout shift, no third-party request).
@@ -20,6 +20,16 @@ const fraunces = Fraunces({
   display: "swap",
 });
 const figtree = Figtree({ subsets: ["latin"], variable: "--font-figtree", display: "swap" });
+// Bengali glyphs for Bangla pages (the faces above are Latin only). Bengali subset only, so its
+// unicode-range keeps it from loading unless Bengali text is on the page; not preloaded, and only
+// placed in the font stacks for the bn locale (theme.ts fontStackCss).
+const notoBengali = Noto_Sans_Bengali({
+  subsets: ["bengali"],
+  variable: "--font-bengali",
+  display: "swap",
+  preload: false,
+  adjustFontFallback: false,
+});
 
 // Root layout for every storefront page. proxy.ts guarantees a valid /{locale}-{market}/ prefix.
 
@@ -54,9 +64,16 @@ export default async function RootLayout({ children }: LayoutProps<"/[market]">)
   const fonts = theme
     ? googleFontsUrl(webFontFamilies(theme.tokens.typography.fontBody, theme.tokens.typography.fontHeading))
     : null;
+  const bengali = ref.locale === "bn";
+  const { fontBody, fontHeading } = theme?.tokens.typography ?? DEFAULT_FONT_STACKS;
+  const fontStacks = fontStackCss(fontBody, fontHeading, { bengali });
 
   return (
-    <html lang={ref.locale} data-market={ref.market} className={`${fraunces.variable} ${figtree.variable}`}>
+    <html
+      lang={ref.locale}
+      data-market={ref.market}
+      className={`${fraunces.variable} ${figtree.variable} ${notoBengali.variable}`}
+    >
       <head>
         {fonts && (
           <>
@@ -69,12 +86,12 @@ export default async function RootLayout({ children }: LayoutProps<"/[market]">)
           <style
             id="theme-tokens"
             dangerouslySetInnerHTML={{
-              __html: inlineCss(
-                theme.css + fontStackCss(theme.tokens.typography.fontBody, theme.tokens.typography.fontHeading),
-              ),
+              __html: inlineCss(theme.css + fontStacks),
             }}
           />
         )}
+        {/* before a theme is activated, Bangla pages still need the Bengali face in the default stacks */}
+        {!theme && bengali && <style id="font-stacks" dangerouslySetInnerHTML={{ __html: fontStacks }} />}
         {theme?.customCss && (
           <style id="theme-custom" dangerouslySetInnerHTML={{ __html: inlineCss(theme.customCss) }} />
         )}

@@ -19,9 +19,9 @@ const isBlock = (v: unknown): v is CmsBlock =>
   !!v && typeof v === "object" && typeof (v as { type?: unknown }).type === "string";
 
 // Rules that hold for every visitor, applied to the cached, shared page: the market list and the
-// schedule. Experiment-variant blocks are left out until visitors get an A/B bucket (B-Phase 3).
-// Blocks aimed at signed-in shoppers, new visitors or segments stay in the tree; they're decided
-// per visitor when the page renders (see `personalAudience` / `matchesAudience`).
+// schedule. Blocks aimed at signed-in shoppers, new visitors or segments, and A/B variant blocks,
+// stay in the tree; they're decided per visitor when the page renders (see `personalAudience` /
+// `matchesAudience` and `experimentOf` / `matchesExperiment`).
 export function visibleBlocks(blocks: unknown, ctx: { market: string; now: Date }): CmsBlock[] {
   if (!Array.isArray(blocks)) return [];
   return blocks
@@ -31,7 +31,6 @@ export function visibleBlocks(blocks: unknown, ctx: { market: string; now: Date 
       if (!s) return true;
       const a = s.audience;
       if (a?.markets?.length && !a.markets.includes(ctx.market)) return false;
-      if (s.experiment) return false;
       const starts = s.schedule?.startsAt ? Date.parse(s.schedule.startsAt) : NaN;
       const ends = s.schedule?.endsAt ? Date.parse(s.schedule.endsAt) : NaN;
       if (!Number.isNaN(starts) && ctx.now.getTime() < starts) return false;
@@ -63,4 +62,20 @@ export function matchesAudience(audience: Omit<Audience, "markets">, visitor: Vi
   if (audience.newVisitors !== undefined && audience.newVisitors !== visitor.isNew) return false;
   if (audience.segmentIds?.length && !audience.segmentIds.some((id) => visitor.segmentIds.includes(id))) return false;
   return true;
+}
+
+// The A/B variant a block belongs to, or null when it isn't part of an experiment.
+export function experimentOf(block: CmsBlock): { key: string; variant: string } | null {
+  const e = block.settings?.experiment;
+  if (!e || typeof e.key !== "string" || typeof e.variant !== "string" || !e.key || !e.variant) return null;
+  return { key: e.key, variant: e.variant };
+}
+
+// A visitor's variants across running experiments ({ experimentKey: variant }), from the API.
+export type Assignments = Record<string, string>;
+
+// Shown only to visitors bucketed into this variant; visitors outside the experiment's traffic,
+// or experiments that aren't running (no assignment at all), see none of its variants.
+export function matchesExperiment(experiment: { key: string; variant: string }, assignments: Assignments): boolean {
+  return assignments[experiment.key] === experiment.variant;
 }

@@ -24,12 +24,12 @@ test("the active theme's tokens drive the page", async ({ page }) => {
   expect(heading).toMatch(/Fraunces/);
 });
 
-test("the chosen locale is remembered and falls back to English for untranslated text", async ({ page }) => {
+test("the chosen locale is remembered and the shop speaks it", async ({ page }) => {
   await page.goto("/bn-bd");
   await expect(page.locator("html")).toHaveAttribute("lang", "bn");
-  // translated chrome, English where there is no translation yet
+  // translated chrome (missing translations fall back to English: src/i18n/messages.test.ts)
   await expect(page.getByRole("link", { name: "মূল বিষয়বস্তুতে যান" })).toBeAttached();
-  await expect(page.getByRole("button", { name: "Copy promo code EID15" })).toBeAttached();
+  await expect(page.getByRole("list", { name: "পেমেন্টের মাধ্যম" })).toBeAttached();
   await page.goto("/");
   await expect(page).toHaveURL(/\/bn-bd$/);
 });

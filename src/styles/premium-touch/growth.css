@@ -384,3 +384,29 @@
   cursor: progress;
   opacity: 0.6;
 }
+
+/* ---------- Recommendations (B-Phase 3): recently viewed strip, bag suggestions ---------- */
+/* one scrollable row of product cards; filled in by the browser below the page's own content */
+.rec-strip__title {
+  margin-bottom: var(--space-6);
+}
+.rec-strip__list {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(160px, calc((100% - var(--space-4)) / 2));
+  gap: var(--space-4);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  padding-bottom: var(--space-3);
+  scrollbar-width: thin;
+}
+.rec-strip__list > .card {
+  scroll-snap-align: start;
+}
+@media (min-width: 1024px) {
+  .rec-strip__list {
+    grid-auto-columns: calc((100% - 3 * var(--space-5)) / 4);
+    gap: var(--space-5);
+  }
+}

@@ -1,4 +1,5 @@
 import type { ArtName } from "../components/storefront/art";
+import type { IconName } from "../components/storefront/icon";
 import type { Tone } from "../components/storefront/media";
 import type { Emphasized } from "../components/storefront/primitives";
 import type { ProductSort } from "../lib/catalog";
@@ -7,6 +8,8 @@ import type { ProductSort } from "../lib/catalog";
 // block, so the page builder (B-Phase 2) can supply the same shapes per block later. Commerce
 // data (products, prices, menus, the bag) comes from the API, not from here. Paths are relative
 // to the market prefix.
+// This file is the English edition; home.bn.ts is the Bangla one, typed against HomeContent so the
+// two can't drift. Pick one with homeContent(locale) from ./index.
 
 export type Placeholder = { art: ArtName; tone: Tone; alt: string; caption?: string };
 type Link = { label: string; path: string };
@@ -23,7 +26,7 @@ export const hero = {
     { icon: "shield", label: "5-year warranty" },
     { icon: "cash", label: "COD & bKash" },
     { icon: "truck", label: "2–4 days in Dhaka" },
-  ] as const,
+  ] satisfies { icon: IconName; label: string }[],
   media: {
     art: "weekender",
     tone: "warm",
@@ -339,4 +342,41 @@ export const letters = {
     body: "For writers, stylists and creators who already talk about well-made things. Commission terms on application.",
     cta: { label: "Apply to the programme", path: "/affiliate/apply" } satisfies Link,
   },
+};
+
+// Used for the home page's <title>, after the store name.
+export const metaTitle = "Handcrafted leather goods";
+
+export type HomeContent = {
+  metaTitle: string;
+  announcement: string[];
+  hero: typeof hero;
+  collections: typeof collections;
+  shop: typeof shop;
+  giftSet: typeof giftSet;
+  craft: typeof craft;
+  story: typeof story;
+  spotlight: typeof spotlight;
+  services: typeof services;
+  reviews: typeof reviews;
+  offer: typeof offer;
+  faq: typeof faq;
+  letters: typeof letters;
+};
+
+export const homeEn: HomeContent = {
+  metaTitle,
+  announcement,
+  hero,
+  collections,
+  shop,
+  giftSet,
+  craft,
+  story,
+  spotlight,
+  services,
+  reviews,
+  offer,
+  faq,
+  letters,
 };

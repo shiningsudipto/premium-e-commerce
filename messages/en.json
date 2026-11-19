@@ -67,6 +67,11 @@
     "imageAlt": "{title}, image {n}",
     "images": "Product images",
     "showImage": "Show image {n} of {total}",
+    "badgeNew": "New",
+    "badgeSale": "−{percent}%",
+    "cardAlt": "{title}, front view",
+    "cardAltColour": "{title} in {colour}, front view",
+    "availableIn": "Available in {colours}",
     "stock": {
       "checking": "Checking stock…",
       "in_stock": "In stock",
@@ -164,7 +169,16 @@
     "taxNote": "Delivery and any taxes are worked out at checkout.",
     "emptyTitle": "Your bag is empty",
     "emptyBody": "Find something you love and it'll wait for you here.",
-    "startShopping": "Start shopping"
+    "startShopping": "Start shopping",
+    "errors": {
+      "INSUFFICIENT_STOCK": "Sorry, there isn't enough stock left for that.",
+      "PRICE_NOT_AVAILABLE": "This piece isn't sold in your market.",
+      "CART_NOT_ACTIVE": "Your bag is being checked out. Refresh and try again.",
+      "CHOOSE_OPTIONS": "Choose a colour or size first.",
+      "UNAVAILABLE": "This piece can't be added right now.",
+      "OFFLINE": "You seem to be offline. Please try again.",
+      "generic": "Something went wrong. Please try again."
+    }
   },
   "checkout": {
     "title": "Checkout",
@@ -207,7 +221,19 @@
     "shippingCost": "Delivery",
     "total": "Total",
     "keepShopping": "Continue shopping",
-    "viewOrder": "View order"
+    "viewOrder": "View order",
+    "errors": {
+      "CART_NOT_ACTIVE": "This bag has already been checked out.",
+      "CART_EMPTY": "Your bag is empty.",
+      "CART_INVALID": "Check your details and delivery method, then try again.",
+      "SHIPPING_UNAVAILABLE": "We can't deliver to that address yet.",
+      "INSUFFICIENT_STOCK": "Something in your bag has sold out. Check your bag and try again.",
+      "PAYMENT_PROVIDER_UNAVAILABLE": "That payment method isn't available. Choose another.",
+      "PAYMENT_FAILED": "The payment didn't go through. Try again or choose another method.",
+      "GUEST_CHECKOUT_DISABLED": "Sign in to check out.",
+      "placeOrderFailed": "We couldn't place your order. Please try again.",
+      "generic": "Something went wrong. Please try again."
+    }
   },
   "account": {
     "title": "Your account",
@@ -282,7 +308,21 @@
     "tracking": "tracking",
     "shippedAt": "Shipped {date}",
     "deliveredAt": "Delivered {date}",
-    "timeline": "Order history"
+    "timeline": "Order history",
+    "errors": {
+      "INVALID_CREDENTIALS": "That email and password don't match an account.",
+      "ALREADY_EXISTS": "There's already an account with that email. Sign in instead.",
+      "ACCOUNT_DISABLED": "This account is disabled. Contact us for help.",
+      "RATE_LIMITED": "Too many attempts. Wait a minute and try again.",
+      "TOKEN_EXPIRED": "This link has expired. Ask for a new one.",
+      "UNAUTHENTICATED": "This link isn't valid any more. Ask for a new one.",
+      "generic": "Something went wrong. Please try again.",
+      "resetFailed": "We couldn't change your password. Ask for a new link.",
+      "phoneTaken": "That phone number is used by another account.",
+      "profileFailed": "We couldn't save your details.",
+      "addressFailed": "We couldn't save that address.",
+      "deleteAddressFailed": "We couldn't delete that address."
+    }
   },
   "orderStatus": {
     "draft": "Draft",
@@ -322,5 +362,31 @@
       "passwordMismatch": "The passwords don't match.",
       "wrongPassword": "That isn't your current password."
     }
+  },
+  "editorial": {
+    "bundlePrice": "Bundle price {price}, was {was} if bought separately.",
+    "save": "Save {amount}",
+    "chapters": "{count, plural, =1 {One chapter} =2 {Two chapters} =3 {Three chapters} =4 {Four chapters} =5 {Five chapters} =6 {Six chapters} =7 {Seven chapters} =8 {Eight chapters} =9 {Nine chapters} =10 {Ten chapters} =11 {Eleven chapters} =12 {Twelve chapters} other {# chapters}}",
+    "swipeStory": "Swipe to read on",
+    "rated": "Rated {rating} out of 5",
+    "fromReviews": "from {count} reviews",
+    "reviewsRegion": "Customer reviews, scroll horizontally",
+    "verified": "Verified buyer",
+    "bought": "Bought: {product}",
+    "reviewsHint": "Swipe or use arrow keys to see more reviews"
+  },
+  "spotlight": {
+    "images": "Product images",
+    "showImage": "Show image {n} of {total}: {label}",
+    "alt": "{title}, {view}",
+    "altColour": "{title} in {colour}, {view}",
+    "added": "{title} added to your bag.",
+    "addedColour": "{title} in {colour} added to your bag.",
+    "front": "Front",
+    "side": "Side",
+    "detail": "Detail",
+    "frontView": "front view",
+    "sideView": "side view",
+    "detailView": "stitching detail"
   }
 }

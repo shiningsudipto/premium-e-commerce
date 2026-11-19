@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { statusTone } from "./readers";
+import { statusTone } from "./status";
 
 // Small presentational pieces shared by the affiliate pages (server-rendered).
 
@@ -34,3 +34,35 @@ export function Stat({ label, value, note }: { label: string; value: string; not
 
 export const cursorOf = (params: Record<string, string | string[] | undefined>) =>
   typeof params.cursor === "string" && params.cursor.length <= 100 ? params.cursor : undefined;
+
+// A progress bar towards a goal: the numbers are in `valueText` (read out and shown beside it),
+// the bar itself is the visual.
+export function ProgressBar({
+  value,
+  max,
+  label,
+  valueText,
+}: {
+  value: number;
+  max: number;
+  label: string;
+  valueText: string;
+}) {
+  const ratio = max > 0 ? Math.min(1, Math.max(0, value / max)) : 0;
+  return (
+    <div className="affiliate-progress">
+      <div
+        className="affiliate-progress__track"
+        role="progressbar"
+        aria-label={label}
+        aria-valuemin={0}
+        aria-valuemax={max}
+        aria-valuenow={Math.min(Math.max(value, 0), max)}
+        aria-valuetext={valueText}
+      >
+        <span className="affiliate-progress__fill" style={{ width: `${(ratio * 100).toFixed(1)}%` }} />
+      </div>
+      <p className="affiliate-progress__text">{valueText}</p>
+    </div>
+  );
+}

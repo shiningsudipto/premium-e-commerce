@@ -6,6 +6,7 @@ import {
   type FetchArgs,
   type FetchBaseQueryError,
 } from "@reduxjs/toolkit/query/react";
+import { useTranslations } from "next-intl";
 import type { paths } from "../../api/schema";
 import type { MarketRef } from "../../lib/market";
 import type { Bag } from "./types";
@@ -87,19 +88,26 @@ export function bagErrorCode(error: unknown): string | undefined {
   return errorCode(error);
 }
 
-const MESSAGES: Partial<Record<string, string>> = {
-  INSUFFICIENT_STOCK: "Sorry, there isn't enough stock left for that.",
-  PRICE_NOT_AVAILABLE: "This piece isn't sold in your market.",
-  CART_NOT_ACTIVE: "Your bag is being checked out. Refresh and try again.",
-  CHOOSE_OPTIONS: "Choose a colour or size first.",
-  UNAVAILABLE: "This piece can't be added right now.",
-  OFFLINE: "You seem to be offline. Please try again.",
-};
+// Codes with their own message in cart.errors (messages/en.json); anything else gets "generic".
+const MESSAGE_CODES = new Set([
+  "INSUFFICIENT_STOCK",
+  "PRICE_NOT_AVAILABLE",
+  "CART_NOT_ACTIVE",
+  "CHOOSE_OPTIONS",
+  "UNAVAILABLE",
+  "OFFLINE",
+]);
 
-// What to tell the shopper when a bag change fails.
-export function bagErrorMessage(error: unknown): string {
+// What to tell the shopper when a bag change fails, as a key of cart.errors.
+export function bagErrorKey(error: unknown): string {
   const code = bagErrorCode(error);
-  return (code && MESSAGES[code]) ?? "Something went wrong. Please try again.";
+  return code && MESSAGE_CODES.has(code) ? code : "generic";
+}
+
+// What to tell the shopper when a bag change fails, in the page's language.
+export function useBagErrorMessage(): (error: unknown) => string {
+  const t = useTranslations("cart.errors");
+  return (error) => t(bagErrorKey(error));
 }
 
 export type AddToBagArg = { variantId?: string; handle?: string; quantity?: number };

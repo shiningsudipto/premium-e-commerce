@@ -20,6 +20,8 @@ export default async function AffiliateLayout({ children }: LayoutProps<"/[marke
     { href: href(market, "/affiliate/orders"), label: t("nav.orders") },
     { href: href(market, "/affiliate/earnings"), label: t("nav.earnings") },
     { href: href(market, "/affiliate/payouts"), label: t("nav.payouts") },
+    { href: href(market, "/affiliate/payout-methods"), label: t("nav.payoutMethods") },
+    { href: href(market, "/affiliate/assets"), label: t("nav.assets") },
     { href: href(market, "/account"), label: t("nav.account") },
   ];
   return (

@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { Fragment, Suspense } from "react";
 import { getTranslations } from "next-intl/server";
-import { drawerLinks } from "../../content/site";
+import { siteContent } from "../../content";
+import { languageName, marketLanguages } from "../../i18n/languages";
 import { getMenu } from "../../lib/catalog";
 import { href } from "../../lib/links";
 import type { MarketRef } from "../../lib/market";
@@ -9,6 +10,7 @@ import type { StoreConfig } from "../../lib/store-data";
 import { Logo } from "../storefront/primitives";
 import { AccountButton, AccountButtonFallback, BagButton, BagButtonFallback } from "./header-actions";
 import { HeaderBar } from "./header-bar";
+import { LanguageSwitcher } from "./language-switcher";
 import { MobileMenu } from "./mobile-menu";
 import { SearchDialog } from "../../features/search/search-dialog";
 
@@ -21,7 +23,7 @@ export function marketLabel(market: MarketRef, config: StoreConfig) {
     })
       .formatToParts(0)
       .find((p) => p.type === "currency")?.value ?? "";
-  return `${market.locale.toUpperCase()} · ${symbol} ${config.market.currency}`;
+  return `${languageName(market.locale)} · ${symbol} ${config.market.currency}`;
 }
 
 export function AnnouncementBar({ messages }: { messages: string[] }) {
@@ -42,7 +44,10 @@ export function AnnouncementBar({ messages }: { messages: string[] }) {
 // account and bag. Navigation is cached with the menu; account and bag stream per request.
 export async function SiteHeader({ market, config }: { market: MarketRef; config: StoreConfig }) {
   const [menu, t] = await Promise.all([getMenu(market, "main"), getTranslations("header")]);
-  const footerLinks = drawerLinks.map((l) => ({ label: l.label, href: href(market, l.path) }));
+  const footerLinks = siteContent(market.locale).drawerLinks.map((l) => ({
+    label: l.label,
+    href: href(market, l.path),
+  }));
 
   return (
     <HeaderBar>
@@ -65,6 +70,12 @@ export async function SiteHeader({ market, config }: { market: MarketRef; config
           ))}
         </nav>
         <div className="header-actions">
+          <LanguageSwitcher
+            locale={market.locale}
+            market={market.market}
+            languages={marketLanguages(config.market.locales)}
+            placement="header"
+          />
           <SearchDialog market={market} label={t("search")} />
           <Suspense fallback={<AccountButtonFallback market={market} label={t("signIn")} />}>
             <AccountButton market={market} />

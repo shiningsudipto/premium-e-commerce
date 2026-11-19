@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import type { ComponentProps, ReactNode } from "react";
 import { Icon } from "./icon";
 
@@ -109,9 +110,10 @@ const SWATCH_VARS: Record<string, string> = {
 export const swatchColor = (name: string) => SWATCH_VARS[name.trim().toLowerCase()] ?? "var(--swatch-default)";
 
 export function Swatches({ colours }: { colours: string[] }) {
+  const t = useTranslations("product");
   if (!colours.length) return null;
   return (
-    <div className="swatches" role="img" aria-label={`Available in ${colours.join(", ")}`}>
+    <div className="swatches" role="img" aria-label={t("availableIn", { colours: colours.join(", ") })}>
       {colours.map((c) => (
         <span key={c} className="swatch-dot" style={{ background: swatchColor(c) }} />
       ))}

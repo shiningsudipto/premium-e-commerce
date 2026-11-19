@@ -7,13 +7,15 @@ import { artFor } from "../../components/storefront/art";
 import { Media, type MediaImage } from "../../components/storefront/media";
 import { RichText } from "../../components/storefront/rich-text";
 import { Stars } from "../../components/storefront/primitives";
-import { getCollection, listProducts, type ProductSummary } from "../../lib/catalog";
+import { RecentlyViewed } from "../../features/recommendations/recently-viewed";
+import { getCollection, getTrendingProducts, listProducts, type ProductSummary } from "../../lib/catalog";
 import type { MarketRef } from "../../lib/market";
 import { href as marketHref } from "../../lib/links";
-import { matchesAudience, personalAudience, type CmsBlock } from "./blocks";
+import { experimentOf, matchesAudience, matchesExperiment, personalAudience, type CmsBlock } from "./blocks";
+import { ExperimentExposure } from "./exposure";
 import { Carousel, Countdown, Tabs } from "./interactive";
 import { videoSource } from "./video";
-import { currentVisitor } from "./visitor";
+import { currentAssignments, currentVisitor } from "./visitor";
 
 // Page-builder blocks (spec §9.1) for CMS pages: every type in the API's block registry has a
 // renderer here; a type this storefront doesn't know yet renders nothing, so the admin can ship
@@ -257,6 +259,29 @@ const RENDERERS: Record<string, Renderer> = {
     );
   },
 
+  // Trending is the same for everyone: rendered here and cached with the catalog. Recently viewed
+  // lives in the shopper's browser, so the browser fills it in (and leaves it out when empty).
+  recommendations: (p, ctx) => {
+    const limit = typeof p.limit === "number" ? Math.min(24, Math.max(1, Math.round(p.limit))) : 8;
+    const title = str(p.title);
+    if (p.placement === "recently_viewed") {
+      return (
+        <RecentlyViewed
+          market={ctx.market}
+          title={title ?? ctx.labels.recentlyViewed}
+          limit={limit}
+          className="section"
+        />
+      );
+    }
+    if (p.placement !== "trending") return null;
+    return (
+      <Suspense fallback={<ProductGridSkeleton count={Math.min(limit, 8)} label="" />}>
+        <TrendingBlock market={ctx.market} title={title ?? ctx.labels.trending} limit={limit} />
+      </Suspense>
+    );
+  },
+
   newsletter: (p, ctx) => (
     <section className="section cms-newsletter">
       {str(p.heading) && <h2 className="h3">{str(p.heading)}</h2>}
@@ -327,6 +352,23 @@ async function ProductGridBlock({
   );
 }
 
+async function TrendingBlock({ market, title, limit }: { market: MarketRef; title: string; limit: number }) {
+  const products = await getTrendingProducts(market, limit);
+  if (!products.length) return null;
+  return (
+    <section className="section" data-testid="cms-trending">
+      <h2 className="h3" style={{ marginBottom: "var(--space-5)" }}>
+        {title}
+      </h2>
+      <ul className="product-grid">
+        {products.map((product, i) => (
+          <ProductCard key={product.id} product={product} market={market} index={i} />
+        ))}
+      </ul>
+    </section>
+  );
+}
+
 async function CollectionTiles({ market, handles }: { market: MarketRef; handles: string[] }) {
   const collections = (await Promise.all(handles.map((h) => getCollection(market, h).catch(() => null)))).filter(
     (c): c is NonNullable<typeof c> => !!c,
@@ -384,12 +426,32 @@ function Disclosures({
   );
 }
 
-// A block aimed at signed-in shoppers, new visitors or segments: decided per visitor, inside its
-// own Suspense boundary, so the rest of the page stays shared and cached.
+// A block aimed at signed-in shoppers, new visitors or segments, or an A/B variant: decided per
+// visitor, inside its own Suspense boundary, so the rest of the page stays shared and cached.
+// A variant shows only to visitors bucketed into it (assignments are read once per request) and
+// reports the exposure from the browser when it does.
 async function Targeted({ block, ctx }: { block: CmsBlock; ctx: Ctx }) {
-  const audience = personalAudience(block)!;
-  if (!matchesAudience(audience, await currentVisitor())) return null;
-  return draw(block, ctx);
+  const experiment = experimentOf(block);
+  const audience = personalAudience(block);
+  const [assigned, visitor] = await Promise.all([
+    experiment ? currentAssignments() : null,
+    audience ? currentVisitor() : null,
+  ]);
+  if (experiment && (!assigned?.visitorId || !matchesExperiment(experiment, assigned.assignments))) return null;
+  if (audience && !matchesAudience(audience, visitor!)) return null;
+  const content = draw(block, ctx);
+  if (!experiment || !assigned?.visitorId) return content;
+  return (
+    <>
+      {content}
+      <ExperimentExposure
+        visitorId={assigned.visitorId}
+        market={ctx.market}
+        experimentKey={experiment.key}
+        variant={experiment.variant}
+      />
+    </>
+  );
 }
 
 function draw(block: CmsBlock, ctx: Ctx): ReactNode {
@@ -403,7 +465,7 @@ function draw(block: CmsBlock, ctx: Ctx): ReactNode {
 
 function renderBlock(block: CmsBlock, ctx: Ctx): ReactNode {
   if (!RENDERERS[block.type]) return null;
-  if (personalAudience(block)) {
+  if (personalAudience(block) || experimentOf(block)) {
     return (
       <Suspense fallback={null}>
         <Targeted block={block} ctx={ctx} />
@@ -414,7 +476,7 @@ function renderBlock(block: CmsBlock, ctx: Ctx): ReactNode {
 }
 
 async function labelsFor() {
-  const t = await getTranslations("cms");
+  const [t, r] = await Promise.all([getTranslations("cms"), getTranslations("recommendations")]);
   return {
     video: t("video"),
     carousel: { region: t("carousel"), previous: t("previous"), next: t("next") },
@@ -422,6 +484,8 @@ async function labelsFor() {
     // filled in per block with the formatted end time
     countdownEnds: t.raw("endsOn") as string,
     newsletterConsent: t("newsletterConsent"),
+    trending: r("trending"),
+    recentlyViewed: r("recentlyViewed"),
   };
 }
 

@@ -3,7 +3,6 @@ import { getTranslations } from "next-intl/server";
 import { unwrap } from "@/src/api/errors";
 import { requestContext, serverApi } from "@/src/api/server";
 import { activeAffiliate } from "@/src/features/affiliate/data";
-import { readEarnings } from "@/src/features/affiliate/readers";
 import { cursorOf, NextPage, StatusPill } from "@/src/features/affiliate/ui";
 import { href } from "@/src/lib/links";
 import { formatMoney } from "@/src/lib/money";
@@ -22,13 +21,12 @@ export default async function AffiliateEarningsPage({ searchParams }: Props) {
   if (!me) return null;
   const [ctx, t, params] = await Promise.all([requestContext(), getTranslations("affiliate"), searchParams]);
   const cursor = cursorOf(params);
-  const [raw, config] = await Promise.all([
+  const [page, config] = await Promise.all([
     unwrap(
       serverApi(ctx).GET("/v1/affiliate/earnings", { params: { query: { limit: 25, ...(cursor ? { cursor } : {}) } } }),
     ),
     getStoreConfig(ctx.market),
   ]);
-  const page = readEarnings(raw);
   const date = new Intl.DateTimeFormat(ctx.market.locale, { dateStyle: "medium" });
   const label = (group: string, value: string) => (t.has(`${group}.${value}`) ? t(`${group}.${value}`) : value);
 
@@ -54,7 +52,7 @@ export default async function AffiliateEarningsPage({ searchParams }: Props) {
             <tbody>
               {page.items.map((e) => (
                 <tr key={e.id}>
-                  <td>{e.createdAt ? date.format(new Date(e.createdAt)) : "—"}</td>
+                  <td>{date.format(new Date(e.createdAt))}</td>
                   <td>{label("earningKind", e.kind)}</td>
                   <td>
                     <StatusPill status={e.status} label={label("earningStatus", e.status)} />
@@ -65,7 +63,7 @@ export default async function AffiliateEarningsPage({ searchParams }: Props) {
                     )}
                   </td>
                   <td>{label("rewardType", e.rewardType)}</td>
-                  <td>{formatMoney(e.amountMinor, e.currency ?? config.market.currency, ctx.market.locale)}</td>
+                  <td>{formatMoney(e.amountMinor, e.currency || config.market.currency, ctx.market.locale)}</td>
                   <td>{e.reason ?? ""}</td>
                 </tr>
               ))}

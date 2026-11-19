@@ -5,6 +5,7 @@ export const addTagTypes = [
   "Dashboard",
   "Experiments",
   "Catalog",
+  "Operations",
   "Reports",
   "Search tuning",
   "Webhooks",
@@ -29,6 +30,7 @@ export const addTagTypes = [
   "Shipping",
   "Staff & roles",
   "Tax",
+  "Translations",
   "Admin auth",
   "Admin session",
 ] as const;
@@ -277,6 +279,20 @@ const injectedRtkApi = api
         }),
         invalidatesTags: ["Affiliates"],
       }),
+      deleteV1AdminAffiliateProgramAssetsId: build.mutation<
+        DeleteV1AdminAffiliateProgramAssetsIdApiResponse,
+        DeleteV1AdminAffiliateProgramAssetsIdApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/v1/admin/affiliate-program/assets/${queryArg.id}`,
+          method: "DELETE",
+          headers: {
+            "x-market": queryArg["x-market"],
+            "x-locale": queryArg["x-locale"],
+          },
+        }),
+        invalidatesTags: ["Affiliates"],
+      }),
       getV1AdminAffiliateProgramAssetsAnalytics: build.query<
         GetV1AdminAffiliateProgramAssetsAnalyticsApiResponse,
         GetV1AdminAffiliateProgramAssetsAnalyticsApiArg
@@ -438,6 +454,94 @@ const injectedRtkApi = api
           },
         }),
         invalidatesTags: ["Catalog"],
+      }),
+      getV1AdminOpsQueues: build.query<
+        GetV1AdminOpsQueuesApiResponse,
+        GetV1AdminOpsQueuesApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/v1/admin/ops/queues`,
+          headers: {
+            "x-market": queryArg["x-market"],
+            "x-locale": queryArg["x-locale"],
+          },
+        }),
+        providesTags: ["Operations"],
+      }),
+      getV1AdminOpsQueuesQueueJobs: build.query<
+        GetV1AdminOpsQueuesQueueJobsApiResponse,
+        GetV1AdminOpsQueuesQueueJobsApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/v1/admin/ops/queues/${queryArg.queue}/jobs`,
+          headers: {
+            "x-market": queryArg["x-market"],
+            "x-locale": queryArg["x-locale"],
+          },
+          params: {
+            state: queryArg.state,
+            cursor: queryArg.cursor,
+            limit: queryArg.limit,
+          },
+        }),
+        providesTags: ["Operations"],
+      }),
+      getV1AdminOpsQueuesQueueJobsId: build.query<
+        GetV1AdminOpsQueuesQueueJobsIdApiResponse,
+        GetV1AdminOpsQueuesQueueJobsIdApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/v1/admin/ops/queues/${queryArg.queue}/jobs/${queryArg.id}`,
+          headers: {
+            "x-market": queryArg["x-market"],
+            "x-locale": queryArg["x-locale"],
+          },
+        }),
+        providesTags: ["Operations"],
+      }),
+      postV1AdminOpsQueuesQueueJobsIdRetry: build.mutation<
+        PostV1AdminOpsQueuesQueueJobsIdRetryApiResponse,
+        PostV1AdminOpsQueuesQueueJobsIdRetryApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/v1/admin/ops/queues/${queryArg.queue}/jobs/${queryArg.id}/retry`,
+          method: "POST",
+          headers: {
+            "x-market": queryArg["x-market"],
+            "x-locale": queryArg["x-locale"],
+          },
+        }),
+        invalidatesTags: ["Operations"],
+      }),
+      postV1AdminOpsQueuesQueueJobsIdCancel: build.mutation<
+        PostV1AdminOpsQueuesQueueJobsIdCancelApiResponse,
+        PostV1AdminOpsQueuesQueueJobsIdCancelApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/v1/admin/ops/queues/${queryArg.queue}/jobs/${queryArg.id}/cancel`,
+          method: "POST",
+          headers: {
+            "x-market": queryArg["x-market"],
+            "x-locale": queryArg["x-locale"],
+          },
+        }),
+        invalidatesTags: ["Operations"],
+      }),
+      getV1AdminOpsIntegrations: build.query<
+        GetV1AdminOpsIntegrationsApiResponse,
+        GetV1AdminOpsIntegrationsApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/v1/admin/ops/integrations`,
+          headers: {
+            "x-market": queryArg["x-market"],
+            "x-locale": queryArg["x-locale"],
+          },
+          params: {
+            check: queryArg.check,
+          },
+        }),
+        providesTags: ["Operations"],
       }),
       getV1AdminReportBuilderCatalog: build.query<
         GetV1AdminReportBuilderCatalogApiResponse,
@@ -3779,6 +3883,82 @@ const injectedRtkApi = api
         }),
         invalidatesTags: ["Tax"],
       }),
+      getV1AdminTranslationsLocales: build.query<
+        GetV1AdminTranslationsLocalesApiResponse,
+        GetV1AdminTranslationsLocalesApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/v1/admin/translations/locales`,
+          headers: {
+            "x-market": queryArg["x-market"],
+            "x-locale": queryArg["x-locale"],
+          },
+        }),
+        providesTags: ["Translations"],
+      }),
+      getV1AdminTranslations: build.query<
+        GetV1AdminTranslationsApiResponse,
+        GetV1AdminTranslationsApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/v1/admin/translations`,
+          headers: {
+            "x-market": queryArg["x-market"],
+            "x-locale": queryArg["x-locale"],
+          },
+          params: {
+            cursor: queryArg.cursor,
+            limit: queryArg.limit,
+            entityType: queryArg.entityType,
+            locale: queryArg.locale,
+            status: queryArg.status,
+            q: queryArg.q,
+          },
+        }),
+        providesTags: ["Translations"],
+      }),
+      getV1AdminTranslationsEntityTypeEntityIdLocale: build.query<
+        GetV1AdminTranslationsEntityTypeEntityIdLocaleApiResponse,
+        GetV1AdminTranslationsEntityTypeEntityIdLocaleApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/v1/admin/translations/${queryArg.entityType}/${queryArg.entityId}/${queryArg.locale}`,
+          headers: {
+            "x-market": queryArg["x-market"],
+            "x-locale": queryArg["x-locale"],
+          },
+        }),
+        providesTags: ["Translations"],
+      }),
+      putV1AdminTranslationsEntityTypeEntityIdLocale: build.mutation<
+        PutV1AdminTranslationsEntityTypeEntityIdLocaleApiResponse,
+        PutV1AdminTranslationsEntityTypeEntityIdLocaleApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/v1/admin/translations/${queryArg.entityType}/${queryArg.entityId}/${queryArg.locale}`,
+          method: "PUT",
+          body: queryArg.body,
+          headers: {
+            "x-market": queryArg["x-market"],
+            "x-locale": queryArg["x-locale"],
+          },
+        }),
+        invalidatesTags: ["Translations"],
+      }),
+      deleteV1AdminTranslationsEntityTypeEntityIdLocale: build.mutation<
+        DeleteV1AdminTranslationsEntityTypeEntityIdLocaleApiResponse,
+        DeleteV1AdminTranslationsEntityTypeEntityIdLocaleApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/v1/admin/translations/${queryArg.entityType}/${queryArg.entityId}/${queryArg.locale}`,
+          method: "DELETE",
+          headers: {
+            "x-market": queryArg["x-market"],
+            "x-locale": queryArg["x-locale"],
+          },
+        }),
+        invalidatesTags: ["Translations"],
+      }),
       postV1AdminAuthLogin: build.mutation<
         PostV1AdminAuthLoginApiResponse,
         PostV1AdminAuthLoginApiArg
@@ -4005,7 +4185,36 @@ export type PostV1AdminAffiliateProgramAffiliatesIdCouponCodesApiArg = {
     usageLimit?: number | null;
   };
 };
-export type GetV1AdminAffiliateProgramFraudFlagsApiResponse = unknown;
+export type GetV1AdminAffiliateProgramFraudFlagsApiResponse =
+  /** status 200 OK */ {
+    items: {
+      id: string;
+      affiliateId: string;
+      kind:
+        | "SELF_REFERRAL"
+        | "HIGH_REFUND_RATE"
+        | "CLICK_SPIKE"
+        | "MARGIN_CAP"
+        | "COUPON_LEAK"
+        | "OTHER";
+      status: "OPEN" | "DISMISSED" | "CONFIRMED";
+      orderId: string | null;
+      details: {
+        [key: string]: any;
+      };
+      note: string | null;
+      resolvedBy: string | null;
+      resolvedAt: string | null;
+      createdAt: string;
+      affiliate: {
+        status: "PENDING" | "ACTIVE" | "SUSPENDED" | "REJECTED" | "CLOSED";
+        customer: {
+          email: string | null;
+        };
+      };
+    }[];
+    nextCursor: string | null;
+  };
 export type GetV1AdminAffiliateProgramFraudFlagsApiArg = {
   cursor?: string;
   limit?: number;
@@ -4015,7 +4224,26 @@ export type GetV1AdminAffiliateProgramFraudFlagsApiArg = {
   "x-locale"?: string;
 };
 export type PostV1AdminAffiliateProgramAffiliatesIdFraudFlagsApiResponse =
-  unknown;
+  /** status 201 OK */ {
+    id: string;
+    affiliateId: string;
+    kind:
+      | "SELF_REFERRAL"
+      | "HIGH_REFUND_RATE"
+      | "CLICK_SPIKE"
+      | "MARGIN_CAP"
+      | "COUPON_LEAK"
+      | "OTHER";
+    status: "OPEN" | "DISMISSED" | "CONFIRMED";
+    orderId: string | null;
+    details: {
+      [key: string]: any;
+    };
+    note: string | null;
+    resolvedBy: string | null;
+    resolvedAt: string | null;
+    createdAt: string;
+  };
 export type PostV1AdminAffiliateProgramAffiliatesIdFraudFlagsApiArg = {
   id: string;
   "x-market"?: string;
@@ -4026,7 +4254,27 @@ export type PostV1AdminAffiliateProgramAffiliatesIdFraudFlagsApiArg = {
     orderId?: string;
   };
 };
-export type PostV1AdminAffiliateProgramFraudFlagsIdResolveApiResponse = unknown;
+export type PostV1AdminAffiliateProgramFraudFlagsIdResolveApiResponse =
+  /** status 200 OK */ {
+    id: string;
+    affiliateId: string;
+    kind:
+      | "SELF_REFERRAL"
+      | "HIGH_REFUND_RATE"
+      | "CLICK_SPIKE"
+      | "MARGIN_CAP"
+      | "COUPON_LEAK"
+      | "OTHER";
+    status: "OPEN" | "DISMISSED" | "CONFIRMED";
+    orderId: string | null;
+    details: {
+      [key: string]: any;
+    };
+    note: string | null;
+    resolvedBy: string | null;
+    resolvedAt: string | null;
+    createdAt: string;
+  };
 export type PostV1AdminAffiliateProgramFraudFlagsIdResolveApiArg = {
   id: string;
   "x-market"?: string;
@@ -4037,14 +4285,70 @@ export type PostV1AdminAffiliateProgramFraudFlagsIdResolveApiArg = {
     suspend?: boolean;
   };
 };
-export type GetV1AdminAffiliateProgramPayoutBatchesApiResponse = unknown;
+export type GetV1AdminAffiliateProgramPayoutBatchesApiResponse =
+  /** status 200 OK */ {
+    items: {
+      id: string;
+      status:
+        "DRAFT" | "APPROVED" | "PROCESSING" | "PAID" | "FAILED" | "CANCELLED";
+      currency: string;
+      totalMinor: number;
+      preparedBy: string | null;
+      approvedBy: string | null;
+      approvedAt: string | null;
+      createdAt: string;
+      updatedAt: string;
+      payoutCount: number;
+    }[];
+    nextCursor: string | null;
+  };
 export type GetV1AdminAffiliateProgramPayoutBatchesApiArg = {
   cursor?: string;
   limit?: number;
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type PostV1AdminAffiliateProgramPayoutBatchesApiResponse = unknown;
+export type PostV1AdminAffiliateProgramPayoutBatchesApiResponse =
+  /** status 201 OK */ {
+    id: string;
+    status:
+      "DRAFT" | "APPROVED" | "PROCESSING" | "PAID" | "FAILED" | "CANCELLED";
+    currency: string;
+    totalMinor: number;
+    preparedBy: string | null;
+    approvedBy: string | null;
+    approvedAt: string | null;
+    createdAt: string;
+    updatedAt: string;
+    payouts: {
+      id: string;
+      affiliateId: string;
+      status:
+        "DRAFT" | "APPROVED" | "PROCESSING" | "PAID" | "FAILED" | "CANCELLED";
+      amountMinor: number;
+      currency: string;
+      method: string;
+      provider: string;
+      payoutMethodId: string | null;
+      failureReason: string | null;
+      providerRef: string | null;
+      preparedBy: string | null;
+      approvedBy: string | null;
+      paidAt: string | null;
+      createdAt: string;
+      updatedAt: string;
+      affiliate?: {
+        customer: {
+          email: string | null;
+        };
+      };
+      payoutMethod: {
+        type: string;
+        label: string;
+        masked: string;
+      } | null;
+    }[];
+  };
 export type PostV1AdminAffiliateProgramPayoutBatchesApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
@@ -4052,20 +4356,139 @@ export type PostV1AdminAffiliateProgramPayoutBatchesApiArg = {
     currency: string;
   };
 };
-export type GetV1AdminAffiliateProgramPayoutBatchesIdApiResponse = unknown;
+export type GetV1AdminAffiliateProgramPayoutBatchesIdApiResponse =
+  /** status 200 OK */ {
+    id: string;
+    status:
+      "DRAFT" | "APPROVED" | "PROCESSING" | "PAID" | "FAILED" | "CANCELLED";
+    currency: string;
+    totalMinor: number;
+    preparedBy: string | null;
+    approvedBy: string | null;
+    approvedAt: string | null;
+    createdAt: string;
+    updatedAt: string;
+    payouts: {
+      id: string;
+      affiliateId: string;
+      status:
+        "DRAFT" | "APPROVED" | "PROCESSING" | "PAID" | "FAILED" | "CANCELLED";
+      amountMinor: number;
+      currency: string;
+      method: string;
+      provider: string;
+      payoutMethodId: string | null;
+      failureReason: string | null;
+      providerRef: string | null;
+      preparedBy: string | null;
+      approvedBy: string | null;
+      paidAt: string | null;
+      createdAt: string;
+      updatedAt: string;
+      affiliate?: {
+        customer: {
+          email: string | null;
+        };
+      };
+      payoutMethod: {
+        type: string;
+        label: string;
+        masked: string;
+      } | null;
+    }[];
+  };
 export type GetV1AdminAffiliateProgramPayoutBatchesIdApiArg = {
   id: string;
   "x-market"?: string;
   "x-locale"?: string;
 };
 export type PostV1AdminAffiliateProgramPayoutBatchesIdApproveApiResponse =
-  unknown;
+  /** status 200 OK */ {
+    id: string;
+    status:
+      "DRAFT" | "APPROVED" | "PROCESSING" | "PAID" | "FAILED" | "CANCELLED";
+    currency: string;
+    totalMinor: number;
+    preparedBy: string | null;
+    approvedBy: string | null;
+    approvedAt: string | null;
+    createdAt: string;
+    updatedAt: string;
+    payouts: {
+      id: string;
+      affiliateId: string;
+      status:
+        "DRAFT" | "APPROVED" | "PROCESSING" | "PAID" | "FAILED" | "CANCELLED";
+      amountMinor: number;
+      currency: string;
+      method: string;
+      provider: string;
+      payoutMethodId: string | null;
+      failureReason: string | null;
+      providerRef: string | null;
+      preparedBy: string | null;
+      approvedBy: string | null;
+      paidAt: string | null;
+      createdAt: string;
+      updatedAt: string;
+      affiliate?: {
+        customer: {
+          email: string | null;
+        };
+      };
+      payoutMethod: {
+        type: string;
+        label: string;
+        masked: string;
+      } | null;
+    }[];
+  };
 export type PostV1AdminAffiliateProgramPayoutBatchesIdApproveApiArg = {
   id: string;
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type PostV1AdminAffiliateProgramPayoutBatchesIdPaidApiResponse = unknown;
+export type PostV1AdminAffiliateProgramPayoutBatchesIdPaidApiResponse =
+  /** status 200 OK */ {
+    id: string;
+    status:
+      "DRAFT" | "APPROVED" | "PROCESSING" | "PAID" | "FAILED" | "CANCELLED";
+    currency: string;
+    totalMinor: number;
+    preparedBy: string | null;
+    approvedBy: string | null;
+    approvedAt: string | null;
+    createdAt: string;
+    updatedAt: string;
+    payouts: {
+      id: string;
+      affiliateId: string;
+      status:
+        "DRAFT" | "APPROVED" | "PROCESSING" | "PAID" | "FAILED" | "CANCELLED";
+      amountMinor: number;
+      currency: string;
+      method: string;
+      provider: string;
+      payoutMethodId: string | null;
+      failureReason: string | null;
+      providerRef: string | null;
+      preparedBy: string | null;
+      approvedBy: string | null;
+      paidAt: string | null;
+      createdAt: string;
+      updatedAt: string;
+      affiliate?: {
+        customer: {
+          email: string | null;
+        };
+      };
+      payoutMethod: {
+        type: string;
+        label: string;
+        masked: string;
+      } | null;
+    }[];
+  };
 export type PostV1AdminAffiliateProgramPayoutBatchesIdPaidApiArg = {
   id: string;
   "x-market"?: string;
@@ -4077,7 +4500,46 @@ export type PostV1AdminAffiliateProgramPayoutBatchesIdPaidApiArg = {
   };
 };
 export type PostV1AdminAffiliateProgramPayoutBatchesIdCancelApiResponse =
-  unknown;
+  /** status 200 OK */ {
+    id: string;
+    status:
+      "DRAFT" | "APPROVED" | "PROCESSING" | "PAID" | "FAILED" | "CANCELLED";
+    currency: string;
+    totalMinor: number;
+    preparedBy: string | null;
+    approvedBy: string | null;
+    approvedAt: string | null;
+    createdAt: string;
+    updatedAt: string;
+    payouts: {
+      id: string;
+      affiliateId: string;
+      status:
+        "DRAFT" | "APPROVED" | "PROCESSING" | "PAID" | "FAILED" | "CANCELLED";
+      amountMinor: number;
+      currency: string;
+      method: string;
+      provider: string;
+      payoutMethodId: string | null;
+      failureReason: string | null;
+      providerRef: string | null;
+      preparedBy: string | null;
+      approvedBy: string | null;
+      paidAt: string | null;
+      createdAt: string;
+      updatedAt: string;
+      affiliate?: {
+        customer: {
+          email: string | null;
+        };
+      };
+      payoutMethod: {
+        type: string;
+        label: string;
+        masked: string;
+      } | null;
+    }[];
+  };
 export type PostV1AdminAffiliateProgramPayoutBatchesIdCancelApiArg = {
   id: string;
   "x-market"?: string;
@@ -4090,7 +4552,25 @@ export type GetV1AdminAffiliateProgramPayoutBatchesIdExportApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type PostV1AdminAffiliateProgramPayoutsIdSendApiResponse = unknown;
+export type PostV1AdminAffiliateProgramPayoutsIdSendApiResponse =
+  /** status 200 OK */ {
+    id: string;
+    affiliateId: string;
+    status:
+      "DRAFT" | "APPROVED" | "PROCESSING" | "PAID" | "FAILED" | "CANCELLED";
+    amountMinor: number;
+    currency: string;
+    method: string;
+    provider: string;
+    payoutMethodId: string | null;
+    failureReason: string | null;
+    providerRef: string | null;
+    preparedBy: string | null;
+    approvedBy: string | null;
+    paidAt: string | null;
+    createdAt: string;
+    updatedAt: string;
+  };
 export type PostV1AdminAffiliateProgramPayoutsIdSendApiArg = {
   id: string;
   "x-market"?: string;
@@ -4099,12 +4579,39 @@ export type PostV1AdminAffiliateProgramPayoutsIdSendApiArg = {
     provider?: string;
   };
 };
-export type GetV1AdminAffiliateProgramAssetsApiResponse = unknown;
+export type GetV1AdminAffiliateProgramAssetsApiResponse = /** status 200 OK */ {
+  id: string;
+  title: string;
+  kind: "banner" | "image" | "copy";
+  mediaId: string | null;
+  body: string | null;
+  productId: string | null;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  media: {
+    id: string;
+    url: string;
+    width: number | null;
+    height: number | null;
+  } | null;
+}[];
 export type GetV1AdminAffiliateProgramAssetsApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type PostV1AdminAffiliateProgramAssetsApiResponse = unknown;
+export type PostV1AdminAffiliateProgramAssetsApiResponse =
+  /** status 201 OK */ {
+    id: string;
+    title: string;
+    kind: "banner" | "image" | "copy";
+    mediaId: string | null;
+    body: string | null;
+    productId: string | null;
+    isActive: boolean;
+    createdAt: string;
+    updatedAt: string;
+  };
 export type PostV1AdminAffiliateProgramAssetsApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
@@ -4117,7 +4624,18 @@ export type PostV1AdminAffiliateProgramAssetsApiArg = {
     isActive?: boolean;
   };
 };
-export type PutV1AdminAffiliateProgramAssetsIdApiResponse = unknown;
+export type PutV1AdminAffiliateProgramAssetsIdApiResponse =
+  /** status 200 OK */ {
+    id: string;
+    title: string;
+    kind: "banner" | "image" | "copy";
+    mediaId: string | null;
+    body: string | null;
+    productId: string | null;
+    isActive: boolean;
+    createdAt: string;
+    updatedAt: string;
+  };
 export type PutV1AdminAffiliateProgramAssetsIdApiArg = {
   id: string;
   "x-market"?: string;
@@ -4131,7 +4649,23 @@ export type PutV1AdminAffiliateProgramAssetsIdApiArg = {
     isActive?: boolean;
   };
 };
-export type GetV1AdminAffiliateProgramAssetsAnalyticsApiResponse = unknown;
+export type DeleteV1AdminAffiliateProgramAssetsIdApiResponse = unknown;
+export type DeleteV1AdminAffiliateProgramAssetsIdApiArg = {
+  id: string;
+  "x-market"?: string;
+  "x-locale"?: string;
+};
+export type GetV1AdminAffiliateProgramAssetsAnalyticsApiResponse =
+  /** status 200 OK */ {
+    id: string;
+    title: string;
+    kind: string;
+    downloads: number;
+    clicks: number;
+    conversions: number;
+    conversionRate: number;
+    revenueMinor: number;
+  }[];
 export type GetV1AdminAffiliateProgramAssetsAnalyticsApiArg = {
   from?: string;
   to?: string;
@@ -4225,6 +4759,184 @@ export type PutV1AdminProductsIdRelationsApiArg = {
     kind: "RELATED" | "COMPLETE_THE_LOOK" | "UPSELL";
     relatedIds: string[];
   };
+};
+export type GetV1AdminOpsQueuesApiResponse = /** status 200 OK */ {
+  checkedAt: string;
+  queues: {
+    name: string;
+    kind: "scheduled" | "task" | "subscriber" | "dead-letter";
+    counts: {
+      created: number;
+      retry: number;
+      active: number;
+      completed: number;
+      failed: number;
+      cancelled: number;
+    };
+    failedLast24h: number;
+    lastCompletedAt: string | null;
+  }[];
+};
+export type GetV1AdminOpsQueuesApiArg = {
+  "x-market"?: string;
+  "x-locale"?: string;
+};
+export type GetV1AdminOpsQueuesQueueJobsApiResponse = /** status 200 OK */ {
+  items: {
+    id: string;
+    queue: string;
+    state:
+      "created" | "retry" | "active" | "completed" | "failed" | "cancelled";
+    retryCount: number;
+    retryLimit: number;
+    createdAt: string;
+    startAfter: string;
+    startedAt: string | null;
+    completedAt: string | null;
+    singletonKey: string | null;
+    sourceQueue: string | null;
+    sourceJobId: string | null;
+    error: string | null;
+    data: {
+      keys: string[];
+      fields: {
+        [key: string]: string | number | boolean;
+      };
+    };
+    actions: {
+      retry: boolean;
+      cancel: boolean;
+    };
+  }[];
+  nextCursor: string | null;
+};
+export type GetV1AdminOpsQueuesQueueJobsApiArg = {
+  queue: string;
+  state?: "created" | "retry" | "active" | "completed" | "failed" | "cancelled";
+  cursor?: string;
+  limit?: number;
+  "x-market"?: string;
+  "x-locale"?: string;
+};
+export type GetV1AdminOpsQueuesQueueJobsIdApiResponse = /** status 200 OK */ {
+  id: string;
+  queue: string;
+  state: "created" | "retry" | "active" | "completed" | "failed" | "cancelled";
+  retryCount: number;
+  retryLimit: number;
+  createdAt: string;
+  startAfter: string;
+  startedAt: string | null;
+  completedAt: string | null;
+  singletonKey: string | null;
+  sourceQueue: string | null;
+  sourceJobId: string | null;
+  error: string | null;
+  data: {
+    keys: string[];
+    fields: {
+      [key: string]: string | number | boolean;
+    };
+  };
+  actions: {
+    retry: boolean;
+    cancel: boolean;
+  };
+};
+export type GetV1AdminOpsQueuesQueueJobsIdApiArg = {
+  queue: string;
+  id: string;
+  "x-market"?: string;
+  "x-locale"?: string;
+};
+export type PostV1AdminOpsQueuesQueueJobsIdRetryApiResponse =
+  /** status 200 OK */ {
+    id: string;
+    queue: string;
+    state:
+      "created" | "retry" | "active" | "completed" | "failed" | "cancelled";
+    retryCount: number;
+    retryLimit: number;
+    createdAt: string;
+    startAfter: string;
+    startedAt: string | null;
+    completedAt: string | null;
+    singletonKey: string | null;
+    sourceQueue: string | null;
+    sourceJobId: string | null;
+    error: string | null;
+    data: {
+      keys: string[];
+      fields: {
+        [key: string]: string | number | boolean;
+      };
+    };
+    actions: {
+      retry: boolean;
+      cancel: boolean;
+    };
+  };
+export type PostV1AdminOpsQueuesQueueJobsIdRetryApiArg = {
+  queue: string;
+  id: string;
+  "x-market"?: string;
+  "x-locale"?: string;
+};
+export type PostV1AdminOpsQueuesQueueJobsIdCancelApiResponse =
+  /** status 200 OK */ {
+    id: string;
+    queue: string;
+    state:
+      "created" | "retry" | "active" | "completed" | "failed" | "cancelled";
+    retryCount: number;
+    retryLimit: number;
+    createdAt: string;
+    startAfter: string;
+    startedAt: string | null;
+    completedAt: string | null;
+    singletonKey: string | null;
+    sourceQueue: string | null;
+    sourceJobId: string | null;
+    error: string | null;
+    data: {
+      keys: string[];
+      fields: {
+        [key: string]: string | number | boolean;
+      };
+    };
+    actions: {
+      retry: boolean;
+      cancel: boolean;
+    };
+  };
+export type PostV1AdminOpsQueuesQueueJobsIdCancelApiArg = {
+  queue: string;
+  id: string;
+  "x-market"?: string;
+  "x-locale"?: string;
+};
+export type GetV1AdminOpsIntegrationsApiResponse = /** status 200 OK */ {
+  status: "up" | "degraded" | "down" | "disabled";
+  live: boolean;
+  checkedAt: string;
+  checks: {
+    key: string;
+    name: string;
+    status: "up" | "degraded" | "down" | "disabled";
+    summary: string;
+    action: string | null;
+    adapter: string | null;
+    details: {
+      label: string;
+      value: string;
+    }[];
+    checkedAt: string;
+  }[];
+};
+export type GetV1AdminOpsIntegrationsApiArg = {
+  check?: string;
+  "x-market"?: string;
+  "x-locale"?: string;
 };
 export type GetV1AdminReportBuilderCatalogApiResponse = unknown;
 export type GetV1AdminReportBuilderCatalogApiArg = {
@@ -4368,17 +5080,44 @@ export type DeleteV1AdminSearchRulesIdApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type GetV1AdminWebhooksEventsApiResponse = unknown;
+export type GetV1AdminWebhooksEventsApiResponse = /** status 200 OK */ {
+  events: string[];
+};
 export type GetV1AdminWebhooksEventsApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type GetV1AdminWebhooksApiResponse = unknown;
+export type GetV1AdminWebhooksApiResponse = /** status 200 OK */ {
+  id: string;
+  url: string;
+  description: string | null;
+  events: string[];
+  isActive: boolean;
+  consecutiveFailures: number;
+  disabledAt: string | null;
+  disabledReason: string | null;
+  createdAt: string;
+  updatedAt: string;
+}[];
 export type GetV1AdminWebhooksApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type PostV1AdminWebhooksApiResponse = unknown;
+export type PostV1AdminWebhooksApiResponse = /** status 201 OK */ {
+  subscription: {
+    id: string;
+    url: string;
+    description: string | null;
+    events: string[];
+    isActive: boolean;
+    consecutiveFailures: number;
+    disabledAt: string | null;
+    disabledReason: string | null;
+    createdAt: string;
+    updatedAt: string;
+  };
+  secret: string;
+};
 export type PostV1AdminWebhooksApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
@@ -4388,7 +5127,18 @@ export type PostV1AdminWebhooksApiArg = {
     description?: string;
   };
 };
-export type PatchV1AdminWebhooksIdApiResponse = unknown;
+export type PatchV1AdminWebhooksIdApiResponse = /** status 200 OK */ {
+  id: string;
+  url: string;
+  description: string | null;
+  events: string[];
+  isActive: boolean;
+  consecutiveFailures: number;
+  disabledAt: string | null;
+  disabledReason: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
 export type PatchV1AdminWebhooksIdApiArg = {
   id: string;
   "x-market"?: string;
@@ -4406,42 +5156,198 @@ export type DeleteV1AdminWebhooksIdApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type PostV1AdminWebhooksIdRotateSecretApiResponse = unknown;
+export type PostV1AdminWebhooksIdRotateSecretApiResponse =
+  /** status 200 OK */ {
+    secret: string;
+  };
 export type PostV1AdminWebhooksIdRotateSecretApiArg = {
   id: string;
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type PostV1AdminWebhooksIdPingApiResponse = unknown;
+export type PostV1AdminWebhooksIdPingApiResponse = /** status 202 OK */ {
+  queued: true;
+  eventId: string;
+};
 export type PostV1AdminWebhooksIdPingApiArg = {
   id: string;
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type GetV1AdminWebhooksIdDeliveriesApiResponse = unknown;
+export type GetV1AdminWebhooksIdDeliveriesApiResponse = /** status 200 OK */ {
+  available: boolean;
+  items: {
+    id: string;
+    subscriptionId: string;
+    eventId: string;
+    eventType: string;
+    url?: string | null;
+    attempt?: number | null;
+    ok?: boolean | null;
+    status?: number | null;
+    error?: string | null;
+    durationMs?: number | null;
+    payload: any;
+    occurredAt: string;
+  }[];
+};
 export type GetV1AdminWebhooksIdDeliveriesApiArg = {
   id: string;
   limit?: number;
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type PostV1AdminWebhooksDeliveriesIdReplayApiResponse = unknown;
+export type PostV1AdminWebhooksDeliveriesIdReplayApiResponse =
+  /** status 202 OK */ {
+    queued: true;
+  };
 export type PostV1AdminWebhooksDeliveriesIdReplayApiArg = {
   id: string;
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type GetV1AdminWorkflowsTriggersApiResponse = unknown;
+export type GetV1AdminWorkflowsTriggersApiResponse = /** status 200 OK */ {
+  triggers: string[];
+};
 export type GetV1AdminWorkflowsTriggersApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type GetV1AdminWorkflowsApiResponse = unknown;
+export type GetV1AdminWorkflowsApiResponse = /** status 200 OK */ {
+  id: string;
+  name: string;
+  trigger: string;
+  conditions:
+    | {}
+    | {
+        match: "all" | "any";
+        conditions: {
+          field: string;
+          op:
+            | "eq"
+            | "neq"
+            | "gt"
+            | "gte"
+            | "lt"
+            | "lte"
+            | "in"
+            | "not_in"
+            | "contains"
+            | "exists";
+          value?: string | number | boolean | (string | number)[];
+        }[];
+      };
+  actions: (
+    | {
+        type: "tag_order";
+        tag: string;
+      }
+    | {
+        type: "tag_customer";
+        tag: string;
+      }
+    | {
+        type: "hold_order";
+        reason: string;
+      }
+    | {
+        type: "add_order_note";
+        note: string;
+      }
+    | {
+        type: "notify";
+        to: string[];
+        subject: string;
+        message: string;
+      }
+    | {
+        type: "call_webhook";
+        url: string;
+      }
+    | {
+        type: "suspend_affiliate";
+        reason: string;
+      }
+    | {
+        type: "hold_affiliate_earnings";
+        reason: string;
+      }
+  )[];
+  isActive: boolean;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+  lastRunAt: string | null;
+}[];
 export type GetV1AdminWorkflowsApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type PostV1AdminWorkflowsApiResponse = unknown;
+export type PostV1AdminWorkflowsApiResponse = /** status 201 OK */ {
+  id: string;
+  name: string;
+  trigger: string;
+  conditions:
+    | {}
+    | {
+        match: "all" | "any";
+        conditions: {
+          field: string;
+          op:
+            | "eq"
+            | "neq"
+            | "gt"
+            | "gte"
+            | "lt"
+            | "lte"
+            | "in"
+            | "not_in"
+            | "contains"
+            | "exists";
+          value?: string | number | boolean | (string | number)[];
+        }[];
+      };
+  actions: (
+    | {
+        type: "tag_order";
+        tag: string;
+      }
+    | {
+        type: "tag_customer";
+        tag: string;
+      }
+    | {
+        type: "hold_order";
+        reason: string;
+      }
+    | {
+        type: "add_order_note";
+        note: string;
+      }
+    | {
+        type: "notify";
+        to: string[];
+        subject: string;
+        message: string;
+      }
+    | {
+        type: "call_webhook";
+        url: string;
+      }
+    | {
+        type: "suspend_affiliate";
+        reason: string;
+      }
+    | {
+        type: "hold_affiliate_earnings";
+        reason: string;
+      }
+  )[];
+  isActive: boolean;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+};
 export type PostV1AdminWorkflowsApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
@@ -4453,7 +5359,71 @@ export type PostV1AdminWorkflowsApiArg = {
     isActive?: boolean;
   };
 };
-export type PutV1AdminWorkflowsIdApiResponse = unknown;
+export type PutV1AdminWorkflowsIdApiResponse = /** status 200 OK */ {
+  id: string;
+  name: string;
+  trigger: string;
+  conditions:
+    | {}
+    | {
+        match: "all" | "any";
+        conditions: {
+          field: string;
+          op:
+            | "eq"
+            | "neq"
+            | "gt"
+            | "gte"
+            | "lt"
+            | "lte"
+            | "in"
+            | "not_in"
+            | "contains"
+            | "exists";
+          value?: string | number | boolean | (string | number)[];
+        }[];
+      };
+  actions: (
+    | {
+        type: "tag_order";
+        tag: string;
+      }
+    | {
+        type: "tag_customer";
+        tag: string;
+      }
+    | {
+        type: "hold_order";
+        reason: string;
+      }
+    | {
+        type: "add_order_note";
+        note: string;
+      }
+    | {
+        type: "notify";
+        to: string[];
+        subject: string;
+        message: string;
+      }
+    | {
+        type: "call_webhook";
+        url: string;
+      }
+    | {
+        type: "suspend_affiliate";
+        reason: string;
+      }
+    | {
+        type: "hold_affiliate_earnings";
+        reason: string;
+      }
+  )[];
+  isActive: boolean;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+};
 export type PutV1AdminWorkflowsIdApiArg = {
   id: string;
   "x-market"?: string;
@@ -4473,7 +5443,21 @@ export type DeleteV1AdminWorkflowsIdApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type GetV1AdminWorkflowsIdRunsApiResponse = unknown;
+export type GetV1AdminWorkflowsIdRunsApiResponse = /** status 200 OK */ {
+  items: {
+    id: string;
+    ruleId: string;
+    eventId: string;
+    matched: boolean;
+    result: {
+      type: string;
+      ok: boolean;
+      error?: string;
+    }[];
+    createdAt: string;
+  }[];
+  nextCursor: string | null;
+};
 export type GetV1AdminWorkflowsIdRunsApiArg = {
   id: string;
   cursor?: string;
@@ -4481,7 +5465,12 @@ export type GetV1AdminWorkflowsIdRunsApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
 };
-export type PostV1AdminWorkflowsTestApiResponse = unknown;
+export type PostV1AdminWorkflowsTestApiResponse = /** status 200 OK */ {
+  matched: boolean;
+  facts: {
+    [key: string]: any;
+  };
+};
 export type PostV1AdminWorkflowsTestApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
@@ -12581,6 +13570,102 @@ export type DeleteV1AdminTaxRatesIdApiArg = {
   "x-market"?: string;
   "x-locale"?: string;
 };
+export type GetV1AdminTranslationsLocalesApiResponse = /** status 200 OK */ {
+  source: string;
+  locales: string[];
+  entityTypes: ("PRODUCT" | "CATEGORY" | "COLLECTION" | "PAGE" | "MENU")[];
+};
+export type GetV1AdminTranslationsLocalesApiArg = {
+  "x-market"?: string;
+  "x-locale"?: string;
+};
+export type GetV1AdminTranslationsApiResponse = /** status 200 OK */ {
+  items: {
+    entityId: string;
+    handle: string;
+    label: string;
+    source: {
+      [key: string]: any;
+    };
+    sourceUpdatedAt: string;
+    translation: {
+      [key: string]: any;
+    } | null;
+    translationUpdatedAt: string | null;
+    outdated: boolean;
+  }[];
+  nextCursor: string | null;
+};
+export type GetV1AdminTranslationsApiArg = {
+  cursor?: string;
+  limit?: number;
+  entityType: "PRODUCT" | "CATEGORY" | "COLLECTION" | "PAGE" | "MENU";
+  locale: string;
+  status?: "all" | "missing" | "translated";
+  q?: string;
+  "x-market"?: string;
+  "x-locale"?: string;
+};
+export type GetV1AdminTranslationsEntityTypeEntityIdLocaleApiResponse =
+  /** status 200 OK */ {
+    entityId: string;
+    handle: string;
+    label: string;
+    source: {
+      [key: string]: any;
+    };
+    sourceUpdatedAt: string;
+    translation: {
+      [key: string]: any;
+    } | null;
+    translationUpdatedAt: string | null;
+    outdated: boolean;
+  };
+export type GetV1AdminTranslationsEntityTypeEntityIdLocaleApiArg = {
+  entityType: "PRODUCT" | "CATEGORY" | "COLLECTION" | "PAGE" | "MENU";
+  entityId: string;
+  locale: string;
+  "x-market"?: string;
+  "x-locale"?: string;
+};
+export type PutV1AdminTranslationsEntityTypeEntityIdLocaleApiResponse =
+  /** status 200 OK */ {
+    entityId: string;
+    handle: string;
+    label: string;
+    source: {
+      [key: string]: any;
+    };
+    sourceUpdatedAt: string;
+    translation: {
+      [key: string]: any;
+    } | null;
+    translationUpdatedAt: string | null;
+    outdated: boolean;
+  };
+export type PutV1AdminTranslationsEntityTypeEntityIdLocaleApiArg = {
+  entityType: "PRODUCT" | "CATEGORY" | "COLLECTION" | "PAGE" | "MENU";
+  entityId: string;
+  locale: string;
+  "x-market"?: string;
+  "x-locale"?: string;
+  body: {
+    fields: {
+      [key: string]: any;
+    };
+  };
+};
+export type DeleteV1AdminTranslationsEntityTypeEntityIdLocaleApiResponse =
+  /** status 200 OK */ {
+    ok: true;
+  };
+export type DeleteV1AdminTranslationsEntityTypeEntityIdLocaleApiArg = {
+  entityType: "PRODUCT" | "CATEGORY" | "COLLECTION" | "PAGE" | "MENU";
+  entityId: string;
+  locale: string;
+  "x-market"?: string;
+  "x-locale"?: string;
+};
 export type PostV1AdminAuthLoginApiResponse =
   | /** status 200 OK */ {
       status: "authenticated";
@@ -12883,6 +13968,7 @@ export const {
   useGetV1AdminAffiliateProgramAssetsQuery,
   usePostV1AdminAffiliateProgramAssetsMutation,
   usePutV1AdminAffiliateProgramAssetsIdMutation,
+  useDeleteV1AdminAffiliateProgramAssetsIdMutation,
   useGetV1AdminAffiliateProgramAssetsAnalyticsQuery,
   useGetV1AdminApprovalsQuery,
   usePostV1AdminApprovalsIdDecisionMutation,
@@ -12894,6 +13980,12 @@ export const {
   usePostV1AdminExperimentsIdStatusMutation,
   useGetV1AdminExperimentsIdResultsQuery,
   usePutV1AdminProductsIdRelationsMutation,
+  useGetV1AdminOpsQueuesQuery,
+  useGetV1AdminOpsQueuesQueueJobsQuery,
+  useGetV1AdminOpsQueuesQueueJobsIdQuery,
+  usePostV1AdminOpsQueuesQueueJobsIdRetryMutation,
+  usePostV1AdminOpsQueuesQueueJobsIdCancelMutation,
+  useGetV1AdminOpsIntegrationsQuery,
   useGetV1AdminReportBuilderCatalogQuery,
   usePostV1AdminReportBuilderRunMutation,
   useGetV1AdminReportBuilderReportsQuery,
@@ -13117,6 +14209,11 @@ export const {
   usePostV1AdminTaxRatesMutation,
   usePutV1AdminTaxRatesIdMutation,
   useDeleteV1AdminTaxRatesIdMutation,
+  useGetV1AdminTranslationsLocalesQuery,
+  useGetV1AdminTranslationsQuery,
+  useGetV1AdminTranslationsEntityTypeEntityIdLocaleQuery,
+  usePutV1AdminTranslationsEntityTypeEntityIdLocaleMutation,
+  useDeleteV1AdminTranslationsEntityTypeEntityIdLocaleMutation,
   usePostV1AdminAuthLoginMutation,
   usePostV1AdminAuthMfaVerifyMutation,
   usePostV1AdminAuthMfaEnrollMutation,

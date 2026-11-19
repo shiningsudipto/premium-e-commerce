@@ -1,12 +1,13 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import type { ArtName } from "../../components/storefront/art";
 import { Media, type MediaImage, type Tone } from "../../components/storefront/media";
 import { swatchColor } from "../../components/storefront/primitives";
 import { useBag } from "../../features/cart/bag-provider";
-import { bagErrorMessage, useAddToBagMutation } from "../../features/cart/cart-api";
+import { useAddToBagMutation, useBagErrorMessage } from "../../features/cart/cart-api";
 
 export type SpotlightVariant = {
   id: string;
@@ -29,6 +30,7 @@ const TONE_FOR_COLOUR: Record<string, Tone> = {
 // The interactive half of the spotlight: gallery thumbnails, the colour picker and "Add to bag".
 // Product data is fetched on the server and passed in.
 export function SpotlightGallery({ title, shots, colour }: { title: string; shots: Shot[]; colour: string | null }) {
+  const t = useTranslations("spotlight");
   const [index, setIndex] = useState(0);
   const tone = (colour && TONE_FOR_COLOUR[colour.toLowerCase()]) || "warm";
   const shot = shots[index]!;
@@ -40,19 +42,23 @@ export function SpotlightGallery({ title, shots, colour }: { title: string; shot
           art={shot.art}
           flip={shot.flip}
           tone={tone}
-          alt={`${title}${colour ? ` in ${colour.toLowerCase()}` : ""}, ${shot.label}`}
+          alt={
+            colour
+              ? t("altColour", { title, colour: colour.toLowerCase(), view: shot.label })
+              : t("alt", { title, view: shot.label })
+          }
           caption={`${title}${colour ? ` · ${colour}` : ""} · ${shot.caption}`}
           sizes="(min-width: 1024px) 50vw, 100vw"
         />
       </div>
-      <div className="gallery__thumbs" role="group" aria-label="Product images">
+      <div className="gallery__thumbs" role="group" aria-label={t("images")}>
         {shots.map((s, i) => (
           <button
             key={s.label}
             className={cn("thumb", i === index && "is-active")}
             type="button"
             aria-pressed={i === index}
-            aria-label={`Show image ${i + 1} of ${shots.length}: ${s.label}`}
+            aria-label={t("showImage", { n: i + 1, total: shots.length, label: s.label })}
             onClick={() => setIndex(i)}
           >
             <Media image={s.image} art={s.art} flip={s.flip} tone={tone} alt="" decorative sizes="96px" />
@@ -81,6 +87,8 @@ export function SpotlightBuy({
   // shown under the button, e.g. the delivery note
   after?: React.ReactNode;
 }) {
+  const t = useTranslations("spotlight");
+  const bagErrorMessage = useBagErrorMessage();
   const [colour, setColour] = useState(initialColour);
   const [addToBag, { isLoading: pending }] = useAddToBagMutation();
   const [message, setMessage] = useState("");
@@ -92,7 +100,11 @@ export function SpotlightBuy({
     if (!variant) return;
     const result = await addToBag({ variantId: variant.id });
     setMessage(
-      result.error ? bagErrorMessage(result.error) : `${title}${colour ? ` in ${colour}` : ""} added to your bag.`,
+      result.error
+        ? bagErrorMessage(result.error)
+        : colour
+          ? t("addedColour", { title, colour })
+          : t("added", { title }),
     );
     if (!result.error) openBag();
   };

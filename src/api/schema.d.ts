@@ -32,11 +32,12 @@ export interface paths {
         get?: never;
         put?: never;
         post?: never;
-        /** Remove a payout method */
+        /** Remove a payout method (the oldest remaining one becomes the default if needed) */
         delete: operations["delete__v1_affiliate_payout_methods_id"];
         options?: never;
         head?: never;
-        patch?: never;
+        /** Rename a payout method or make it the default (account details can't be changed; add a new method instead) */
+        patch: operations["patch__v1_affiliate_payout_methods_id"];
         trace?: never;
     };
     "/v1/affiliate/payouts/request": {
@@ -99,7 +100,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Get an asset with a tracked link (counts the download) */
+        /** Get an asset with a tracked link (counts the download); the media URL is public, not signed */
         post: operations["post__v1_affiliate_assets_id_download"];
         delete?: never;
         options?: never;
@@ -358,7 +359,8 @@ export interface paths {
         /** Update a marketing asset */
         put: operations["put__v1_admin_affiliate_program_assets_id"];
         post?: never;
-        delete?: never;
+        /** Delete a marketing asset (affiliates' existing tracked links keep working; its analytics stop showing) */
+        delete: operations["delete__v1_admin_affiliate_program_assets_id"];
         options?: never;
         head?: never;
         patch?: never;
@@ -596,6 +598,108 @@ export interface paths {
         get?: never;
         /** Set manual related, complete-the-look or upsell products (in order) */
         put: operations["put__v1_admin_products_id_relations"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/admin/ops/queues": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Job queues with the number of jobs in each state */
+        get: operations["get__v1_admin_ops_queues"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/admin/ops/queues/{queue}/jobs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Jobs in a queue, newest first, optionally in one state */
+        get: operations["get__v1_admin_ops_queues_queue_jobs"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/admin/ops/queues/{queue}/jobs/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** One job */
+        get: operations["get__v1_admin_ops_queues_queue_jobs_id"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/admin/ops/queues/{queue}/jobs/{id}/retry": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Retry a failed job (pg-boss retry) */
+        post: operations["post__v1_admin_ops_queues_queue_jobs_id_retry"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/admin/ops/queues/{queue}/jobs/{id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Cancel a job that hasn't started (pg-boss cancel) */
+        post: operations["post__v1_admin_ops_queues_queue_jobs_id_cancel"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/admin/ops/integrations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Status of the database, queue, log store and configured adapters. ?check=true also runs the adapters' own health checks */
+        get: operations["get__v1_admin_ops_integrations"];
+        put?: never;
         post?: never;
         delete?: never;
         options?: never;
@@ -957,7 +1061,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List workflow rules */
+        /** List workflow rules, each with when it last ran */
         get: operations["get__v1_admin_workflows"];
         put?: never;
         /** Create a rule: trigger → conditions → actions (tag, hold, note, notify, webhook, suspend affiliate, hold earnings) */
@@ -1131,6 +1235,23 @@ export interface paths {
         };
         /** Pending, payable, in-payout and paid totals */
         get: operations["get__v1_affiliate_balance"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/affiliate/tier": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Current tier, its rewards and commission, and progress towards the next automatic tier */
+        get: operations["get__v1_affiliate_tier"];
         put?: never;
         post?: never;
         delete?: never;
@@ -4548,6 +4669,59 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/admin/translations/locales": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Languages content can be translated into (every market locale except the English source), and the kinds this staff member may translate */
+        get: operations["get__v1_admin_translations_locales"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/admin/translations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Content of one kind with its translation into a language (filter: missing / translated; search by name or handle) */
+        get: operations["get__v1_admin_translations"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/admin/translations/{entityType}/{entityId}/{locale}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** One item's source text and translation */
+        get: operations["get__v1_admin_translations_entityType_entityId_locale"];
+        /** Save a translation (blank fields fall back to the source; saving nothing removes it) */
+        put: operations["put__v1_admin_translations_entityType_entityId_locale"];
+        post?: never;
+        /** Remove a translation (the source text shows again) */
+        delete: operations["delete__v1_admin_translations_entityType_entityId_locale"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/store/auth/guest": {
         parameters: {
             query?: never;
@@ -5131,7 +5305,18 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        /** @enum {string} */
+                        type: "bank" | "mobile_wallet";
+                        label: string;
+                        masked: string;
+                        isDefault: boolean;
+                        /** Format: date-time */
+                        createdAt: string;
+                    }[];
+                };
             };
             /** @description Error */
             default: {
@@ -5179,7 +5364,18 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        /** @enum {string} */
+                        type: "bank" | "mobile_wallet";
+                        label: string;
+                        masked: string;
+                        isDefault: boolean;
+                        /** Format: date-time */
+                        createdAt: string;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -5224,6 +5420,57 @@ export interface operations {
             };
         };
     };
+    patch__v1_affiliate_payout_methods_id: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-market"?: string;
+                "x-locale"?: string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    label?: string;
+                    /** @constant */
+                    isDefault?: true;
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        id: string;
+                        /** @enum {string} */
+                        type: "bank" | "mobile_wallet";
+                        label: string;
+                        masked: string;
+                        isDefault: boolean;
+                        /** Format: date-time */
+                        createdAt: string;
+                    };
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
     post__v1_affiliate_payouts_request: {
         parameters: {
             query?: never;
@@ -5241,7 +5488,20 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        /** @enum {string} */
+                        status: "DRAFT" | "APPROVED" | "PROCESSING" | "PAID" | "FAILED" | "CANCELLED";
+                        amountMinor: number;
+                        currency: string;
+                        method: string | null;
+                        providerRef: string | null;
+                        paidAt: string | null;
+                        /** Format: date-time */
+                        createdAt: string;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -5271,7 +5531,19 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        code: string;
+                        isActive: boolean;
+                        usageCount: number;
+                        usageLimit: number | null;
+                        promotion: {
+                            name: string;
+                            status: string;
+                        };
+                    }[];
+                };
             };
             /** @description Error */
             default: {
@@ -5301,7 +5573,28 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        title: string;
+                        /** @enum {string} */
+                        kind: "banner" | "image" | "copy";
+                        body: string | null;
+                        productId: string | null;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        media: {
+                            id: string;
+                            url: string;
+                            width: number | null;
+                            height: number | null;
+                            mimeType: string;
+                            sizeBytes: number;
+                        } | null;
+                    }[];
+                };
             };
             /** @description Error */
             default: {
@@ -5333,7 +5626,29 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        title: string;
+                        /** @enum {string} */
+                        kind: "banner" | "image" | "copy";
+                        body: string | null;
+                        productId: string | null;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        media: {
+                            id: string;
+                            url: string;
+                            width: number | null;
+                            height: number | null;
+                            mimeType: string;
+                            sizeBytes: number;
+                        } | null;
+                        trackedPath: string;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -5366,7 +5681,18 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        title: string;
+                        kind: string;
+                        downloads: number;
+                        clicks: number;
+                        conversions: number;
+                        conversionRate: number;
+                        revenueMinor: number;
+                    }[];
+                };
             };
             /** @description Error */
             default: {
@@ -5489,7 +5815,35 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        items: {
+                            id: string;
+                            affiliateId: string;
+                            /** @enum {string} */
+                            kind: "SELF_REFERRAL" | "HIGH_REFUND_RATE" | "CLICK_SPIKE" | "MARGIN_CAP" | "COUPON_LEAK" | "OTHER";
+                            /** @enum {string} */
+                            status: "OPEN" | "DISMISSED" | "CONFIRMED";
+                            orderId: string | null;
+                            details: {
+                                [key: string]: unknown;
+                            };
+                            note: string | null;
+                            resolvedBy: string | null;
+                            resolvedAt: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                            affiliate: {
+                                /** @enum {string} */
+                                status: "PENDING" | "ACTIVE" | "SUSPENDED" | "REJECTED" | "CLOSED";
+                                customer: {
+                                    email: string | null;
+                                };
+                            };
+                        }[];
+                        nextCursor: string | null;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -5530,7 +5884,25 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        affiliateId: string;
+                        /** @enum {string} */
+                        kind: "SELF_REFERRAL" | "HIGH_REFUND_RATE" | "CLICK_SPIKE" | "MARGIN_CAP" | "COUPON_LEAK" | "OTHER";
+                        /** @enum {string} */
+                        status: "OPEN" | "DISMISSED" | "CONFIRMED";
+                        orderId: string | null;
+                        details: {
+                            [key: string]: unknown;
+                        };
+                        note: string | null;
+                        resolvedBy: string | null;
+                        resolvedAt: string | null;
+                        /** Format: date-time */
+                        createdAt: string;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -5572,7 +5944,25 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        affiliateId: string;
+                        /** @enum {string} */
+                        kind: "SELF_REFERRAL" | "HIGH_REFUND_RATE" | "CLICK_SPIKE" | "MARGIN_CAP" | "COUPON_LEAK" | "OTHER";
+                        /** @enum {string} */
+                        status: "OPEN" | "DISMISSED" | "CONFIRMED";
+                        orderId: string | null;
+                        details: {
+                            [key: string]: unknown;
+                        };
+                        note: string | null;
+                        resolvedBy: string | null;
+                        resolvedAt: string | null;
+                        /** Format: date-time */
+                        createdAt: string;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -5605,7 +5995,26 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        items: {
+                            id: string;
+                            /** @enum {string} */
+                            status: "DRAFT" | "APPROVED" | "PROCESSING" | "PAID" | "FAILED" | "CANCELLED";
+                            currency: string;
+                            totalMinor: number;
+                            preparedBy: string | null;
+                            approvedBy: string | null;
+                            approvedAt: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                            payoutCount: number;
+                        }[];
+                        nextCursor: string | null;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -5641,7 +6050,52 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        /** @enum {string} */
+                        status: "DRAFT" | "APPROVED" | "PROCESSING" | "PAID" | "FAILED" | "CANCELLED";
+                        currency: string;
+                        totalMinor: number;
+                        preparedBy: string | null;
+                        approvedBy: string | null;
+                        approvedAt: string | null;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        payouts: {
+                            id: string;
+                            affiliateId: string;
+                            /** @enum {string} */
+                            status: "DRAFT" | "APPROVED" | "PROCESSING" | "PAID" | "FAILED" | "CANCELLED";
+                            amountMinor: number;
+                            currency: string;
+                            method: string;
+                            provider: string;
+                            payoutMethodId: string | null;
+                            failureReason: string | null;
+                            providerRef: string | null;
+                            preparedBy: string | null;
+                            approvedBy: string | null;
+                            paidAt: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                            affiliate?: {
+                                customer: {
+                                    email: string | null;
+                                };
+                            };
+                            payoutMethod: {
+                                type: string;
+                                label: string;
+                                masked: string;
+                            } | null;
+                        }[];
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -5673,7 +6127,52 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        /** @enum {string} */
+                        status: "DRAFT" | "APPROVED" | "PROCESSING" | "PAID" | "FAILED" | "CANCELLED";
+                        currency: string;
+                        totalMinor: number;
+                        preparedBy: string | null;
+                        approvedBy: string | null;
+                        approvedAt: string | null;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        payouts: {
+                            id: string;
+                            affiliateId: string;
+                            /** @enum {string} */
+                            status: "DRAFT" | "APPROVED" | "PROCESSING" | "PAID" | "FAILED" | "CANCELLED";
+                            amountMinor: number;
+                            currency: string;
+                            method: string;
+                            provider: string;
+                            payoutMethodId: string | null;
+                            failureReason: string | null;
+                            providerRef: string | null;
+                            preparedBy: string | null;
+                            approvedBy: string | null;
+                            paidAt: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                            affiliate?: {
+                                customer: {
+                                    email: string | null;
+                                };
+                            };
+                            payoutMethod: {
+                                type: string;
+                                label: string;
+                                masked: string;
+                            } | null;
+                        }[];
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -5705,7 +6204,52 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        /** @enum {string} */
+                        status: "DRAFT" | "APPROVED" | "PROCESSING" | "PAID" | "FAILED" | "CANCELLED";
+                        currency: string;
+                        totalMinor: number;
+                        preparedBy: string | null;
+                        approvedBy: string | null;
+                        approvedAt: string | null;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        payouts: {
+                            id: string;
+                            affiliateId: string;
+                            /** @enum {string} */
+                            status: "DRAFT" | "APPROVED" | "PROCESSING" | "PAID" | "FAILED" | "CANCELLED";
+                            amountMinor: number;
+                            currency: string;
+                            method: string;
+                            provider: string;
+                            payoutMethodId: string | null;
+                            failureReason: string | null;
+                            providerRef: string | null;
+                            preparedBy: string | null;
+                            approvedBy: string | null;
+                            paidAt: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                            affiliate?: {
+                                customer: {
+                                    email: string | null;
+                                };
+                            };
+                            payoutMethod: {
+                                type: string;
+                                label: string;
+                                masked: string;
+                            } | null;
+                        }[];
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -5745,7 +6289,52 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        /** @enum {string} */
+                        status: "DRAFT" | "APPROVED" | "PROCESSING" | "PAID" | "FAILED" | "CANCELLED";
+                        currency: string;
+                        totalMinor: number;
+                        preparedBy: string | null;
+                        approvedBy: string | null;
+                        approvedAt: string | null;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        payouts: {
+                            id: string;
+                            affiliateId: string;
+                            /** @enum {string} */
+                            status: "DRAFT" | "APPROVED" | "PROCESSING" | "PAID" | "FAILED" | "CANCELLED";
+                            amountMinor: number;
+                            currency: string;
+                            method: string;
+                            provider: string;
+                            payoutMethodId: string | null;
+                            failureReason: string | null;
+                            providerRef: string | null;
+                            preparedBy: string | null;
+                            approvedBy: string | null;
+                            paidAt: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                            affiliate?: {
+                                customer: {
+                                    email: string | null;
+                                };
+                            };
+                            payoutMethod: {
+                                type: string;
+                                label: string;
+                                masked: string;
+                            } | null;
+                        }[];
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -5777,7 +6366,52 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        /** @enum {string} */
+                        status: "DRAFT" | "APPROVED" | "PROCESSING" | "PAID" | "FAILED" | "CANCELLED";
+                        currency: string;
+                        totalMinor: number;
+                        preparedBy: string | null;
+                        approvedBy: string | null;
+                        approvedAt: string | null;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        payouts: {
+                            id: string;
+                            affiliateId: string;
+                            /** @enum {string} */
+                            status: "DRAFT" | "APPROVED" | "PROCESSING" | "PAID" | "FAILED" | "CANCELLED";
+                            amountMinor: number;
+                            currency: string;
+                            method: string;
+                            provider: string;
+                            payoutMethodId: string | null;
+                            failureReason: string | null;
+                            providerRef: string | null;
+                            preparedBy: string | null;
+                            approvedBy: string | null;
+                            paidAt: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                            affiliate?: {
+                                customer: {
+                                    email: string | null;
+                                };
+                            };
+                            payoutMethod: {
+                                type: string;
+                                label: string;
+                                masked: string;
+                            } | null;
+                        }[];
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -5848,7 +6482,28 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        affiliateId: string;
+                        /** @enum {string} */
+                        status: "DRAFT" | "APPROVED" | "PROCESSING" | "PAID" | "FAILED" | "CANCELLED";
+                        amountMinor: number;
+                        currency: string;
+                        method: string;
+                        provider: string;
+                        payoutMethodId: string | null;
+                        failureReason: string | null;
+                        providerRef: string | null;
+                        preparedBy: string | null;
+                        approvedBy: string | null;
+                        paidAt: string | null;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -5878,7 +6533,28 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        title: string;
+                        /** @enum {string} */
+                        kind: "banner" | "image" | "copy";
+                        mediaId: string | null;
+                        body: string | null;
+                        productId: string | null;
+                        isActive: boolean;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        media: {
+                            id: string;
+                            url: string;
+                            width: number | null;
+                            height: number | null;
+                        } | null;
+                    }[];
+                };
             };
             /** @description Error */
             default: {
@@ -5921,7 +6597,22 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        title: string;
+                        /** @enum {string} */
+                        kind: "banner" | "image" | "copy";
+                        mediaId: string | null;
+                        body: string | null;
+                        productId: string | null;
+                        isActive: boolean;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -5966,6 +6657,53 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
+                content: {
+                    "application/json": {
+                        id: string;
+                        title: string;
+                        /** @enum {string} */
+                        kind: "banner" | "image" | "copy";
+                        mediaId: string | null;
+                        body: string | null;
+                        productId: string | null;
+                        isActive: boolean;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                    };
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    delete__v1_admin_affiliate_program_assets_id: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-market"?: string;
+                "x-locale"?: string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
                 content?: never;
             };
             /** @description Error */
@@ -5999,7 +6737,18 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        title: string;
+                        kind: string;
+                        downloads: number;
+                        clicks: number;
+                        conversions: number;
+                        conversionRate: number;
+                        revenueMinor: number;
+                    }[];
+                };
             };
             /** @description Error */
             default: {
@@ -6549,6 +7298,365 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    get__v1_admin_ops_queues: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-market"?: string;
+                "x-locale"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** Format: date-time */
+                        checkedAt: string;
+                        queues: {
+                            name: string;
+                            /** @enum {string} */
+                            kind: "scheduled" | "task" | "subscriber" | "dead-letter";
+                            counts: {
+                                created: number;
+                                retry: number;
+                                active: number;
+                                completed: number;
+                                failed: number;
+                                cancelled: number;
+                            };
+                            failedLast24h: number;
+                            lastCompletedAt: string | null;
+                        }[];
+                    };
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    get__v1_admin_ops_queues_queue_jobs: {
+        parameters: {
+            query?: {
+                state?: "created" | "retry" | "active" | "completed" | "failed" | "cancelled";
+                cursor?: string;
+                limit?: number;
+            };
+            header?: {
+                "x-market"?: string;
+                "x-locale"?: string;
+            };
+            path: {
+                queue: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        items: {
+                            id: string;
+                            queue: string;
+                            /** @enum {string} */
+                            state: "created" | "retry" | "active" | "completed" | "failed" | "cancelled";
+                            retryCount: number;
+                            retryLimit: number;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            startAfter: string;
+                            startedAt: string | null;
+                            completedAt: string | null;
+                            singletonKey: string | null;
+                            sourceQueue: string | null;
+                            sourceJobId: string | null;
+                            error: string | null;
+                            data: {
+                                keys: string[];
+                                fields: {
+                                    [key: string]: string | number | boolean;
+                                };
+                            };
+                            actions: {
+                                retry: boolean;
+                                cancel: boolean;
+                            };
+                        }[];
+                        nextCursor: string | null;
+                    };
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    get__v1_admin_ops_queues_queue_jobs_id: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-market"?: string;
+                "x-locale"?: string;
+            };
+            path: {
+                queue: string;
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        id: string;
+                        queue: string;
+                        /** @enum {string} */
+                        state: "created" | "retry" | "active" | "completed" | "failed" | "cancelled";
+                        retryCount: number;
+                        retryLimit: number;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        startAfter: string;
+                        startedAt: string | null;
+                        completedAt: string | null;
+                        singletonKey: string | null;
+                        sourceQueue: string | null;
+                        sourceJobId: string | null;
+                        error: string | null;
+                        data: {
+                            keys: string[];
+                            fields: {
+                                [key: string]: string | number | boolean;
+                            };
+                        };
+                        actions: {
+                            retry: boolean;
+                            cancel: boolean;
+                        };
+                    };
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    post__v1_admin_ops_queues_queue_jobs_id_retry: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-market"?: string;
+                "x-locale"?: string;
+            };
+            path: {
+                queue: string;
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        id: string;
+                        queue: string;
+                        /** @enum {string} */
+                        state: "created" | "retry" | "active" | "completed" | "failed" | "cancelled";
+                        retryCount: number;
+                        retryLimit: number;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        startAfter: string;
+                        startedAt: string | null;
+                        completedAt: string | null;
+                        singletonKey: string | null;
+                        sourceQueue: string | null;
+                        sourceJobId: string | null;
+                        error: string | null;
+                        data: {
+                            keys: string[];
+                            fields: {
+                                [key: string]: string | number | boolean;
+                            };
+                        };
+                        actions: {
+                            retry: boolean;
+                            cancel: boolean;
+                        };
+                    };
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    post__v1_admin_ops_queues_queue_jobs_id_cancel: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-market"?: string;
+                "x-locale"?: string;
+            };
+            path: {
+                queue: string;
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        id: string;
+                        queue: string;
+                        /** @enum {string} */
+                        state: "created" | "retry" | "active" | "completed" | "failed" | "cancelled";
+                        retryCount: number;
+                        retryLimit: number;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        startAfter: string;
+                        startedAt: string | null;
+                        completedAt: string | null;
+                        singletonKey: string | null;
+                        sourceQueue: string | null;
+                        sourceJobId: string | null;
+                        error: string | null;
+                        data: {
+                            keys: string[];
+                            fields: {
+                                [key: string]: string | number | boolean;
+                            };
+                        };
+                        actions: {
+                            retry: boolean;
+                            cancel: boolean;
+                        };
+                    };
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    get__v1_admin_ops_integrations: {
+        parameters: {
+            query?: {
+                check?: string;
+            };
+            header?: {
+                "x-market"?: string;
+                "x-locale"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @enum {string} */
+                        status: "up" | "degraded" | "down" | "disabled";
+                        live: boolean;
+                        /** Format: date-time */
+                        checkedAt: string;
+                        checks: {
+                            key: string;
+                            name: string;
+                            /** @enum {string} */
+                            status: "up" | "degraded" | "down" | "disabled";
+                            summary: string;
+                            action: string | null;
+                            adapter: string | null;
+                            details: {
+                                label: string;
+                                value: string;
+                            }[];
+                            /** Format: date-time */
+                            checkedAt: string;
+                        }[];
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -7192,7 +8300,11 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        events: string[];
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -7222,7 +8334,22 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        url: string;
+                        description: string | null;
+                        events: string[];
+                        isActive: boolean;
+                        consecutiveFailures: number;
+                        disabledAt: string | null;
+                        disabledReason: string | null;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                    }[];
+                };
             };
             /** @description Error */
             default: {
@@ -7261,7 +8388,25 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        subscription: {
+                            id: string;
+                            url: string;
+                            description: string | null;
+                            events: string[];
+                            isActive: boolean;
+                            consecutiveFailures: number;
+                            disabledAt: string | null;
+                            disabledReason: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                        };
+                        secret: string;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -7335,7 +8480,22 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        url: string;
+                        description: string | null;
+                        events: string[];
+                        isActive: boolean;
+                        consecutiveFailures: number;
+                        disabledAt: string | null;
+                        disabledReason: string | null;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -7367,7 +8527,11 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        secret: string;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -7399,7 +8563,13 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        queued: true;
+                        eventId: string;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -7433,7 +8603,26 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        available: boolean;
+                        items: {
+                            id: string;
+                            subscriptionId: string;
+                            eventId: string;
+                            eventType: string;
+                            url?: string | null;
+                            attempt?: number | null;
+                            ok?: boolean | null;
+                            status?: number | null;
+                            error?: string | null;
+                            durationMs?: number | null;
+                            payload: unknown;
+                            /** Format: date-time */
+                            occurredAt: string;
+                        }[];
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -7465,7 +8654,12 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        queued: true;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -7495,7 +8689,11 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        triggers: string[];
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -7525,7 +8723,69 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        name: string;
+                        trigger: string;
+                        conditions: Record<string, never> | {
+                            /**
+                             * @default all
+                             * @enum {string}
+                             */
+                            match: "all" | "any";
+                            conditions: {
+                                field: string;
+                                /** @enum {string} */
+                                op: "eq" | "neq" | "gt" | "gte" | "lt" | "lte" | "in" | "not_in" | "contains" | "exists";
+                                value?: string | number | boolean | (string | number)[];
+                            }[];
+                        };
+                        actions: ({
+                            /** @constant */
+                            type: "tag_order";
+                            tag: string;
+                        } | {
+                            /** @constant */
+                            type: "tag_customer";
+                            tag: string;
+                        } | {
+                            /** @constant */
+                            type: "hold_order";
+                            reason: string;
+                        } | {
+                            /** @constant */
+                            type: "add_order_note";
+                            note: string;
+                        } | {
+                            /** @constant */
+                            type: "notify";
+                            to: string[];
+                            subject: string;
+                            message: string;
+                        } | {
+                            /** @constant */
+                            type: "call_webhook";
+                            /** Format: uri */
+                            url: string;
+                        } | {
+                            /** @constant */
+                            type: "suspend_affiliate";
+                            reason: string;
+                        } | {
+                            /** @constant */
+                            type: "hold_affiliate_earnings";
+                            reason: string;
+                        })[];
+                        isActive: boolean;
+                        version: number;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        lastRunAt: string | null;
+                    }[];
+                };
             };
             /** @description Error */
             default: {
@@ -7566,7 +8826,68 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        name: string;
+                        trigger: string;
+                        conditions: Record<string, never> | {
+                            /**
+                             * @default all
+                             * @enum {string}
+                             */
+                            match: "all" | "any";
+                            conditions: {
+                                field: string;
+                                /** @enum {string} */
+                                op: "eq" | "neq" | "gt" | "gte" | "lt" | "lte" | "in" | "not_in" | "contains" | "exists";
+                                value?: string | number | boolean | (string | number)[];
+                            }[];
+                        };
+                        actions: ({
+                            /** @constant */
+                            type: "tag_order";
+                            tag: string;
+                        } | {
+                            /** @constant */
+                            type: "tag_customer";
+                            tag: string;
+                        } | {
+                            /** @constant */
+                            type: "hold_order";
+                            reason: string;
+                        } | {
+                            /** @constant */
+                            type: "add_order_note";
+                            note: string;
+                        } | {
+                            /** @constant */
+                            type: "notify";
+                            to: string[];
+                            subject: string;
+                            message: string;
+                        } | {
+                            /** @constant */
+                            type: "call_webhook";
+                            /** Format: uri */
+                            url: string;
+                        } | {
+                            /** @constant */
+                            type: "suspend_affiliate";
+                            reason: string;
+                        } | {
+                            /** @constant */
+                            type: "hold_affiliate_earnings";
+                            reason: string;
+                        })[];
+                        isActive: boolean;
+                        version: number;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -7610,7 +8931,68 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        id: string;
+                        name: string;
+                        trigger: string;
+                        conditions: Record<string, never> | {
+                            /**
+                             * @default all
+                             * @enum {string}
+                             */
+                            match: "all" | "any";
+                            conditions: {
+                                field: string;
+                                /** @enum {string} */
+                                op: "eq" | "neq" | "gt" | "gte" | "lt" | "lte" | "in" | "not_in" | "contains" | "exists";
+                                value?: string | number | boolean | (string | number)[];
+                            }[];
+                        };
+                        actions: ({
+                            /** @constant */
+                            type: "tag_order";
+                            tag: string;
+                        } | {
+                            /** @constant */
+                            type: "tag_customer";
+                            tag: string;
+                        } | {
+                            /** @constant */
+                            type: "hold_order";
+                            reason: string;
+                        } | {
+                            /** @constant */
+                            type: "add_order_note";
+                            note: string;
+                        } | {
+                            /** @constant */
+                            type: "notify";
+                            to: string[];
+                            subject: string;
+                            message: string;
+                        } | {
+                            /** @constant */
+                            type: "call_webhook";
+                            /** Format: uri */
+                            url: string;
+                        } | {
+                            /** @constant */
+                            type: "suspend_affiliate";
+                            reason: string;
+                        } | {
+                            /** @constant */
+                            type: "hold_affiliate_earnings";
+                            reason: string;
+                        })[];
+                        isActive: boolean;
+                        version: number;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -7677,7 +9059,24 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        items: {
+                            id: string;
+                            ruleId: string;
+                            eventId: string;
+                            matched: boolean;
+                            result: {
+                                type: string;
+                                ok: boolean;
+                                error?: string;
+                            }[];
+                            /** Format: date-time */
+                            createdAt: string;
+                        }[];
+                        nextCursor: string | null;
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -7718,7 +9117,14 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        matched: boolean;
+                        facts: {
+                            [key: string]: unknown;
+                        };
+                    };
+                };
             };
             /** @description Error */
             default: {
@@ -8069,6 +9475,73 @@ export interface operations {
                         inPayoutMinor: number;
                         paidMinor: number;
                         reversedMinor: number;
+                        payoutMinMinor: number;
+                        /** @enum {string} */
+                        payoutSchedule: "weekly" | "monthly" | "on_request";
+                    };
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    get__v1_affiliate_tier: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-market"?: string;
+                "x-locale"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        current: {
+                            name: string;
+                            /** @enum {string} */
+                            rewardType: "CASH" | "STORE_CREDIT" | "LOYALTY_POINTS";
+                            minSalesMinor: number | null;
+                            commission: {
+                                /** @enum {string} */
+                                type: "percent" | "fixed_per_item" | "fixed_per_order" | "tiered";
+                                percent?: number;
+                                amountMinor?: number;
+                                /** @enum {string} */
+                                appliesTo?: "all" | "first_order" | "returning";
+                            } | null;
+                        } | null;
+                        automatic: boolean;
+                        periodDays: number;
+                        periodSalesMinor: number;
+                        next: {
+                            name: string;
+                            /** @enum {string} */
+                            rewardType: "CASH" | "STORE_CREDIT" | "LOYALTY_POINTS";
+                            minSalesMinor: number;
+                            commission: {
+                                /** @enum {string} */
+                                type: "percent" | "fixed_per_item" | "fixed_per_order" | "tiered";
+                                percent?: number;
+                                amountMinor?: number;
+                                /** @enum {string} */
+                                appliesTo?: "all" | "first_order" | "returning";
+                            } | null;
+                        } | null;
                     };
                 };
             };
@@ -26583,6 +28056,245 @@ export interface operations {
                                 variantCount: number;
                             } | null;
                         }[];
+                    };
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    get__v1_admin_translations_locales: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-market"?: string;
+                "x-locale"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        source: string;
+                        locales: string[];
+                        entityTypes: ("PRODUCT" | "CATEGORY" | "COLLECTION" | "PAGE" | "MENU")[];
+                    };
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    get__v1_admin_translations: {
+        parameters: {
+            query: {
+                cursor?: string;
+                limit?: number;
+                entityType: "PRODUCT" | "CATEGORY" | "COLLECTION" | "PAGE" | "MENU";
+                locale: string;
+                status?: "all" | "missing" | "translated";
+                q?: string;
+            };
+            header?: {
+                "x-market"?: string;
+                "x-locale"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        items: {
+                            entityId: string;
+                            handle: string;
+                            label: string;
+                            source: {
+                                [key: string]: unknown;
+                            };
+                            /** Format: date-time */
+                            sourceUpdatedAt: string;
+                            translation: {
+                                [key: string]: unknown;
+                            } | null;
+                            translationUpdatedAt: string | null;
+                            outdated: boolean;
+                        }[];
+                        nextCursor: string | null;
+                    };
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    get__v1_admin_translations_entityType_entityId_locale: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-market"?: string;
+                "x-locale"?: string;
+            };
+            path: {
+                entityType: "PRODUCT" | "CATEGORY" | "COLLECTION" | "PAGE" | "MENU";
+                entityId: string;
+                locale: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        entityId: string;
+                        handle: string;
+                        label: string;
+                        source: {
+                            [key: string]: unknown;
+                        };
+                        /** Format: date-time */
+                        sourceUpdatedAt: string;
+                        translation: {
+                            [key: string]: unknown;
+                        } | null;
+                        translationUpdatedAt: string | null;
+                        outdated: boolean;
+                    };
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    put__v1_admin_translations_entityType_entityId_locale: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-market"?: string;
+                "x-locale"?: string;
+            };
+            path: {
+                entityType: "PRODUCT" | "CATEGORY" | "COLLECTION" | "PAGE" | "MENU";
+                entityId: string;
+                locale: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    fields: {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        entityId: string;
+                        handle: string;
+                        label: string;
+                        source: {
+                            [key: string]: unknown;
+                        };
+                        /** Format: date-time */
+                        sourceUpdatedAt: string;
+                        translation: {
+                            [key: string]: unknown;
+                        } | null;
+                        translationUpdatedAt: string | null;
+                        outdated: boolean;
+                    };
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    delete__v1_admin_translations_entityType_entityId_locale: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-market"?: string;
+                "x-locale"?: string;
+            };
+            path: {
+                entityType: "PRODUCT" | "CATEGORY" | "COLLECTION" | "PAGE" | "MENU";
+                entityId: string;
+                locale: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        ok: true;
                     };
                 };
             };

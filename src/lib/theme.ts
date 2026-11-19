@@ -52,9 +52,29 @@ export function resolveFontStack(stack: string): string {
   ].join(", ");
 }
 
-// Overrides the theme's --font-body / --font-heading so self-hosted families resolve.
-export function fontStackCss(fontBody: string, fontHeading: string): string {
-  return `:root { --font-body: ${resolveFontStack(fontBody)}; --font-heading: ${resolveFontStack(fontHeading)}; }`;
+// Bangla pages: the theme's Latin faces have no Bengali glyphs, so a self-hosted Bengali face
+// (next/font, bengali subset only, see the root layout) goes right after each stack's first family.
+// Latin text keeps the theme's face; Bengali text gets Noto Sans Bengali instead of whatever the
+// device has. The browser fetches it only when Bengali characters are on the page (unicode-range).
+export const BENGALI_FONT = "var(--font-bengali)";
+
+// The stacks app/globals.css uses before a theme is activated.
+export const DEFAULT_FONT_STACKS = {
+  fontBody: 'Figtree, "Segoe UI", system-ui, sans-serif',
+  fontHeading: 'Fraunces, "Iowan Old Style", Georgia, serif',
+};
+
+// "var(--font-figtree), system-ui" → "var(--font-figtree), var(--font-bengali), system-ui"
+export function withBengaliFallback(stack: string): string {
+  const [first = "", ...rest] = stack.split(",").map((s) => s.trim());
+  return [first, BENGALI_FONT, ...rest].filter(Boolean).join(", ");
+}
+
+// Overrides the theme's --font-body / --font-heading so self-hosted families resolve, and on
+// Bangla pages so Bengali text has a matching face.
+export function fontStackCss(fontBody: string, fontHeading: string, options: { bengali?: boolean } = {}): string {
+  const stack = (s: string) => (options.bengali ? withBengaliFallback(resolveFontStack(s)) : resolveFontStack(s));
+  return `:root { --font-body: ${stack(fontBody)}; --font-heading: ${stack(fontHeading)}; }`;
 }
 
 // Families to fetch from Google Fonts: the first of each stack, unless local or self-hosted.

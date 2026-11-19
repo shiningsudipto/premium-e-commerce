@@ -8,7 +8,7 @@ import { Media } from "../../components/storefront/media";
 import { href } from "../../lib/links";
 import type { MarketRef } from "../../lib/market";
 import { formatMoney } from "../../lib/money";
-import { bagErrorMessage, useRemoveLineMutation, useSetLineQuantityMutation } from "./cart-api";
+import { useBagErrorMessage, useRemoveLineMutation, useSetLineQuantityMutation } from "./cart-api";
 import { freeShippingProgress, type Bag, type BagLine } from "./types";
 
 // The bag's lines, shared by the drawer and the bag page. `cart` is RTK Query's cached bag:
@@ -16,6 +16,7 @@ import { freeShippingProgress, type Bag, type BagLine } from "./types";
 // it back and says why.
 export function BagLines({ cart, market, onNavigate }: { cart: Bag; market: MarketRef; onNavigate?: () => void }) {
   const t = useTranslations("cart");
+  const bagErrorMessage = useBagErrorMessage();
   const [error, setError] = useState("");
   const [setQuantity] = useSetLineQuantityMutation();
   const [remove] = useRemoveLineMutation();

@@ -5,20 +5,31 @@ export type Messages = { [key: string]: string | Messages };
 
 export const BASE_LOCALE = "en";
 
-// English is split by area so separate features can add strings without touching one big file:
-// en.json (core shop), en.growth.json (promotions, CMS, wishlists), en.affiliate.json and
-// en.community.json (reviews, Q&A, returns). Keys must not overlap between them.
-const english = () =>
-  Promise.all([
-    import("../../messages/en.json"),
-    import("../../messages/en.growth.json"),
-    import("../../messages/en.affiliate.json"),
-    import("../../messages/en.community.json"),
-  ]).then((parts) => parts.reduce<Messages>((acc, part) => mergeMessages(part.default as Messages, acc), {}));
+// Each locale is split by area so separate features can add strings without touching one big file:
+// {locale}.json (core shop), {locale}.growth.json (promotions, CMS, wishlists), {locale}.affiliate.json
+// and {locale}.community.json (reviews, Q&A, returns). Keys must not overlap between the parts of a
+// locale. The Bangla parts mirror the English ones; `node scripts/check-messages.mjs` lists gaps.
+type Part = Promise<{ default: unknown }>;
+const combine = (parts: Part[]) =>
+  Promise.all(parts).then((loaded) =>
+    loaded.reduce<Messages>((acc, part) => mergeMessages(part.default as Messages, acc), {}),
+  );
 
 const catalogs: Record<string, () => Promise<Messages>> = {
-  en: english,
-  bn: () => import("../../messages/bn.json").then((m) => m.default),
+  en: () =>
+    combine([
+      import("../../messages/en.json"),
+      import("../../messages/en.growth.json"),
+      import("../../messages/en.affiliate.json"),
+      import("../../messages/en.community.json"),
+    ]),
+  bn: () =>
+    combine([
+      import("../../messages/bn.json"),
+      import("../../messages/bn.growth.json"),
+      import("../../messages/bn.affiliate.json"),
+      import("../../messages/bn.community.json"),
+    ]),
 };
 
 export function fallbackChain(locale: string, marketDefault?: string): string[] {

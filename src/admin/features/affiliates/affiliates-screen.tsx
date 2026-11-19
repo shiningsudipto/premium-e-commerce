@@ -182,9 +182,20 @@ export function AffiliatesScreen() {
         title="Affiliates"
         description="Review applications, manage affiliates, their earnings and payouts."
         actions={
-          <Link href="/admin/affiliates/program" className={buttonVariants({ variant: "outline", size: "sm" })}>
-            <SettingsIcon data-icon="inline-start" /> Tiers &amp; commission
-          </Link>
+          <div className="flex flex-wrap justify-end gap-2">
+            <Link href="/admin/affiliates/fraud" className={buttonVariants({ variant: "outline", size: "sm" })}>
+              Fraud review
+            </Link>
+            <Link href="/admin/affiliates/payouts" className={buttonVariants({ variant: "outline", size: "sm" })}>
+              Payout batches
+            </Link>
+            <Link href="/admin/affiliates/assets" className={buttonVariants({ variant: "outline", size: "sm" })}>
+              Marketing assets
+            </Link>
+            <Link href="/admin/affiliates/program" className={buttonVariants({ variant: "outline", size: "sm" })}>
+              <SettingsIcon data-icon="inline-start" /> Tiers &amp; commission
+            </Link>
+          </div>
         }
       />
       <Tabs

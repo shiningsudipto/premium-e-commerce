@@ -1,5 +1,6 @@
 "use server";
 
+import { getTranslations } from "next-intl/server";
 import { ApiError, unwrap } from "../../api/errors";
 import { requestContext, serverApi } from "../../api/server";
 import type { Bag } from "../cart/types";
@@ -10,11 +11,12 @@ import type { Bag } from "../cart/types";
 export type CodeResult = { ok: true; cart: Bag } | { ok: false; message: string };
 
 // The API's wording for refused codes is written for shoppers; other failures get a generic line.
-function failure(err: unknown): CodeResult {
+async function failure(err: unknown): Promise<CodeResult> {
   if (err instanceof ApiError && (err.code === "PROMOTION_CODE_INVALID" || err.code === "TOO_MANY_CODES")) {
     return { ok: false, message: err.message };
   }
-  return { ok: false, message: "Something went wrong. Please try again." };
+  const t = await getTranslations("checkout.errors");
+  return { ok: false, message: t("generic") };
 }
 
 export async function applyPromoCode(cartId: string, code: string): Promise<CodeResult> {

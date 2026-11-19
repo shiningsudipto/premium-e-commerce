@@ -1,5 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { fontStackCss, googleFontsUrl, inlineCss, resolveFontStack, webFontFamilies } from "./theme";
+import {
+  DEFAULT_FONT_STACKS,
+  fontStackCss,
+  googleFontsUrl,
+  inlineCss,
+  resolveFontStack,
+  webFontFamilies,
+  withBengaliFallback,
+} from "./theme";
 
 describe("theme helpers", () => {
   it("loads only web fonts named first in each stack", () => {
@@ -21,6 +29,16 @@ describe("theme helpers", () => {
     expect(webFontFamilies("Figtree, sans-serif", "Lora, serif")).toEqual(["Lora"]);
     expect(fontStackCss("Figtree, sans-serif", "Lora, serif")).toBe(
       ":root { --font-body: var(--font-figtree), sans-serif; --font-heading: Lora, serif; }",
+    );
+  });
+
+  it("adds the Bengali face after the first family on Bangla pages", () => {
+    expect(withBengaliFallback("Lora, serif")).toBe("Lora, var(--font-bengali), serif");
+    expect(fontStackCss("Figtree, sans-serif", "Lora, serif", { bengali: true })).toBe(
+      ":root { --font-body: var(--font-figtree), var(--font-bengali), sans-serif; --font-heading: Lora, var(--font-bengali), serif; }",
+    );
+    expect(fontStackCss(DEFAULT_FONT_STACKS.fontBody, DEFAULT_FONT_STACKS.fontHeading, { bengali: true })).toContain(
+      '--font-heading: var(--font-fraunces), var(--font-bengali), "Iowan Old Style", Georgia, serif;',
     );
   });
 
