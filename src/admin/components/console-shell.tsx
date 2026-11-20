@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState, type ReactNode } from "react";
 import {
   ActivityIcon,
@@ -22,6 +22,7 @@ import {
   ListChecksIcon,
   ListTreeIcon,
   LogOutIcon,
+  ShieldCheckIcon,
   MailIcon,
   MessageSquareIcon,
   MenuIcon,
@@ -207,6 +208,8 @@ function Brand() {
 
 function UserMenu() {
   const me = useMe();
+  const router = useRouter();
+  const pathname = usePathname();
   const [logout] = usePostV1AdminSessionLogoutMutation();
   async function signOut() {
     // the API revokes the session and clears its cookies
@@ -236,6 +239,21 @@ function UserMenu() {
             <span className="block truncate text-xs font-normal">{me.data.roles.join(", ")}</span>
           </DropdownMenuLabel>
         </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        {/* two-step verification is optional unless a role requires it; anyone can turn it on */}
+        {me.data.mfaEnabled ? (
+          <DropdownMenuItem disabled>
+            <ShieldCheckIcon aria-hidden />
+            Two-step verification is on
+          </DropdownMenuItem>
+        ) : (
+          <DropdownMenuItem
+            onClick={() => router.push(`/admin/mfa/enroll?optional=1&next=${encodeURIComponent(pathname)}`)}
+          >
+            <ShieldCheckIcon aria-hidden />
+            Turn on two-step verification
+          </DropdownMenuItem>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={signOut}>
           <LogOutIcon aria-hidden />

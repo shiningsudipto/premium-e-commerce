@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { QRCodeSVG } from "qrcode.react";
 import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useDispatch } from "react-redux";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
@@ -11,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { apiErrorBody } from "../../store/api-errors";
 import {
+  adminApi,
   usePostV1AdminSessionMfaEnrollConfirmMutation,
   usePostV1AdminSessionMfaEnrollMutation,
   usePostV1AdminSessionMfaVerifyMutation,
@@ -28,6 +30,7 @@ type CodeMutation =
 
 function useCodeSubmit(useMutation: CodeMutation) {
   const router = useRouter();
+  const dispatch = useDispatch();
   const next = safeNext(useSearchParams().get("next"));
   const [error, setError] = useState<string | null>(null);
   const [expired, setExpired] = useState(false);
@@ -39,6 +42,8 @@ function useCodeSubmit(useMutation: CodeMutation) {
     setError(null);
     try {
       await submit({ body: { code } }).unwrap();
+      // the signed-in profile carries mfaEnabled (account menu); load it again
+      dispatch(adminApi.util.invalidateTags(["Admin auth"]));
       router.replace(next);
     } catch (err) {
       const body = apiErrorBody(err);
@@ -106,6 +111,8 @@ export function MfaEnrollForm() {
   const [enroll] = usePostV1AdminSessionMfaEnrollMutation();
   const [enrollment, setEnrollment] = useState<{ secret: string; otpauthUrl: string } | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
+  // turned on from the account menu (?optional=1) rather than required by the person's role
+  const optional = useSearchParams().get("optional") === "1";
 
   // Each enroll call issues a new secret, so it must run once: Strict Mode runs effects twice in
   // development, and a second secret would make the QR code on screen stale.
@@ -127,7 +134,8 @@ export function MfaEnrollForm() {
       <div className="space-y-1">
         <h1 className="text-2xl font-medium tracking-tight">Set up two-step verification</h1>
         <p className="text-sm text-muted-foreground">
-          Your role requires it. Scan the code with an authenticator app, then enter the 6-digit code it shows.
+          {optional ? "Adds a code from your phone to every sign-in." : "Your role requires it."} Scan the code with an
+          authenticator app, then enter the 6-digit code it shows.
         </p>
       </div>
       <ErrorNotice error={error ?? loadError} expired={expired || !!loadError} />
