@@ -178,6 +178,16 @@
       "UNAVAILABLE": "This piece can't be added right now.",
       "OFFLINE": "You seem to be offline. Please try again.",
       "generic": "Something went wrong. Please try again."
+    },
+    "recover": {
+      "title": "Your saved bag",
+      "working": "Opening your bag…",
+      "expiredTitle": "This link has expired",
+      "expiredBody": "The bag from your email has already been checked out, or the link is too old to use.",
+      "continue": "Continue shopping",
+      "signInTitle": "Sign in to see your bag",
+      "signInBody": "This bag belongs to an account. Sign in and we’ll bring you straight back to it.",
+      "signIn": "Sign in"
     }
   },
   "checkout": {

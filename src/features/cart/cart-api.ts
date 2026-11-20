@@ -205,6 +205,23 @@ export const bagApi = createApi({
     // Promotion codes. A code the API refuses outright (unknown, expired, used up, too many codes)
     // fails with its error; one whose conditions aren't met yet stays on the bag, explained in
     // bag.promotions.codes.
+    // The link in an abandoned-cart email (?token=…): reopens that bag for this shopper. A visitor
+    // without a session gets a guest session first, as with "Add to bag".
+    recoverBag: build.mutation<Bag, string>({
+      queryFn: async (token, _api, _extra, baseQuery) => {
+        const request = { url: "/v1/store/carts/recover", method: "POST", body: { token } } as const;
+        let result = await baseQuery(request);
+        if (result.error?.status === 401) {
+          const guest = await baseQuery({ url: "/v1/store/session/guest", method: "POST" });
+          if (guest.error) return fail(guest.error);
+          result = await baseQuery(request);
+        }
+        if (result.error) return fail(result.error);
+        return { data: result.data as Bag };
+      },
+      onQueryStarted: (_arg, api) => settle(api),
+    }),
+
     applyCode: build.mutation<Bag, { cartId: string; code: string }>({
       queryFn: ({ cartId, code }, _api, _extra, baseQuery) =>
         write(baseQuery, {
@@ -287,4 +304,5 @@ export const {
   useRemoveLineMutation,
   useApplyCodeMutation,
   useRemoveCodeMutation,
+  useRecoverBagMutation,
 } = bagApi;

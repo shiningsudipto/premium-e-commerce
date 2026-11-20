@@ -485,3 +485,12 @@
 .affiliate-closed .lede {
   margin-block: 0 1.5rem;
 }
+
+/* abandoned-cart link: expired / sign-in message */
+.recover-bag {
+  max-width: 40rem;
+  padding-block: 3rem 5rem;
+}
+.recover-bag .lede {
+  margin-block: 0 1.5rem;
+}
