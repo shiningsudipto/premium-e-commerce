@@ -245,7 +245,7 @@ export function PreviewDialog({
       <DialogTrigger
         render={
           <Button size="sm" variant="outline" disabled={disabled}>
-            <LinkIcon /> Preview
+            <LinkIcon /> Share preview
           </Button>
         }
       />

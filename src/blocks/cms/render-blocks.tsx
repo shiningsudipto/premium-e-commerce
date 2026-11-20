@@ -83,20 +83,94 @@ const RENDERERS: Record<string, Renderer> = {
 
   rich_text: (p) => <RichText value={p.document} />,
 
+  // A text section from a list of elements: eyebrow, heading (*accent* words, line breaks), text,
+  // quote, details rows and buttons, optionally on a tinted or light card.
+  content_stack: (p, ctx) => {
+    const elements = Array.isArray(p.elements) ? (p.elements as StackElement[]) : [];
+    const bg =
+      p.background === "tinted" || p.background === "light" ? ` cms-stack--card cms-stack--${p.background}` : "";
+    return (
+      <div className={`cms-stack${bg}${p.align === "center" ? "cms-stack--center" : ""}`}>
+        {elements.map((el, i) => (
+          <StackPart key={i} el={el} ctx={ctx} />
+        ))}
+      </div>
+    );
+  },
+
+  // label, heading (with an italic accent line), paragraphs and a button: e.g. the text half of a
+  // "text + image" layout
+  heading_text: (p, ctx) => {
+    const cta = link(p.ctaHref, ctx);
+    const label = str(p.ctaLabel);
+    const paragraphs = (str(p.body) ?? "")
+      .split(/\n\s*\n/)
+      .map((t) => t.trim())
+      .filter(Boolean);
+    const style =
+      p.ctaStyle === "secondary" ? "btn btn--secondary" : p.ctaStyle === "link" ? "cms-text__link" : "btn btn--primary";
+    return (
+      <div className={`cms-text${p.align === "center" ? "cms-text--center" : ""}`}>
+        {str(p.eyebrow) && <p className="eyebrow">{str(p.eyebrow)}</p>}
+        <h2 className={p.size === "medium" ? "h2" : "display"}>
+          {str(p.heading)}
+          {str(p.headingAccent) && (
+            <>
+              <br />
+              <em>{str(p.headingAccent)}</em>
+            </>
+          )}
+        </h2>
+        {paragraphs.map((t, i) => (
+          <p key={i} className="cms-text__body">
+            {t}
+          </p>
+        ))}
+        {cta && label && (
+          <Link className={style} href={cta}>
+            {label} <Icon name="arrow" size="sm" />
+          </Link>
+        )}
+      </div>
+    );
+  },
+
   image: (p, ctx) => {
     const image = mediaOf(p.mediaId, ctx, p.alt) ?? (str(p.url) ? { url: str(p.url)!, alt: str(p.alt) ?? null } : null);
-    if (!image) return null;
+    if (!image) {
+      // no image chosen yet: the design's line-art placeholder in the chosen shape, so a new
+      // layout looks finished until a photo is added (blocks with neither shape nor caption stay empty)
+      if (!p.shape || p.shape === "original") return null;
+      const shapeRatio = { portrait: "4 / 5", square: "1 / 1", landscape: "16 / 9" }[String(p.shape)] ?? "4 / 5";
+      return (
+        <figure className="cms-figure">
+          <div className="cms-image" style={{ aspectRatio: shapeRatio }}>
+            <Media
+              art={artFor(str(p.alt) ?? "", str(p.caption) ?? "")}
+              tone="warm"
+              alt={str(p.alt) ?? ""}
+              caption={str(p.caption)}
+              decorative={!str(p.alt)}
+            />
+          </div>
+        </figure>
+      );
+    }
     const target = link(p.href, ctx);
-    const ratio = image.width && image.height ? `${image.width} / ${image.height}` : "4 / 3";
+    const shape = { portrait: "4 / 5", square: "1 / 1", landscape: "16 / 9" }[String(p.shape)];
+    const ratio = shape ?? (image.width && image.height ? `${image.width} / ${image.height}` : "4 / 3");
+    const caption = str(p.caption);
+    const overlay = p.captionStyle === "overlay" && caption;
     const img = (
       <div className="cms-image" style={{ aspectRatio: ratio }}>
-        <Media image={image} art="tote" alt={image.alt ?? ""} sizes="(min-width: 1024px) 80vw, 100vw" />
+        <Media image={image} art="tote" alt={image.alt ?? ""} sizes="(min-width: 1024px) 50vw, 100vw" />
+        {overlay && <span className="cms-image__caption">{caption}</span>}
       </div>
     );
     return (
       <figure className="cms-figure">
         {target ? <Link href={target}>{img}</Link> : img}
-        {str(p.caption) && <figcaption className="muted">{str(p.caption)}</figcaption>}
+        {caption && !overlay && <figcaption className="muted">{caption}</figcaption>}
       </figure>
     );
   },
@@ -283,29 +357,62 @@ const RENDERERS: Record<string, Renderer> = {
     );
   },
 
-  newsletter: (p, ctx) => (
-    <section className="section cms-newsletter">
-      {str(p.heading) && <h2 className="h3">{str(p.heading)}</h2>}
-      {str(p.body) && <p className="muted">{str(p.body)}</p>}
-      <NewsletterForm consent={<span className="consent">{ctx.labels.newsletterConsent}</span>} />
-    </section>
-  ),
+  // Newsletter sign-up: a full-width band in the brand colour (default) or plain. By default only a
+  // Subscribe button shows; clicking it reveals the email field and a Submit button.
+  newsletter: (p, ctx) => {
+    const band = p.style !== "plain";
+    return (
+      <section className={band ? "section cms-newsletter cms-newsletter--band on-dark" : "section cms-newsletter"}>
+        <div className="cms-newsletter__inner">
+          {str(p.heading) && <h2 className={band ? "h2" : "h3"}>{str(p.heading)}</h2>}
+          {str(p.body) && <p className="cms-newsletter__body">{str(p.body)}</p>}
+          <NewsletterForm
+            consent={<span className="consent">{ctx.labels.newsletterConsent}</span>}
+            reveal={p.revealOnClick !== false}
+            revealLabel={str(p.buttonLabel)}
+            submitLabel={str(p.submitLabel)}
+          />
+        </div>
+      </section>
+    );
+  },
 
   columns: (p, ctx, children) => {
     const gap =
       { none: "0", sm: "var(--space-3)", md: "var(--space-5)", lg: "var(--space-7)" }[String(p.gap)] ??
       "var(--space-5)";
+    const count = Math.max(1, children.length);
+    // two columns can have uneven widths; three or more are always equal
+    const ratio = { "60-40": "3fr 2fr", "40-60": "2fr 3fr", "67-33": "2fr 1fr", "33-67": "1fr 2fr" }[String(p.ratio)];
+    const template =
+      count === 2 && ratio
+        ? ratio
+            .split(" ")
+            .map((w) => `minmax(0, ${w})`)
+            .join(" ")
+        : `repeat(${count}, minmax(0, 1fr))`;
+    const align = { center: "center", bottom: "end" }[String(p.align)] ?? "start";
+    const classes = [
+      "cms-columns",
+      p.stackOnMobile === false && "cms-columns--keep",
+      p.stackOnMobile !== false && p.reverseOnMobile === true && "cms-columns--reverse",
+    ]
+      .filter(Boolean)
+      .join(" ");
     return (
       <div
-        className={p.stackOnMobile === false ? "cms-columns cms-columns--keep" : "cms-columns"}
+        className={classes}
         style={{
           gap,
-          gridTemplateColumns: `repeat(${Math.max(1, children.length)}, minmax(0, 1fr))`,
-          ["--cols" as string]: Math.max(1, children.length),
+          alignItems: align,
+          gridTemplateColumns: template,
+          ["--cols-template" as string]: template,
         }}
       >
         {children.map((child, i) => (
-          <div key={child.id ?? i}>{renderBlock(child, { ...ctx, depth: ctx.depth + 1 })}</div>
+          <div key={child.id ?? i} className="cms-columns__col">
+            {renderBlock(child, { ...ctx, depth: ctx.depth + 1 })}
+          </div>
         ))}
       </div>
     );
@@ -510,4 +617,102 @@ export async function RenderBlocks({
       ))}
     </>
   );
+}
+
+type StackElement = {
+  kind?: string;
+  text?: string;
+  size?: string;
+  tone?: string;
+  author?: string;
+  rows?: { label?: string; value?: string; href?: string }[];
+  label?: string;
+  href?: string;
+  style?: string;
+  buttonSize?: string;
+};
+
+// "Made to be *repaired,* not replaced." → words in stars become <em> (italic, brand colour);
+// new lines become line breaks.
+function accented(text: string): ReactNode {
+  return text.split("\n").map((line, li) => (
+    <span key={li}>
+      {li > 0 && <br />}
+      {line.split(/\*([^*]+)\*/).map((part, i) => (i % 2 ? <em key={i}>{part}</em> : part))}
+    </span>
+  ));
+}
+
+function StackPart({ el, ctx }: { el: StackElement; ctx: Ctx }) {
+  const text = typeof el.text === "string" ? el.text.trim() : "";
+  switch (el.kind) {
+    case "eyebrow":
+      return text ? <p className="eyebrow">{text}</p> : null;
+    case "heading": {
+      if (!text) return null;
+      const cls = el.size === "md" ? "h3" : el.size === "lg" ? "h2" : "display";
+      return <h2 className={cls}>{accented(text)}</h2>;
+    }
+    case "text": {
+      const paragraphs = text
+        .split(/\n\s*\n/)
+        .map((t) => t.trim())
+        .filter(Boolean);
+      const cls =
+        el.tone === "note"
+          ? "cms-stack__note"
+          : el.tone === "normal"
+            ? "cms-stack__text"
+            : "cms-stack__text cms-stack__text--muted";
+      return (
+        <>
+          {paragraphs.map((t, i) => (
+            <p key={i} className={cls}>
+              {t}
+            </p>
+          ))}
+        </>
+      );
+    }
+    case "quote":
+      return text ? (
+        <blockquote className="cms-stack__quote">
+          <p>“{text}”</p>
+          {el.author?.trim() && <footer>— {el.author.trim()}</footer>}
+        </blockquote>
+      ) : null;
+    case "details": {
+      const rows = (el.rows ?? []).filter((r) => r.label?.trim() || r.value?.trim());
+      if (!rows.length) return null;
+      return (
+        <dl className="cms-stack__details">
+          {rows.map((r, i) => {
+            const target = link(r.href, ctx);
+            return (
+              <div key={i}>
+                <dt>{r.label}</dt>
+                <dd>{target ? <a href={target}>{r.value}</a> : r.value}</dd>
+              </div>
+            );
+          })}
+        </dl>
+      );
+    }
+    case "button": {
+      const target = link(el.href, ctx);
+      const label = el.label?.trim();
+      if (!target || !label) return null;
+      const cls =
+        el.style === "link"
+          ? "cms-stack__link"
+          : `btn ${el.style === "secondary" ? "btn--secondary" : "btn--primary"}${el.buttonSize === "lg" ? " btn--lg" : ""}`;
+      return (
+        <Link className={cls} href={target}>
+          {label} <Icon name="arrow" size="sm" />
+        </Link>
+      );
+    }
+    default:
+      return null;
+  }
 }

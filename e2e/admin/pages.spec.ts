@@ -86,7 +86,7 @@ test("build, preview, publish and roll back a page", async ({ page, context }) =
   expect(await storeHeading()).toBeNull();
 
   // preview link: opens the saved draft on the storefront
-  await page.getByRole("button", { name: "Preview" }).click();
+  await page.getByRole("button", { name: "Share preview" }).click();
   const preview = page.getByRole("dialog", { name: "Preview the draft" });
   await preview.getByRole("button", { name: "Create link" }).click();
   const link = preview.getByRole("textbox", { name: "Preview link" });

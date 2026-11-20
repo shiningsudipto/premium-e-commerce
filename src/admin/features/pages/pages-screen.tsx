@@ -4,7 +4,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { PlusIcon } from "lucide-react";
+import { PlusIcon, Trash2Icon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,7 +26,9 @@ import {
   type GetV1AdminPagesApiResponse,
 } from "../../store/api.generated";
 import { errorCode } from "../../store/api-errors";
+import { useCan } from "../../components/can";
 import { PageHeader } from "../../components/console-shell";
+import { DeletePageDialog } from "./page-delete";
 import { DataTable } from "../../components/data-table/data-table";
 import { useCursorPages } from "../../components/data-table/use-cursor-pages";
 import { useTableFilters, type FilterDef } from "../../components/data-table/use-table-filters";
@@ -129,6 +131,36 @@ const columns: ColumnDef<PageRow>[] = [
 
 // Page builder list (spec §9.1): content pages and global sections (reusable blocks such as a
 // header promo), with their publishing state.
+// last column: delete, for staff who can edit pages
+function DeleteCell({ page }: { page: PageRow }) {
+  const canWrite = useCan("content.pages.write");
+  if (!canWrite) return null;
+  return (
+    <DeletePageDialog
+      page={page}
+      trigger={
+        <Button
+          size="icon"
+          variant="ghost"
+          className="size-8 text-muted-foreground hover:text-destructive"
+          aria-label={`Delete ${page.title}`}
+          title="Delete"
+        >
+          <Trash2Icon />
+        </Button>
+      }
+    />
+  );
+}
+const listColumns: ColumnDef<PageRow>[] = [
+  ...columns,
+  {
+    id: "delete",
+    header: () => <span className="sr-only">Delete</span>,
+    cell: ({ row: { original: p } }) => <DeleteCell page={p} />,
+  },
+];
+
 export function PagesScreen() {
   const filters = useTableFilters(filterDefs);
   const pages = useCursorPages(filters.key);
@@ -147,7 +179,7 @@ export function PagesScreen() {
       />
       <DataTable
         tableKey="pages"
-        columns={columns}
+        columns={listColumns}
         data={list.data?.items}
         loading={list.isFetching}
         error={list.error}

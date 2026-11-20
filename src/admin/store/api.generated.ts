@@ -1381,6 +1381,20 @@ const injectedRtkApi = api
         }),
         invalidatesTags: ["Page builder"],
       }),
+      deleteV1AdminPagesId: build.mutation<
+        DeleteV1AdminPagesIdApiResponse,
+        DeleteV1AdminPagesIdApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/v1/admin/pages/${queryArg.id}`,
+          method: "DELETE",
+          headers: {
+            "x-market": queryArg["x-market"],
+            "x-locale": queryArg["x-locale"],
+          },
+        }),
+        invalidatesTags: ["Page builder"],
+      }),
       postV1AdminPagesIdPublish: build.mutation<
         PostV1AdminPagesIdPublishApiResponse,
         PostV1AdminPagesIdPublishApiArg
@@ -1410,6 +1424,19 @@ const injectedRtkApi = api
           },
         }),
         invalidatesTags: ["Page builder"],
+      }),
+      getV1AdminPagesIdUsage: build.query<
+        GetV1AdminPagesIdUsageApiResponse,
+        GetV1AdminPagesIdUsageApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/v1/admin/pages/${queryArg.id}/usage`,
+          headers: {
+            "x-market": queryArg["x-market"],
+            "x-locale": queryArg["x-locale"],
+          },
+        }),
+        providesTags: ["Page builder"],
       }),
       getV1AdminPagesIdVersions: build.query<
         GetV1AdminPagesIdVersionsApiResponse,
@@ -6340,6 +6367,12 @@ export type PutV1AdminPagesIdApiArg = {
     version: number;
   };
 };
+export type DeleteV1AdminPagesIdApiResponse = unknown;
+export type DeleteV1AdminPagesIdApiArg = {
+  id: string;
+  "x-market"?: string;
+  "x-locale"?: string;
+};
 export type PostV1AdminPagesIdPublishApiResponse = /** status 200 OK */ {
   id: string;
   handle: string;
@@ -6397,6 +6430,21 @@ export type PostV1AdminPagesIdUnpublishApiArg = {
   body: {
     status?: "DRAFT" | "ARCHIVED";
   };
+};
+export type GetV1AdminPagesIdUsageApiResponse = /** status 200 OK */ {
+  menus: {
+    handle: string;
+    name: string;
+  }[];
+  pages: {
+    id: string;
+    title: string;
+  }[];
+};
+export type GetV1AdminPagesIdUsageApiArg = {
+  id: string;
+  "x-market"?: string;
+  "x-locale"?: string;
 };
 export type GetV1AdminPagesIdVersionsApiResponse = /** status 200 OK */ {
   id: string;
@@ -14191,8 +14239,10 @@ export const {
   usePostV1AdminPagesMutation,
   useGetV1AdminPagesIdQuery,
   usePutV1AdminPagesIdMutation,
+  useDeleteV1AdminPagesIdMutation,
   usePostV1AdminPagesIdPublishMutation,
   usePostV1AdminPagesIdUnpublishMutation,
+  useGetV1AdminPagesIdUsageQuery,
   useGetV1AdminPagesIdVersionsQuery,
   usePostV1AdminPagesIdRollbackMutation,
   usePostV1AdminPagesIdPreviewLinkMutation,

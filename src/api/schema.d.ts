@@ -1635,7 +1635,8 @@ export interface paths {
         /** Save the draft (the live version is untouched until publish); set publishAt to schedule */
         put: operations["put__v1_admin_pages_id"];
         post?: never;
-        delete?: never;
+        /** Delete a page or global section permanently, with its versions and translations */
+        delete: operations["delete__v1_admin_pages_id"];
         options?: never;
         head?: never;
         patch?: never;
@@ -1669,6 +1670,23 @@ export interface paths {
         put?: never;
         /** Take a page offline (DRAFT) or archive it */
         post: operations["post__v1_admin_pages_id_unpublish"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/admin/pages/{id}/usage": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Menus and pages that still link to or include this page (deleting is refused while there are any) */
+        get: operations["get__v1_admin_pages_id_usage"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -11439,6 +11457,38 @@ export interface operations {
             };
         };
     };
+    delete__v1_admin_pages_id: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-market"?: string;
+                "x-locale"?: string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
     post__v1_admin_pages_id_publish: {
         parameters: {
             query?: never;
@@ -11559,6 +11609,49 @@ export interface operations {
                             createdAt: string;
                         } | null;
                         hasUnpublishedChanges: boolean;
+                    };
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    get__v1_admin_pages_id_usage: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-market"?: string;
+                "x-locale"?: string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        menus: {
+                            handle: string;
+                            name: string;
+                        }[];
+                        pages: {
+                            id: string;
+                            title: string;
+                        }[];
                     };
                 };
             };

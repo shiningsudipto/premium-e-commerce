@@ -19,12 +19,15 @@ export function BlockLibraryDialog({
   defs,
   intoContainer,
   onPick,
+  shortcuts = [],
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   defs: BlockDef[];
   intoContainer: boolean;
   onPick: (def: BlockDef) => void;
+  // ready-made layouts (several blocks at once), offered at the top level only
+  shortcuts?: { key: string; label: string; hint: string; onPick: () => void }[];
 }) {
   // container blocks aren't nested in each other
   const available = defs.filter((d) => !(intoContainer && d.container));
@@ -40,6 +43,27 @@ export function BlockLibraryDialog({
           </DialogDescription>
         </DialogHeader>
         <div className="max-h-[65vh] space-y-5 overflow-y-auto">
+          {!intoContainer && shortcuts.length > 0 && (
+            <section aria-labelledby="block-group-shortcuts">
+              <h3 id="block-group-shortcuts" className="mb-2 text-xs font-medium text-muted-foreground uppercase">
+                Ready-made layouts
+              </h3>
+              <ul className="grid gap-2 sm:grid-cols-3">
+                {shortcuts.map((s) => (
+                  <li key={s.key}>
+                    <button
+                      type="button"
+                      className="w-full rounded-md border border-dashed p-3 text-left text-sm outline-none hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring"
+                      onClick={s.onPick}
+                    >
+                      <span className="block font-medium">{s.label}</span>
+                      <span className="block text-[11px] text-muted-foreground">{s.hint}</span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
           {GROUPS.map((g) => {
             const items = available.filter((d) => d.group === g.key);
             if (!items.length) return null;
@@ -59,7 +83,7 @@ export function BlockLibraryDialog({
                         <span className="block font-medium">{d.label}</span>
                         <span className="block font-mono text-[11px] text-muted-foreground">
                           {d.type}
-                          {d.container ? " · holds columns" : ""}
+                          {d.container ? " · each block inside is a column" : ""}
                         </span>
                       </button>
                     </li>

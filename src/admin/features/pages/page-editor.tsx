@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { ArchiveIcon, ArrowLeftIcon, EyeOffIcon, PlusIcon, RotateCcwIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ArchiveIcon, ArrowLeftIcon, EyeOffIcon, PlusIcon, RotateCcwIcon, Trash2Icon } from "lucide-react";
 import { toast } from "sonner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -52,6 +53,8 @@ import {
   type BlockDef,
   type PageErrors,
 } from "./block-tree";
+import { DeletePageDialog } from "./page-delete";
+import { LivePreviewButton } from "./page-live-preview";
 import { PreviewDialog, PublishDialog, ScheduleDialog, VersionsCard, type AdminPage } from "./page-publishing";
 import { KIND_LABEL, STATE_BADGE } from "./pages-screen";
 
@@ -306,6 +309,125 @@ function PageEditor({
     setAnnouncement(`${def.label} added`);
   }
 
+  // Ready-made layouts built from "Text section" blocks (and an image), so a whole designed section
+  // is one click; every part can then be edited, swapped or moved like any block.
+  const layouts = (() => {
+    const cols = allowedDefs.find((d) => d.type === "columns");
+    const stack = allowedDefs.find((d) => d.type === "content_stack");
+    const image = allowedDefs.find((d) => d.type === "image");
+    if (!cols || !stack || !image) return [];
+    const section = (elements: unknown[], background = "none"): Block => ({
+      id: newBlockId(),
+      type: "content_stack",
+      props: { ...defaultProps(stack), background, elements },
+    });
+    const columns = (children: Block[], props: Record<string, unknown> = {}): Block => ({
+      id: newBlockId(),
+      type: "columns",
+      props: { ...defaultProps(cols), gap: "lg", ratio: "equal", align: "center", ...props },
+      children,
+    });
+    const add = (block: Block, select: Block, message: string) => {
+      setBlocks(insertBlock(blocks, null, blocks.length, block));
+      setSelectedId(select.id!);
+      setLibrary(null);
+      setAnnouncement(message);
+    };
+    const story = () =>
+      section([
+        { kind: "eyebrow", text: "About us" },
+        { kind: "heading", text: "Fewer things,\n*made properly.*", size: "xl" },
+        {
+          kind: "text",
+          text: "Tell your story here: who you are, what you make and why it's worth buying.",
+          tone: "muted",
+        },
+        { kind: "button", label: "Shop the collection", href: "/products", style: "primary", buttonSize: "md" },
+      ]);
+    const photo = (): Block => ({
+      id: newBlockId(),
+      type: "image",
+      props: { ...defaultProps(image), shape: "portrait", captionStyle: "overlay" },
+    });
+    return [
+      {
+        key: "text-image",
+        label: "Text + image",
+        hint: "Story text and a button on the left; a tall image on the right",
+        onPick: () => {
+          const text = story();
+          add(columns([text, photo()]), text, "Text and image added");
+        },
+      },
+      {
+        key: "image-text",
+        label: "Image + text",
+        hint: "A tall image on the left; story text and a button on the right",
+        onPick: () => {
+          const text = story();
+          add(columns([photo(), text]), text, "Image and text added");
+        },
+      },
+      {
+        key: "story-quote",
+        label: "Story with quote",
+        hint: "Heading, paragraphs, a note and a founder quote",
+        onPick: () => {
+          const text = section([
+            { kind: "eyebrow", text: "Why we do it this way" },
+            { kind: "heading", text: "Made to be *repaired,* not\nreplaced.", size: "lg" },
+            { kind: "text", text: "What you make, how, and what makes it last.", tone: "muted" },
+            { kind: "text", text: "[Two or three lines on how you started: who, where and why.]", tone: "note" },
+            {
+              kind: "quote",
+              text: "A short line from the founder about why they make things slowly.",
+              author: "Founder name, founder",
+            },
+          ]);
+          add(text, text, "Story with quote added");
+        },
+      },
+      {
+        key: "two-cards",
+        label: "Two cards",
+        hint: "A tinted call-to-action card and a light contact card side by side",
+        onPick: () => {
+          const shop = section(
+            [
+              { kind: "eyebrow", text: "Start here" },
+              { kind: "heading", text: "Find the piece *you'll keep.*", size: "lg" },
+              {
+                kind: "text",
+                text: "Delivered in 2–4 days in Dhaka and nationwide after. Pay cash on delivery or with bKash.",
+                tone: "muted",
+              },
+              { kind: "button", label: "Shop the collection", href: "/products", style: "primary", buttonSize: "md" },
+            ],
+            "tinted",
+          );
+          const contact = section(
+            [
+              { kind: "eyebrow", text: "Talk to the workshop" },
+              { kind: "heading", text: "Questions, repairs or *bulk orders.*", size: "lg" },
+              {
+                kind: "details",
+                rows: [
+                  { label: "Workshop", value: "Street address, area, city" },
+                  { label: "Phone", value: "+880 phone number" },
+                  { label: "Email", value: "hello@yourdomain" },
+                  { label: "Hours", value: "Days and opening hours" },
+                ],
+              },
+              { kind: "button", label: "Send us a message", href: "/pages/contact", style: "link" },
+            ],
+            "light",
+          );
+          add(columns([shop, contact], { align: "top" }), shop, "Two cards added");
+        },
+      },
+    ];
+  })();
+
   const selected = selectedId ? findBlock(blocks, selectedId) : null;
   const state = pageState(page);
 
@@ -318,6 +440,14 @@ function PageEditor({
         actions={
           canWrite && (
             <div className="flex flex-wrap gap-2">
+              {page.kind === "PAGE" && (
+                <LivePreviewButton
+                  page={page}
+                  dirty={dirty}
+                  disabled={readOnly || busy}
+                  onSave={() => saveDraft({}, true)}
+                />
+              )}
               {page.kind === "PAGE" && (
                 <PreviewDialog
                   page={page}
@@ -561,6 +691,7 @@ function PageEditor({
         defs={allowedDefs}
         intoContainer={!!library?.parentId}
         onPick={addBlock}
+        shortcuts={layouts}
       />
       <p className="sr-only" aria-live="polite">
         {announcement}
@@ -583,6 +714,7 @@ function StatusActions({
   disabled: boolean;
   onStatus: (status: "DRAFT" | "ARCHIVED", message: string) => Promise<unknown>;
 }) {
+  const router = useRouter();
   return (
     <>
       {page.status === "ACTIVE" && (
@@ -625,6 +757,15 @@ function StatusActions({
           onConfirm={() => onStatus("ARCHIVED", `${page.title} archived`)}
         />
       )}
+      <DeletePageDialog
+        page={page}
+        onDeleted={() => router.replace("/admin/pages")}
+        trigger={
+          <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" disabled={disabled}>
+            <Trash2Icon /> Delete
+          </Button>
+        }
+      />
     </>
   );
 }

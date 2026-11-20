@@ -1,7 +1,7 @@
 "use client";
 
-import { useId, useState } from "react";
-import { ImageIcon } from "lucide-react";
+import { useId, useRef, useState } from "react";
+import { ImageIcon, UploadIcon } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -20,6 +20,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { useCan } from "../../components/can";
+import { notifyError, notifySaved } from "../../lib/notify";
+import { IMAGE_ACCEPT, useMediaUpload } from "../media/use-media-upload";
+import { StackElementsEditor } from "./stack-editor";
 import { SchemaField, type CustomFieldProps } from "../../components/json-schema-form/schema-field";
 import {
   fromLocalDateTime,
@@ -138,6 +141,7 @@ function renderBlockField(field: CustomFieldProps) {
   const { schema, name } = field;
   if (schema.type === "string" && (name === "mediaId" || name.endsWith("MediaId"))) return <MediaField {...field} />;
   if (schema.type === "string" && name === "sectionHandle") return <SectionHandleField {...field} />;
+  if (schema.type === "array" && name === "elements") return <StackElementsEditor {...field} />;
   if (isFreeform(schema) && (field.value === null || field.value === undefined || typeof field.value === "string"))
     return <RichTextField {...field} />;
   if (schema.type === "string" && !schema.enum && !schema.format && (schema.maxLength ?? 0) >= 500)
@@ -228,8 +232,44 @@ function SectionHandleField({ value, onChange, label, error, disabled }: CustomF
 function MediaField({ value, onChange, label, error, disabled }: CustomFieldProps) {
   const id = useId();
   const canBrowse = useCan("products.read");
+  const canUpload = useCan("media.write");
   const [open, setOpen] = useState(false);
   const [picked, setPicked] = useState<{ id: string; url: string; alt: string | null } | null>(null);
+  const { upload, uploading } = useMediaUpload();
+  const fileInput = useRef<HTMLInputElement>(null);
+  // upload a file to the media library and use it here straight away
+  const uploadFile = async (file: File) => {
+    try {
+      const media = await upload(file);
+      setPicked(media);
+      onChange(media.id);
+      setOpen(false);
+      notifySaved(`${file.name} uploaded`);
+    } catch (err) {
+      notifyError(err instanceof Error ? { data: { code: "UPLOAD", message: err.message } } : err);
+    } finally {
+      if (fileInput.current) fileInput.current.value = "";
+    }
+  };
+  const uploadButton = canUpload && !disabled && (
+    <>
+      <input
+        ref={fileInput}
+        type="file"
+        accept={IMAGE_ACCEPT}
+        className="sr-only"
+        tabIndex={-1}
+        aria-hidden
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) void uploadFile(file);
+        }}
+      />
+      <Button type="button" variant="outline" size="sm" disabled={uploading} onClick={() => fileInput.current?.click()}>
+        <UploadIcon /> {uploading ? "Uploading…" : "Upload"}
+      </Button>
+    </>
+  );
   const current = typeof value === "string" ? value : "";
   const preview = picked && picked.id === current ? picked : null;
   return (
@@ -249,6 +289,7 @@ function MediaField({ value, onChange, label, error, disabled }: CustomFieldProp
           aria-invalid={error ? true : undefined}
           onChange={(e) => onChange(e.target.value.trim())}
         />
+        {uploadButton}
         {canBrowse && !disabled && (
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger
@@ -261,8 +302,15 @@ function MediaField({ value, onChange, label, error, disabled }: CustomFieldProp
             <DialogContent className="sm:max-w-2xl">
               <DialogHeader>
                 <DialogTitle>Choose from the media library</DialogTitle>
-                <DialogDescription>Upload new files from a product&apos;s media section.</DialogDescription>
+                <DialogDescription>Pick an image, or upload a new one from your computer.</DialogDescription>
               </DialogHeader>
+              {canUpload && (
+                <div>
+                  <Button type="button" size="sm" disabled={uploading} onClick={() => fileInput.current?.click()}>
+                    <UploadIcon /> {uploading ? "Uploading…" : "Upload a new image"}
+                  </Button>
+                </div>
+              )}
               {open && (
                 <MediaGrid
                   selected={current}
@@ -278,7 +326,11 @@ function MediaField({ value, onChange, label, error, disabled }: CustomFieldProp
         )}
       </div>
       <FieldDescription>
-        {canBrowse ? "Pick an image, or paste a media ID." : "Paste the ID of an item in the media library."}
+        {canUpload
+          ? "Upload an image from your computer, or choose one already in the media library."
+          : canBrowse
+            ? "Pick an image, or paste a media ID."
+            : "Paste the ID of an item in the media library."}
       </FieldDescription>
       <FieldError>{error}</FieldError>
     </Field>
