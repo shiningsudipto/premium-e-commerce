@@ -38,6 +38,7 @@ import {
 } from "../../store/api.generated";
 import { ConfirmDialog } from "../../components/confirm-dialog";
 import { PageHeader } from "../../components/console-shell";
+import { GuideLink } from "../guides/guide-link";
 import { DataTable } from "../../components/data-table/data-table";
 import { humanize } from "../../components/json-schema-form/schema";
 import { formatDateTime } from "../../lib/format";
@@ -126,9 +127,12 @@ export function WebhooksScreen() {
         title="Webhooks"
         description="Send store events to other systems. Payloads are signed, failed deliveries are retried, and an endpoint that keeps failing is switched off."
         actions={
-          <Button size="sm" onClick={() => setEditing("new")}>
-            <PlusIcon /> New endpoint
-          </Button>
+          <>
+            <GuideLink href="/admin/webhooks/guide" />
+            <Button size="sm" onClick={() => setEditing("new")}>
+              <PlusIcon /> New endpoint
+            </Button>
+          </>
         }
       />
       <DataTable

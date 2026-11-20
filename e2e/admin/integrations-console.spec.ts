@@ -19,17 +19,30 @@ const keys: string[] = [];
 test.describe.configure({ mode: "serial" });
 test.use({ storageState: OWNER_STATE });
 
+// Endpoints left by a run that stopped before its cleanup (they keep getting real order events,
+// fail, and mark Outgoing webhooks "down" on the Integrations page until they're removed).
+async function removeLeftoverEndpoints() {
+  const res = await admin.get("/v1/admin/webhooks");
+  if (!res.ok()) return;
+  const leftovers = ((await res.json()) as { id: string; url: string; description: string | null }[]).filter(
+    (e) => e.url.startsWith("http://127.0.0.1:9/e2e-") && e.description?.startsWith("E2E hook "),
+  );
+  for (const e of leftovers) await admin.delete(`/v1/admin/webhooks/${e.id}`);
+}
+
 test.beforeAll(async () => {
   admin = await request.newContext({
     baseURL: API,
     storageState: OWNER_STATE,
     extraHTTPHeaders: { origin: STOREFRONT },
   });
+  await removeLeftoverEndpoints();
 });
 
 test.afterAll(async () => {
   for (const id of rules) await admin.delete(`/v1/admin/workflows/${id}`);
   for (const id of endpoints) await admin.delete(`/v1/admin/webhooks/${id}`);
+  await removeLeftoverEndpoints();
   // already revoked keys answer 404, which is fine
   for (const id of keys) await admin.post(`/v1/admin/api-keys/${id}/revoke`);
   await admin.dispose();

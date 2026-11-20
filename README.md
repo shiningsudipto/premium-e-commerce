@@ -139,6 +139,7 @@ The home page implements the Premium Touch design (`../Home — Desktop 1440-htm
   - `/admin/translations`: English next to Bangla per field; page blocks by text prop.
   - `/admin/workflows`: rule builder with a dry-run test and run history.
   - `/admin/webhooks`: endpoints, event picker, one-time secret, delivery log with replay.
+  - Guides: `/admin/webhooks/guide`, `/admin/api-keys/guide` and `/admin/workflows/guide` (the **Guide** button on each screen) explain the feature for staff and integrators, with copy-link, Markdown copy/download and print/PDF for sharing. Content lives in `src/admin/features/guides/` and must be kept in step with the backend.
   - `/admin/api-keys`: scopes and expiry, one-time key, revoke by typing the name.
   - `/admin/jobs`: pg-boss queues, jobs, retry and cancel.
   - `/admin/integrations`: status cards; live checks only on demand.

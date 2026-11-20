@@ -34,6 +34,7 @@ import {
 } from "../../store/api.generated";
 import { useMe } from "../../components/can";
 import { PageHeader } from "../../components/console-shell";
+import { GuideLink } from "../guides/guide-link";
 import { DataTable } from "../../components/data-table/data-table";
 import { humanize } from "../../components/json-schema-form/schema";
 import { formatDateTime } from "../../lib/format";
@@ -116,9 +117,12 @@ export function ApiKeysScreen() {
         title="API keys"
         description="Keys for integrations calling the admin API. Each key can do only what its scopes allow, and never more than the person who created it."
         actions={
-          <Button size="sm" onClick={() => setCreating(true)}>
-            <PlusIcon /> New key
-          </Button>
+          <>
+            <GuideLink href="/admin/api-keys/guide" />
+            <Button size="sm" onClick={() => setCreating(true)}>
+              <PlusIcon /> New key
+            </Button>
+          </>
         }
       />
       <DataTable

@@ -13,6 +13,7 @@ import {
 } from "../../store/api.generated";
 import { ConfirmDialog } from "../../components/confirm-dialog";
 import { PageHeader } from "../../components/console-shell";
+import { GuideLink } from "../guides/guide-link";
 import { DataTable } from "../../components/data-table/data-table";
 import { formatDateTime } from "../../lib/format";
 import { notifyError, notifySaved } from "../../lib/notify";
@@ -75,9 +76,12 @@ export function WorkflowsScreen() {
         title="Workflows"
         description="Automations: when an event happens and its conditions hold, the rule runs its actions. Each event runs a rule once, and every run is logged."
         actions={
-          <Link href="/admin/workflows/new" className={buttonVariants({ size: "sm" })}>
-            <PlusIcon /> New rule
-          </Link>
+          <>
+            <GuideLink href="/admin/workflows/guide" />
+            <Link href="/admin/workflows/new" className={buttonVariants({ size: "sm" })}>
+              <PlusIcon /> New rule
+            </Link>
+          </>
         }
       />
       <DataTable

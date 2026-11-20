@@ -257,14 +257,14 @@ export function ConsoleShell({ children }: { children: ReactNode }) {
         Skip to content
       </a>
       {/* pinned to the viewport; the brand stays put and the menu scrolls on its own */}
-      <aside className="bg-sidebar fixed inset-y-0 left-0 z-40 hidden w-60 flex-col lg:flex">
+      <aside className="bg-sidebar fixed inset-y-0 left-0 z-40 hidden w-60 flex-col lg:flex print:hidden">
         <Brand />
         <div className="min-h-0 flex-1 [scrollbar-width:thin] [scrollbar-color:var(--sidebar-accent)_transparent] overflow-y-auto overscroll-contain pb-6">
           <SidebarNav />
         </div>
       </aside>
-      <div className="flex min-w-0 flex-1 flex-col lg:pl-60">
-        <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b bg-background/90 px-4 backdrop-blur sm:px-6">
+      <div className="flex min-w-0 flex-1 flex-col lg:pl-60 print:pl-0">
+        <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b bg-background/90 px-4 backdrop-blur sm:px-6 print:hidden">
           <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
             <SheetTrigger
               render={
