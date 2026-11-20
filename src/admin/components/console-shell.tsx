@@ -256,11 +256,14 @@ export function ConsoleShell({ children }: { children: ReactNode }) {
       >
         Skip to content
       </a>
-      <aside className="bg-sidebar sticky top-0 hidden h-dvh w-60 shrink-0 flex-col lg:flex">
+      {/* pinned to the viewport; the brand stays put and the menu scrolls on its own */}
+      <aside className="bg-sidebar fixed inset-y-0 left-0 z-40 hidden w-60 flex-col lg:flex">
         <Brand />
-        <SidebarNav />
+        <div className="min-h-0 flex-1 [scrollbar-width:thin] [scrollbar-color:var(--sidebar-accent)_transparent] overflow-y-auto overscroll-contain pb-6">
+          <SidebarNav />
+        </div>
       </aside>
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-w-0 flex-1 flex-col lg:pl-60">
         <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b bg-background/90 px-4 backdrop-blur sm:px-6">
           <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
             <SheetTrigger
@@ -270,10 +273,12 @@ export function ConsoleShell({ children }: { children: ReactNode }) {
                 </Button>
               }
             />
-            <SheetContent side="left" className="bg-sidebar text-sidebar-foreground w-64 p-0">
+            <SheetContent side="left" className="bg-sidebar text-sidebar-foreground flex w-64 flex-col p-0">
               <SheetTitle className="sr-only">Navigation</SheetTitle>
               <Brand />
-              <SidebarNav onNavigate={() => setMenuOpen(false)} />
+              <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain pb-6">
+                <SidebarNav onNavigate={() => setMenuOpen(false)} />
+              </div>
             </SheetContent>
           </Sheet>
           <div className="ml-auto">

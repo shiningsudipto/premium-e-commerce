@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { requestContext } from "@/src/api/server";
 import { affiliateStatus } from "@/src/features/affiliate/data";
@@ -17,8 +17,9 @@ export async function generateMetadata(): Promise<Metadata> {
 // "Become an affiliate": the application form, or where the application or profile stands.
 // Rendered inside the account layout's customer-only Suspense boundary.
 export default async function AccountAffiliatePage() {
-  if (!(await isEnabled("affiliates"))) notFound();
-  const [ctx, t, status] = await Promise.all([requestContext(), getTranslations("affiliate"), affiliateStatus()]);
+  const [ctx, t] = await Promise.all([requestContext(), getTranslations("affiliate")]);
+  if (!(await isEnabled("affiliates"))) redirect(href(ctx.market, "/affiliate-program"));
+  const status = await affiliateStatus();
   const { profile, currentTermsVersion } = status;
   const termsHref = href(ctx.market, "/pages/affiliate-terms");
 

@@ -4,7 +4,7 @@ import { cookies, headers } from "next/headers";
 import { env } from "../lib/env";
 import { parseMarketSegment, type MarketRef } from "../lib/market";
 import { COOKIE } from "../lib/session/cookies";
-import { contextHeaders, newRequestId } from "./upstream";
+import { contextHeaders } from "./upstream";
 import type { paths } from "./schema";
 
 export type ApiContext = { market: MarketRef; requestId?: string; token?: string | null };
@@ -18,7 +18,9 @@ export function serverApi(ctx: ApiContext) {
       const h = contextHeaders({
         market: ctx.market,
         channel: env.CHANNEL,
-        requestId: ctx.requestId ?? newRequestId(),
+        // never generated here: this runs while rendering, where Cache Components refuses
+        // randomness (proxy.ts normally provides the ID; without one the API makes its own)
+        requestId: ctx.requestId,
       });
       for (const [k, v] of Object.entries(h)) request.headers.set(k, v);
       if (ctx.token) request.headers.set("authorization", `Bearer ${ctx.token}`);

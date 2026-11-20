@@ -40,7 +40,7 @@ export const footerColumns = [
     links: [
       { label: "Our craft", path: "/pages/our-craft" },
       { label: "Journal", path: "/pages/journal" },
-      { label: "Affiliate programme", path: "/affiliate/apply" },
+      { label: "Affiliate programme", path: "/affiliate-program" },
       { label: "Careers", path: "/pages/careers" },
     ],
   },

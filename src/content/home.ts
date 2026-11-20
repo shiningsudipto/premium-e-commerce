@@ -340,7 +340,7 @@ export const letters = {
     eyebrow: "Partner programme",
     title: { text: "Become an affiliate partner.", em: "Earn on every referral." } satisfies Emphasized,
     body: "For writers, stylists and creators who already talk about well-made things. Commission terms on application.",
-    cta: { label: "Apply to the programme", path: "/affiliate/apply" } satisfies Link,
+    cta: { label: "Apply to the programme", path: "/affiliate-program" } satisfies Link,
   },
 };
 

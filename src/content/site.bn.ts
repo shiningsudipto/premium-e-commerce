@@ -36,7 +36,7 @@ export const siteBn: SiteContent = {
       links: [
         { label: "আমাদের কারিগরি", path: "/pages/our-craft" },
         { label: "জার্নাল", path: "/pages/journal" },
-        { label: "অ্যাফিলিয়েট প্রোগ্রাম", path: "/affiliate/apply" },
+        { label: "অ্যাফিলিয়েট প্রোগ্রাম", path: "/affiliate-program" },
         { label: "ক্যারিয়ার", path: "/pages/careers" },
       ],
     },

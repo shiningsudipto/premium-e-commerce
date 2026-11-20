@@ -16,6 +16,7 @@ import {
   useGetWishlistQuery,
   useGetWishlistsQuery,
   useRemoveWishlistItemMutation,
+  useAddToWishlistMutation,
   useUpdateWishlistMutation,
   type Wishlist,
   type WishlistItem,
@@ -49,7 +50,13 @@ export function WishlistsView({ market }: { market: MarketRef }) {
         </div>
       )}
       {current ? (
-        <ListPanel key={current.id} id={current.id} market={market} onDeleted={() => setPicked(null)} />
+        <ListPanel
+          key={current.id}
+          id={current.id}
+          market={market}
+          otherLists={lists.filter((l) => l.id !== current.id)}
+          onDeleted={() => setPicked(null)}
+        />
       ) : (
         <div className="no-results">
           <h2 className="h3">{t("emptyTitle")}</h2>
@@ -107,7 +114,17 @@ function CreateList({ onCreated }: { onCreated: (id: string) => void }) {
   );
 }
 
-function ListPanel({ id, market, onDeleted }: { id: string; market: MarketRef; onDeleted: () => void }) {
+function ListPanel({
+  id,
+  market,
+  otherLists,
+  onDeleted,
+}: {
+  id: string;
+  market: MarketRef;
+  otherLists: { id: string; name: string }[];
+  onDeleted: () => void;
+}) {
   const t = useTranslations("wishlist");
   const { data: list, isLoading, isError } = useGetWishlistQuery(id);
 
@@ -127,7 +144,7 @@ function ListPanel({ id, market, onDeleted }: { id: string; market: MarketRef; o
       ) : (
         <ul className="wish-items">
           {list.items.map((item) => (
-            <Item key={item.id} item={item} listId={list.id} market={market} />
+            <Item key={item.id} item={item} listId={list.id} market={market} otherLists={otherLists} />
           ))}
         </ul>
       )}
@@ -248,14 +265,35 @@ function ListHead({ list, market, onDeleted }: { list: Wishlist; market: MarketR
   );
 }
 
-function Item({ item, listId, market }: { item: WishlistItem; listId: string; market: MarketRef }) {
+function Item({
+  item,
+  listId,
+  market,
+  otherLists,
+}: {
+  item: WishlistItem;
+  listId: string;
+  market: MarketRef;
+  otherLists: { id: string; name: string }[];
+}) {
   const t = useTranslations("wishlist");
   const { openBag } = useBag();
   const [addToBag, { isLoading: adding }] = useAddToBagMutation();
   const bagErrorMessage = useBagErrorMessage();
   const [removeItem] = useRemoveWishlistItemMutation();
+  const [addToList, { isLoading: moving }] = useAddToWishlistMutation();
   const [message, setMessage] = useState("");
   const product = item.product;
+
+  // move: add to the chosen list, then take it out of this one
+  const moveTo = async (targetId: string) => {
+    const target = otherLists.find((l) => l.id === targetId);
+    if (!target) return;
+    const added = await addToList({ id: targetId, productId: item.productId, variantId: item.variantId ?? undefined });
+    if (added.error) return setMessage(t("failed"));
+    await removeItem({ id: listId, itemId: item.id });
+    setMessage(t("movedTo", { list: target.name }));
+  };
 
   if (!product) {
     return (
@@ -302,6 +340,26 @@ function Item({ item, listId, market }: { item: WishlistItem; listId: string; ma
           <span className="sr-only"> {product.title}</span>
         </button>
       </div>
+      {otherLists.length > 0 && (
+        <label className="wish-item__move">
+          <span className="sr-only">{t("moveToLabel", { title: product.title })}</span>
+          <select
+            className="input"
+            value=""
+            disabled={moving}
+            onChange={(e) => {
+              if (e.target.value) void moveTo(e.target.value);
+            }}
+          >
+            <option value="">{t("moveTo")}</option>
+            {otherLists.map((l) => (
+              <option key={l.id} value={l.id}>
+                {l.name}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
       <button className="btn btn--primary" type="button" onClick={add} disabled={adding || !product.availableForSale}>
         {product.availableForSale ? t("addToBag") : t("soldOut")}
       </button>

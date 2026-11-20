@@ -79,4 +79,25 @@ test("hearts, lists and sharing", async ({ page, browser }) => {
     .getByRole("button", { name: new RegExp(`^Remove ${product.title}`) })
     .click();
   await expect(page.getByTestId("wish-item")).toHaveCount(0);
+
+  // save the piece into a named list from its product page
+  await page.goto(`/${MARKET}/products/${product.handle}`);
+  await page.getByTestId("save-to-list").click();
+  await page
+    .getByRole("dialog")
+    .getByRole("button", { name: /^Gifts/ })
+    .click();
+  await expect(page.getByText(`${product.title} saved to Gifts.`)).toBeVisible();
+
+  // it's in Gifts; move it to Saved items from there
+  await page.goto(`/${MARKET}/account/wishlists`);
+  await page.getByRole("button", { name: /Gifts/ }).click();
+  await expect(page.getByTestId("wish-item")).toHaveCount(1);
+  await page
+    .getByTestId("wish-item")
+    .getByRole("combobox", { name: `Move ${product.title} to another list` })
+    .selectOption({ label: "Saved items" });
+  await expect(page.getByTestId("wish-item")).toHaveCount(0);
+  await page.getByRole("button", { name: /Saved items/ }).click();
+  await expect(page.getByTestId("wish-item")).toHaveCount(1);
 });

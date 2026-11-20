@@ -40,6 +40,7 @@ const PATHS = {
     </>
   ),
   plus: <path d="M12 5v14M5 12h14" />,
+  chevron: <path d="M6 9l6 6 6-6" />,
   copy: (
     <>
       <rect x="8" y="8" width="12" height="12" rx="1.5" />

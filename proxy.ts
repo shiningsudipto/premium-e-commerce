@@ -91,6 +91,8 @@ export async function proxy(request: NextRequest, event?: NextFetchEvent) {
   headers.set("x-locale", current.locale);
   headers.set("x-channel", env.CHANNEL);
   headers.set("x-request-id", requestId);
+  // the page asked for, so the account area can send signed-out visitors back to it after sign-in
+  headers.set("x-pathname", request.nextUrl.pathname + request.nextUrl.search);
 
   const response = NextResponse.next({ request: { headers } });
   response.headers.set("x-request-id", requestId);

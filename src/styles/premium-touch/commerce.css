@@ -397,6 +397,38 @@
 .pdp__details summary::-webkit-details-marker {
   display: none;
 }
+/* FAQ / accordion arrow: points down, flips up when the item is open */
+.pdp__details summary {
+  align-items: center;
+  gap: var(--space-4);
+}
+.disclosure__chevron {
+  flex: none;
+  color: var(--color-muted-foreground);
+  transition: transform var(--dur-base) var(--ease-out);
+}
+.pdp__details details[open] > summary .disclosure__chevron {
+  transform: rotate(180deg);
+}
+/* light highlight on the question row; the negative margin keeps the text aligned */
+.pdp__details summary {
+  margin: calc(-1 * var(--space-2)) calc(-1 * var(--space-3));
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  transition: background-color var(--dur-fast);
+}
+.pdp__details summary:hover,
+.pdp__details summary:focus-visible {
+  background-color: color-mix(in oklab, var(--color-primary) 7%, transparent);
+}
+.pdp__details summary:hover .disclosure__chevron {
+  color: var(--color-foreground);
+}
+@media (prefers-reduced-motion: reduce) {
+  .disclosure__chevron {
+    transition: none;
+  }
+}
 .pdp__details dl {
   display: grid;
   grid-template-columns: max-content 1fr;

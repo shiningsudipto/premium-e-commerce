@@ -7,7 +7,8 @@ import { buildTable, type RedirectRule, type RedirectTable } from "../lib/redire
 export type ForwardContext = {
   market: MarketRef;
   channel: string;
-  requestId: string;
+  // omitted when there is none: the API then starts its own correlation ID
+  requestId?: string;
   clientIp?: string | null;
   userAgent?: string | null;
 };
@@ -19,7 +20,7 @@ export function contextHeaders(ctx: ForwardContext): Record<string, string> {
     "x-market": ctx.market.market,
     "x-locale": ctx.market.locale,
     "x-channel": ctx.channel,
-    "x-request-id": ctx.requestId,
+    ...(ctx.requestId ? { "x-request-id": ctx.requestId } : {}),
     ...(ctx.clientIp ? { "x-forwarded-for": ctx.clientIp } : {}),
     ...(ctx.userAgent ? { "user-agent": ctx.userAgent } : {}),
   };

@@ -73,7 +73,15 @@
     "soldOut": "Sold out",
     "unavailable": "This piece is no longer available.",
     "sharedTitle": "A shared wishlist",
-    "sharedEyebrow": "Shared wishlist"
+    "sharedEyebrow": "Shared wishlist",
+    "saveToList": "Save to a list",
+    "saveToListTitle": "Save {title} to a list",
+    "savedToList": "{title} saved to {list}.",
+    "noListsYet": "You don't have any lists yet.",
+    "createAndSave": "Create & save",
+    "moveTo": "Move to…",
+    "moveToLabel": "Move {title} to another list",
+    "movedTo": "Moved to {list}."
   },
   "recommendations": {
     "completeTheLook": "Complete the look",

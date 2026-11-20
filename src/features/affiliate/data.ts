@@ -22,8 +22,9 @@ async function fetchMe() {
 
 export const dashboardAccess = cache(async (): Promise<DashboardAccess> => {
   const ctx = await requestContext();
-  if (ctx.kind !== "customer") return { kind: "signed-out" };
+  // flag first: while the program is closed, everyone (signed in or not) is told so
   if (!(await isEnabled("affiliates"))) return { kind: "disabled" };
+  if (ctx.kind !== "customer") return { kind: "signed-out" };
   try {
     const me = await fetchMe();
     if (me.termsCurrent) return { kind: "ok", me };

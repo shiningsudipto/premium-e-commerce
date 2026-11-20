@@ -81,6 +81,20 @@ export const wishlistApi = bagApi.enhanceEndpoints({ addTagTypes: ["Saved", "Wis
       invalidatesTags: ["Wishlists", "Saved"],
     }),
 
+    // Put a product into a particular list (the heart only uses the default list).
+    addToWishlist: build.mutation<Wishlist, { id: string; productId: string; variantId?: string }>({
+      query: ({ id, productId, variantId }) => ({
+        url: `/v1/store/wishlists/${enc(id)}/items`,
+        method: "POST",
+        body: { productId, ...(variantId ? { variantId } : {}) },
+      }),
+      onQueryStarted: async ({ id }, { dispatch, queryFulfilled }) => {
+        const { data } = await queryFulfilled.catch(() => ({ data: null }));
+        if (data) dispatch(wishlistApi.util.upsertQueryData("getWishlist", id, data));
+      },
+      invalidatesTags: ["Wishlists", "Saved"],
+    }),
+
     removeWishlistItem: build.mutation<Wishlist, { id: string; itemId: string }>({
       query: ({ id, itemId }) => ({ url: `/v1/store/wishlists/${enc(id)}/items/${enc(itemId)}`, method: "DELETE" }),
       onQueryStarted: async ({ id, itemId }, { dispatch, queryFulfilled }) => {
@@ -111,4 +125,5 @@ export const {
   useUpdateWishlistMutation,
   useDeleteWishlistMutation,
   useRemoveWishlistItemMutation,
+  useAddToWishlistMutation,
 } = wishlistApi;

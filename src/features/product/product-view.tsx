@@ -9,6 +9,7 @@ import type { MarketRef } from "../../lib/market";
 import { formatMoney } from "../../lib/money";
 import { href } from "../../lib/links";
 import { HeartButton } from "../wishlist/heart-button";
+import { SaveToList } from "../wishlist/save-to-list";
 import { useBag } from "../cart/bag-provider";
 import { useAddToBagMutation, useBagErrorMessage } from "../cart/cart-api";
 import {
@@ -208,6 +209,7 @@ export function ProductView({
             className="heart--bordered"
           />
         </div>
+        <SaveToList productId={product.id} variantId={variant?.id} title={product.title} />
         <p
           className={cn("muted", message?.error && "field__error")}
           aria-live="polite"

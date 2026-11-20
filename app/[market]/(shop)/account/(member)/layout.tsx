@@ -1,8 +1,10 @@
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { Suspense, type ReactNode } from "react";
 import { getTranslations } from "next-intl/server";
 import { requestContext } from "@/src/api/server";
 import { AccountNav } from "@/src/features/account/account-nav";
+import { safeNext } from "@/src/features/account/next-path";
 import { currentMarket } from "@/src/lib/current-market";
 import { href } from "@/src/lib/links";
 
@@ -37,7 +39,10 @@ export default async function AccountLayout({ children }: LayoutProps<"/[market]
 async function CustomerOnly({ children }: { children: ReactNode }) {
   const ctx = await requestContext();
   if (ctx.kind !== "customer") {
-    redirect(`${href(ctx.market, "/account/sign-in")}?next=${encodeURIComponent(href(ctx.market, "/account"))}`);
+    // back to the page they asked for (e.g. /account/affiliate) once signed in; site paths only
+    const fallback = href(ctx.market, "/account");
+    const back = safeNext((await headers()).get("x-pathname"), fallback);
+    redirect(`${href(ctx.market, "/account/sign-in")}?next=${encodeURIComponent(back)}`);
   }
   return children;
 }

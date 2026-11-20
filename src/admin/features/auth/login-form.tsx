@@ -16,7 +16,7 @@ const MESSAGES: Record<string, string> = {
   RATE_LIMITED: "Too many attempts. Wait a minute and try again.",
 };
 
-export function LoginForm() {
+export function LoginForm({ defaultEmail, defaultPassword }: { defaultEmail?: string; defaultPassword?: string }) {
   const router = useRouter();
   const next = safeNext(useSearchParams().get("next"));
   const [error, setError] = useState<string | null>(null);
@@ -51,11 +51,26 @@ export function LoginForm() {
       <FieldGroup>
         <Field>
           <FieldLabel htmlFor="email">Email</FieldLabel>
-          <Input id="email" name="email" type="email" autoComplete="username" required autoFocus />
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            autoComplete="username"
+            defaultValue={defaultEmail}
+            required
+            autoFocus
+          />
         </Field>
         <Field>
           <FieldLabel htmlFor="password">Password</FieldLabel>
-          <Input id="password" name="password" type="password" autoComplete="current-password" required />
+          <Input
+            id="password"
+            name="password"
+            type="password"
+            autoComplete="current-password"
+            defaultValue={defaultPassword}
+            required
+          />
         </Field>
       </FieldGroup>
       <Button type="submit" size="lg" className="w-full" disabled={pending || isSuccess}>

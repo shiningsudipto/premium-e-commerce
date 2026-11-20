@@ -73,7 +73,15 @@
     "soldOut": "স্টক শেষ",
     "unavailable": "এই পণ্যটি আর পাওয়া যাচ্ছে না।",
     "sharedTitle": "একটি শেয়ার করা উইশলিস্ট",
-    "sharedEyebrow": "শেয়ার করা উইশলিস্ট"
+    "sharedEyebrow": "শেয়ার করা উইশলিস্ট",
+    "saveToList": "একটি লিস্টে সেভ করুন",
+    "saveToListTitle": "{title} একটি লিস্টে সেভ করুন",
+    "savedToList": "{title} \"{list}\" লিস্টে সেভ হয়েছে।",
+    "noListsYet": "আপনার এখনো কোনো লিস্ট নেই।",
+    "createAndSave": "তৈরি করে সেভ করুন",
+    "moveTo": "সরিয়ে নিন…",
+    "moveToLabel": "{title} অন্য লিস্টে সরিয়ে নিন",
+    "movedTo": "\"{list}\" লিস্টে সরানো হয়েছে।"
   },
   "recommendations": {
     "completeTheLook": "লুকটি সম্পূর্ণ করুন",

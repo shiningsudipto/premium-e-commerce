@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { ProductCard, ProductGridSkeleton } from "../product-shelf/product-card";
 import { NewsletterForm } from "../letters/newsletter-form";
 import { artFor } from "../../components/storefront/art";
+import { Icon } from "../../components/storefront/icon";
 import { Media, type MediaImage } from "../../components/storefront/media";
 import { RichText } from "../../components/storefront/rich-text";
 import { Stars } from "../../components/storefront/primitives";
@@ -416,7 +417,10 @@ function Disclosures({
       )}
       {list.map((item, i) => (
         <details key={i} name={group}>
-          <summary>{str(item[titleKey])}</summary>
+          <summary>
+            {str(item[titleKey])}
+            <Icon name="chevron" size="sm" className="disclosure__chevron" />
+          </summary>
           <div style={{ paddingTop: "var(--space-3)" }}>
             <RichText value={item[bodyKey]} />
           </div>

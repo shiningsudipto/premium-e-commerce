@@ -365,6 +365,11 @@
       "copyText": "Copy text",
       "htmlSnippet": "HTML for your website",
       "copySnippet": "Copy HTML"
+    },
+    "closed": {
+      "title": "Our affiliate program isn’t open yet",
+      "body": "We’re not taking affiliate applications right now. Please check back soon — we’ll announce it here when the program opens.",
+      "action": "Continue shopping"
     }
   }
 }
