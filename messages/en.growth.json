@@ -108,7 +108,26 @@
     "placeholder": "you@example.com",
     "subscribe": "Subscribe",
     "invalid": "Enter an email address like name@example.com.",
-    "unavailable": "Sign-ups open soon. Thank you for your interest; please check back shortly.",
-    "consent": "By subscribing you agree to receive emails from {store}. Unsubscribe any time. See our <privacy>{label}</privacy>."
+    "unavailable": "We couldn’t sign you up just now. Please try again in a moment.",
+    "consent": "By subscribing you agree to receive emails from {store}. Unsubscribe any time. See our <privacy>{label}</privacy>.",
+    "pending": "Almost there: we’ve sent you an email. Click the link in it to confirm your subscription.",
+    "tooMany": "Too many attempts. Please wait a few minutes and try again.",
+    "confirmPage": {
+      "title": "You’re subscribed",
+      "body": "Thanks for confirming. The next letter arrives at the start of the month.",
+      "invalidTitle": "This link has expired",
+      "invalidBody": "Confirmation links work for 7 days. Sign up again and we’ll send you a fresh one.",
+      "continue": "Continue shopping"
+    },
+    "unsubscribePage": {
+      "title": "Unsubscribe from our newsletter?",
+      "body": "You’ll stop receiving the newsletter. You can sign up again any time.",
+      "button": "Unsubscribe",
+      "doneTitle": "You’re unsubscribed",
+      "doneBody": "You won’t receive our newsletter any more. Order and delivery emails still reach you.",
+      "invalidTitle": "This link isn’t valid",
+      "invalidBody": "Reply to any of our emails and we’ll take you off the list.",
+      "continue": "Back to the shop"
+    }
   }
 }

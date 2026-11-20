@@ -24,6 +24,7 @@ import {
   LogOutIcon,
   ShieldCheckIcon,
   MailIcon,
+  MailPlusIcon,
   MessageSquareIcon,
   MenuIcon,
   PackageIcon,
@@ -97,6 +98,7 @@ export const NAV: { heading: string; items: NavItem[] }[] = [
     heading: "Marketing",
     items: [
       { href: "/admin/promotions", label: "Promotions", icon: TicketPercentIcon, permission: "promotions.write" },
+      { href: "/admin/newsletter", label: "Newsletter", icon: MailPlusIcon, permission: "customers.read" },
       { href: "/admin/affiliates", label: "Affiliates", icon: HandshakeIcon, permission: "affiliates.read" },
       { href: "/admin/affiliates/fraud", label: "Fraud review", icon: ShieldAlertIcon, permission: "affiliates.read" },
       { href: "/admin/affiliates/payouts", label: "Payout batches", icon: BanknoteIcon, permission: "affiliates.read" },

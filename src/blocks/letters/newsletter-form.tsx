@@ -39,11 +39,12 @@ export function NewsletterForm({
     if (opened) input.current?.focus();
   }, [opened]);
 
-  if (state.status === "subscribed") {
+  if (state.status === "subscribed" || state.status === "pending") {
     return (
       <p className="success" role="status">
         <Icon name="check" />
-        {t("subscribed")}
+        {/* double opt-in: "check your inbox"; already confirmed (or opt-in off): "you're on the list" */}
+        {state.status === "pending" ? t("pending") : t("subscribed")}
       </p>
     );
   }
@@ -66,6 +67,16 @@ export function NewsletterForm({
 
   return (
     <form action={action} noValidate className="newsletter__form" id={`${id}-form`}>
+      {/* bots fill every field; people never see this one (the server drops sign-ups that fill it) */}
+      <div
+        aria-hidden="true"
+        style={{ position: "absolute", left: "-10000px", width: 1, height: 1, overflow: "hidden" }}
+      >
+        <label>
+          Company
+          <input type="text" name="company" tabIndex={-1} autoComplete="off" defaultValue="" />
+        </label>
+      </div>
       <div className="field">
         <label htmlFor={`${id}-email`} className={reveal ? "sr-only" : undefined}>
           {t("email")}
@@ -93,9 +104,9 @@ export function NewsletterForm({
             {t("invalid")}
           </p>
         )}
-        {state.status === "unavailable" && (
-          <p className="consent" role="status">
-            {t("unavailable")}
+        {(state.status === "unavailable" || state.status === "too_many") && (
+          <p className="consent consent--error" role="status">
+            {state.status === "too_many" ? t("tooMany") : t("unavailable")}
           </p>
         )}
       </div>

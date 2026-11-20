@@ -33,6 +33,7 @@ describe("permission gating", () => {
       "/admin/reviews",
       "/admin/data",
       "/admin/promotions",
+      "/admin/newsletter",
       "/admin/affiliates",
       "/admin/affiliates/fraud",
       "/admin/affiliates/payouts",

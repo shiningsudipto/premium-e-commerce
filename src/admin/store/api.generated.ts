@@ -9,6 +9,7 @@ export const addTagTypes = [
   "Reports",
   "Search tuning",
   "Webhooks",
+  "Newsletter",
   "Workflows",
   "Page builder",
   "Customers",
@@ -916,6 +917,83 @@ const injectedRtkApi = api
           },
         }),
         invalidatesTags: ["Webhooks"],
+      }),
+      getV1AdminNewsletterSubscribers: build.query<
+        GetV1AdminNewsletterSubscribersApiResponse,
+        GetV1AdminNewsletterSubscribersApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/v1/admin/newsletter/subscribers`,
+          headers: {
+            "x-market": queryArg["x-market"],
+            "x-locale": queryArg["x-locale"],
+          },
+          params: {
+            cursor: queryArg.cursor,
+            limit: queryArg.limit,
+            q: queryArg.q,
+            status: queryArg.status,
+          },
+        }),
+        providesTags: ["Newsletter"],
+      }),
+      getV1AdminNewsletterSubscribersCounts: build.query<
+        GetV1AdminNewsletterSubscribersCountsApiResponse,
+        GetV1AdminNewsletterSubscribersCountsApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/v1/admin/newsletter/subscribers/counts`,
+          headers: {
+            "x-market": queryArg["x-market"],
+            "x-locale": queryArg["x-locale"],
+          },
+        }),
+        providesTags: ["Newsletter"],
+      }),
+      getV1AdminNewsletterSubscribersExport: build.query<
+        GetV1AdminNewsletterSubscribersExportApiResponse,
+        GetV1AdminNewsletterSubscribersExportApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/v1/admin/newsletter/subscribers/export`,
+          headers: {
+            "x-market": queryArg["x-market"],
+            "x-locale": queryArg["x-locale"],
+          },
+          params: {
+            q: queryArg.q,
+            status: queryArg.status,
+          },
+        }),
+        providesTags: ["Newsletter"],
+      }),
+      postV1AdminNewsletterSubscribersIdUnsubscribe: build.mutation<
+        PostV1AdminNewsletterSubscribersIdUnsubscribeApiResponse,
+        PostV1AdminNewsletterSubscribersIdUnsubscribeApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/v1/admin/newsletter/subscribers/${queryArg.id}/unsubscribe`,
+          method: "POST",
+          headers: {
+            "x-market": queryArg["x-market"],
+            "x-locale": queryArg["x-locale"],
+          },
+        }),
+        invalidatesTags: ["Newsletter"],
+      }),
+      deleteV1AdminNewsletterSubscribersId: build.mutation<
+        DeleteV1AdminNewsletterSubscribersIdApiResponse,
+        DeleteV1AdminNewsletterSubscribersIdApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/v1/admin/newsletter/subscribers/${queryArg.id}`,
+          method: "DELETE",
+          headers: {
+            "x-market": queryArg["x-market"],
+            "x-locale": queryArg["x-locale"],
+          },
+        }),
+        invalidatesTags: ["Newsletter"],
       }),
       getV1AdminWorkflowsTriggers: build.query<
         GetV1AdminWorkflowsTriggersApiResponse,
@@ -5286,6 +5364,62 @@ export type PostV1AdminWebhooksDeliveriesIdReplayApiResponse =
     queued: true;
   };
 export type PostV1AdminWebhooksDeliveriesIdReplayApiArg = {
+  id: string;
+  "x-market"?: string;
+  "x-locale"?: string;
+};
+export type GetV1AdminNewsletterSubscribersApiResponse = /** status 200 OK */ {
+  items: {
+    id: string;
+    email: string;
+    status: "PENDING" | "SUBSCRIBED" | "UNSUBSCRIBED";
+    locale: string | null;
+    source: string | null;
+    consentText: string | null;
+    customerId: string | null;
+    confirmSentAt: string | null;
+    confirmedAt: string | null;
+    unsubscribedAt: string | null;
+    createdAt: string;
+  }[];
+  nextCursor: string | null;
+};
+export type GetV1AdminNewsletterSubscribersApiArg = {
+  cursor?: string;
+  limit?: number;
+  q?: string;
+  status?: "PENDING" | "SUBSCRIBED" | "UNSUBSCRIBED";
+  "x-market"?: string;
+  "x-locale"?: string;
+};
+export type GetV1AdminNewsletterSubscribersCountsApiResponse =
+  /** status 200 OK */ {
+    subscribed: number;
+    pending: number;
+    unsubscribed: number;
+  };
+export type GetV1AdminNewsletterSubscribersCountsApiArg = {
+  "x-market"?: string;
+  "x-locale"?: string;
+};
+export type GetV1AdminNewsletterSubscribersExportApiResponse = unknown;
+export type GetV1AdminNewsletterSubscribersExportApiArg = {
+  q?: string;
+  status?: "PENDING" | "SUBSCRIBED" | "UNSUBSCRIBED";
+  "x-market"?: string;
+  "x-locale"?: string;
+};
+export type PostV1AdminNewsletterSubscribersIdUnsubscribeApiResponse =
+  /** status 200 OK */ {
+    ok: true;
+  };
+export type PostV1AdminNewsletterSubscribersIdUnsubscribeApiArg = {
+  id: string;
+  "x-market"?: string;
+  "x-locale"?: string;
+};
+export type DeleteV1AdminNewsletterSubscribersIdApiResponse = unknown;
+export type DeleteV1AdminNewsletterSubscribersIdApiArg = {
   id: string;
   "x-market"?: string;
   "x-locale"?: string;
@@ -14208,6 +14342,11 @@ export const {
   usePostV1AdminWebhooksIdPingMutation,
   useGetV1AdminWebhooksIdDeliveriesQuery,
   usePostV1AdminWebhooksDeliveriesIdReplayMutation,
+  useGetV1AdminNewsletterSubscribersQuery,
+  useGetV1AdminNewsletterSubscribersCountsQuery,
+  useGetV1AdminNewsletterSubscribersExportQuery,
+  usePostV1AdminNewsletterSubscribersIdUnsubscribeMutation,
+  useDeleteV1AdminNewsletterSubscribersIdMutation,
   useGetV1AdminWorkflowsTriggersQuery,
   useGetV1AdminWorkflowsQuery,
   usePostV1AdminWorkflowsMutation,

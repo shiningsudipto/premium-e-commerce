@@ -90,6 +90,21 @@ export const SETTING_HELP: Record<string, SettingHelp> = {
     caution: "Without the worker running, nothing is sent even when this is on.",
   },
 
+  // ── Newsletter ─────────────────────────────────────────────────────────────
+  "newsletter.double_opt_in": {
+    what: "Whether people who sign up for the newsletter must confirm by clicking a link in an email first (double opt-in).",
+    why: "It proves the address is real and belongs to the person who signed up, keeps typos and fake sign-ups off your list, and protects your sender reputation.",
+    effects: [
+      "**On:** a sign-up shows as “Awaiting confirmation” in Marketing → Newsletter until the link is clicked; the email goes out in the shopper's language.",
+      "**Off:** sign-ups are subscribed straight away, with no email.",
+      "Confirming (or signing up with it off) turns on “accepts marketing” for a customer with that email; unsubscribing turns it off.",
+    ],
+    recommended:
+      "**Off** (the default) for the simplest sign-up. Turn it **on** if fake or mistyped addresses start appearing in your list.",
+    caution:
+      "When on, it needs email sending (Brevo) set up; without it, confirmation emails can't go out and sign-ups stay pending.",
+  },
+
   // ── Analytics ──────────────────────────────────────────────────────────────
   "analytics.product_activity_enabled": {
     what: "Records which products shoppers open and add to their bag, for the **Product activity** report (Sales → Product activity).",

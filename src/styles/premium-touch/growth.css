@@ -769,3 +769,12 @@
     flex: 1;
   }
 }
+
+/* small one-message pages (newsletter confirmed / unsubscribe) */
+.notice-page {
+  max-width: 40rem;
+  padding-block: 3rem 5rem;
+}
+.notice-page .lede {
+  margin-block: 0 1.5rem;
+}
