@@ -15,7 +15,8 @@
     "closeMenu": "মেনু বন্ধ করুন",
     "menu": "মেনু",
     "mobileNav": "মোবাইল",
-    "bag": "ব্যাগ, {count, plural, =0 {খালি} other {#টি পণ্য}}"
+    "bag": "ব্যাগ, {count, plural, =0 {খালি} other {#টি পণ্য}}",
+    "products": "পণ্য"
   },
   "footer": {
     "rights": "© {year} {store}। {tagline}",

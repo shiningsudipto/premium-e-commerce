@@ -15,7 +15,8 @@
     "closeMenu": "Close menu",
     "menu": "Menu",
     "mobileNav": "Mobile",
-    "bag": "Bag, {count, plural, =0 {empty} one {# item} other {# items}}"
+    "bag": "Bag, {count, plural, =0 {empty} one {# item} other {# items}}",
+    "products": "Products"
   },
   "footer": {
     "rights": "© {year} {store}. {tagline}",

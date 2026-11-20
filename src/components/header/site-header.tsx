@@ -43,7 +43,12 @@ export function AnnouncementBar({ messages }: { messages: string[] }) {
 // Header (design §header): drawer button and logo, the "main" menu from the admin, and search,
 // account and bag. Navigation is cached with the menu; account and bag stream per request.
 export async function SiteHeader({ market, config }: { market: MarketRef; config: StoreConfig }) {
-  const [menu, t] = await Promise.all([getMenu(market, "main"), getTranslations("header")]);
+  const [adminMenu, t] = await Promise.all([getMenu(market, "main"), getTranslations("header")]);
+  // "Products" (the whole catalog) always leads the menu; skipped if the admin menu already has it
+  const productsHref = href(market, "/products");
+  const menu = adminMenu.some((link) => link.href === productsHref)
+    ? adminMenu
+    : [{ label: t("products"), href: productsHref, children: [] }, ...adminMenu];
   const footerLinks = siteContent(market.locale).drawerLinks.map((l) => ({
     label: l.label,
     href: href(market, l.path),
