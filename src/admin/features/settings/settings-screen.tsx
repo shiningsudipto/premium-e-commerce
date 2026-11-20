@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { LockIcon, RotateCcwIcon, SearchIcon } from "lucide-react";
+import { InfoIcon, LockIcon, RotateCcwIcon, SearchIcon, XIcon } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -24,6 +24,8 @@ import { humanize, validate, type JsonSchema } from "../../components/json-schem
 import { formatDateTime } from "../../lib/format";
 import { notifyError, notifySaved } from "../../lib/notify";
 import { can } from "../../lib/permissions";
+import { HelpContent } from "./help-content";
+import { SETTING_HELP, type SettingHelp } from "./setting-help";
 
 type Setting = GetV1AdminSettingsApiResponse[number];
 type Scope = Setting["scopes"][number];
@@ -44,7 +46,7 @@ export function SettingsScreen() {
   const activeGroup = group ?? groups[0] ?? null;
   const query = search.trim().toLowerCase();
   const visible = (settings.data ?? []).filter((s) =>
-    query ? `${s.key} ${s.description}`.toLowerCase().includes(query) : s.group === activeGroup,
+    query ? searchText(s).includes(query) : s.group === activeGroup,
   );
 
   if (settings.error) {
@@ -109,6 +111,22 @@ export function SettingsScreen() {
   );
 }
 
+// what the search box looks through: the key, the short description and the help text
+function searchText(s: Setting) {
+  const help = SETTING_HELP[s.key];
+  return [s.key, s.description, help?.what, help?.why, ...(help?.effects ?? [])].join(" ").toLowerCase();
+}
+
+// The explanation behind a setting's info button: what it is, why to change it, what it does,
+// a recommended value and pitfalls.
+function SettingHelpPanel({ id, help, fallback }: { id: string; help: SettingHelp | undefined; fallback: string }) {
+  return (
+    <div id={id} className="mb-4 rounded-md border bg-muted/40 p-4 text-sm">
+      {help ? <HelpContent help={help} /> : <p>{fallback || "No further details for this setting yet."}</p>}
+    </div>
+  );
+}
+
 function storedAt(setting: Setting, ref: ScopeRef) {
   return setting.values.find((v) => v.scope === ref.scope && (v.scopeId ?? null) === (ref.scopeId ?? null));
 }
@@ -166,6 +184,8 @@ export function SettingCard({
   };
 
   const label = humanize(setting.key.slice(setting.group.length + 1) || setting.key);
+  const [helpOpen, setHelpOpen] = useState(false);
+  const helpId = `setting-help-${setting.key.replace(/\W+/g, "-")}`;
 
   return (
     <section
@@ -177,6 +197,21 @@ export function SettingCard({
         <div className="min-w-0 space-y-1">
           <h2 id={`setting-${setting.key}`} className="flex items-center gap-2 font-medium">
             {label}
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="size-6 text-muted-foreground"
+              aria-expanded={helpOpen}
+              aria-controls={helpId}
+              aria-label={
+                helpOpen ? `Hide details about ${label}` : `About ${label}: what it does and recommended value`
+              }
+              title={helpOpen ? "Hide details" : "What is this?"}
+              onClick={() => setHelpOpen((o) => !o)}
+            >
+              {helpOpen ? <XIcon /> : <InfoIcon />}
+            </Button>
             {setting.secret && (
               <Badge variant="outline" className="gap-1">
                 <LockIcon className="size-3" /> Secret
@@ -202,6 +237,8 @@ export function SettingCard({
           </Select>
         )}
       </header>
+
+      {helpOpen && <SettingHelpPanel id={helpId} help={SETTING_HELP[setting.key]} fallback={setting.description} />}
 
       <form
         className="space-y-4"

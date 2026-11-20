@@ -21,7 +21,7 @@ import { guideToMarkdown, parseInline, type Guide, type GuideBlock } from "./gui
 // A guide as a console page: contents, sections, and ways to share it (link for staff, Markdown
 // to paste or send, print / save as PDF for anyone).
 
-function Inline({ text }: { text: string }) {
+export function Inline({ text }: { text: string }) {
   return (
     <>
       {parseInline(text).map((part, i) => {

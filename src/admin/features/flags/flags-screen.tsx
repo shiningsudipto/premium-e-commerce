@@ -2,10 +2,10 @@
 
 import type { ColumnDef } from "@tanstack/react-table";
 import { useState } from "react";
-import { PlusIcon } from "lucide-react";
+import { InfoIcon, PlusIcon, XIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Popover, PopoverContent, PopoverTitle, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -15,22 +15,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  Field,
-  FieldDescription,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-  FieldLegend,
-  FieldSet,
-} from "@/components/ui/field";
+import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { fieldErrors } from "../../store/api-errors";
 import {
-  useGetV1AdminChannelsQuery,
   useGetV1AdminFlagsQuery,
-  useGetV1AdminMarketsQuery,
   usePutV1AdminFlagsKeyMutation,
   type GetV1AdminFlagsApiResponse,
   type PutV1AdminFlagsKeyApiArg,
@@ -38,8 +28,10 @@ import {
 import { useCan } from "../../components/can";
 import { PageHeader } from "../../components/console-shell";
 import { DataTable } from "../../components/data-table/data-table";
-import { SchemaField } from "../../components/json-schema-form/schema-field";
 import { formatDateTime } from "../../lib/format";
+import { HelpContent } from "../settings/help-content";
+import { FlagEditor } from "./flag-editor";
+import { FLAG_BASICS, FLAG_HELP, type FlagHelp } from "./flag-help";
 import { notifyError, notifySaved } from "../../lib/notify";
 
 type Flag = GetV1AdminFlagsApiResponse[number];
@@ -77,8 +69,12 @@ export function FlagsScreen() {
       header: "Flag",
       cell: ({ row: { original: f } }) => (
         <div className="max-w-md space-y-0.5 whitespace-normal">
-          <p className="font-mono text-xs font-medium">{f.key}</p>
-          <p className="text-xs text-muted-foreground">{f.description}</p>
+          <div className="flex flex-wrap items-center gap-1.5">
+            <p className="font-mono text-xs font-medium">{f.key}</p>
+            <FlagStatus help={FLAG_HELP[f.key]} />
+            <FlagInfo flagKey={f.key} help={FLAG_HELP[f.key]} description={f.description} />
+          </div>
+          <p className="text-xs text-muted-foreground">{FLAG_HELP[f.key]?.what ?? f.description}</p>
         </div>
       ),
     },
@@ -118,6 +114,7 @@ export function FlagsScreen() {
         description="Turn features on per market, channel, customer group or a share of shoppers. The kill switch turns a flag off everywhere, whatever its targeting."
         actions={canWrite && <NewFlagDialog existing={flags.data?.map((f) => f.key) ?? []} />}
       />
+      <FlagBasics />
       <DataTable
         tableKey="flags"
         columns={columns}
@@ -129,115 +126,6 @@ export function FlagsScreen() {
         emptyMessage="No flags yet."
       />
     </>
-  );
-}
-
-function FlagEditor({ flag, readOnly }: { flag: Flag; readOnly: boolean }) {
-  const markets = useGetV1AdminMarketsQuery({});
-  const channels = useGetV1AdminChannelsQuery({});
-  const [targeting, setTargeting] = useState<Targeting>(() => (flag.targeting as Targeting) ?? {});
-  const [killSwitch, setKillSwitch] = useState(flag.killSwitch);
-  const [owner, setOwner] = useState(flag.owner ?? "");
-  const [saveFlag, save] = usePutV1AdminFlagsKeyMutation();
-
-  const toggle = (list: "markets" | "channels", handle: string, on: boolean) =>
-    setTargeting((t) => {
-      const current = t[list] ?? [];
-      const next = on ? [...current, handle] : current.filter((h) => h !== handle);
-      return { ...t, [list]: next.length ? next : undefined };
-    });
-
-  return (
-    <form
-      className="grid gap-6 md:grid-cols-2"
-      onSubmit={(e) => {
-        e.preventDefault();
-        saveFlag({
-          key: flag.key,
-          body: { targeting, killSwitch, owner: owner.trim() || null, version: flag.version },
-        })
-          .unwrap()
-          .then(() => notifySaved(`${flag.key} targeting saved`), notifyError);
-      }}
-    >
-      <FieldGroup>
-        {(["markets", "channels"] as const).map((list) => {
-          const options = (list === "markets" ? markets.data : channels.data) ?? [];
-          return (
-            <FieldSet key={list}>
-              <FieldLegend variant="label">{list === "markets" ? "Markets" : "Channels"}</FieldLegend>
-              <FieldDescription>None selected means all {list}.</FieldDescription>
-              <div className="flex flex-wrap gap-x-5 gap-y-2">
-                {options.map((o) => (
-                  <Field key={o.handle} orientation="horizontal" className="w-auto">
-                    <Checkbox
-                      id={`${flag.key}-${list}-${o.handle}`}
-                      checked={targeting[list]?.includes(o.handle) ?? false}
-                      disabled={readOnly}
-                      onCheckedChange={(on) => toggle(list, o.handle, !!on)}
-                    />
-                    <FieldLabel htmlFor={`${flag.key}-${list}-${o.handle}`} className="font-normal">
-                      {o.name}
-                    </FieldLabel>
-                  </Field>
-                ))}
-              </div>
-            </FieldSet>
-          );
-        })}
-        <SchemaField
-          schema={{ anyOf: [{ type: "number", minimum: 0, maximum: 100 }, { type: "null" }] }}
-          label="Share of shoppers (%)"
-          description="A stable share: the same shopper keeps the same answer."
-          value={targeting.percentage ?? null}
-          disabled={readOnly}
-          onChange={(v) => setTargeting((t) => ({ ...t, percentage: v === null ? undefined : (v as number) }))}
-        />
-      </FieldGroup>
-      <FieldGroup>
-        <SchemaField
-          schema={{ type: "array", items: { type: "string" } }}
-          label="Customer groups"
-          value={targeting.groups ?? []}
-          disabled={readOnly}
-          onChange={(v) =>
-            setTargeting((t) => ({ ...t, groups: (v as string[]).length ? (v as string[]) : undefined }))
-          }
-        />
-        <SchemaField
-          schema={{ type: "array", items: { type: "string" } }}
-          label="Customer IDs"
-          value={targeting.customerIds ?? []}
-          disabled={readOnly}
-          onChange={(v) =>
-            setTargeting((t) => ({ ...t, customerIds: (v as string[]).length ? (v as string[]) : undefined }))
-          }
-        />
-        <Field>
-          <FieldLabel htmlFor={`${flag.key}-owner`}>Owner</FieldLabel>
-          <Input
-            id={`${flag.key}-owner`}
-            value={owner}
-            disabled={readOnly}
-            onChange={(e) => setOwner(e.target.value)}
-          />
-        </Field>
-        <Field orientation="horizontal">
-          <Switch id={`${flag.key}-kill`} checked={killSwitch} disabled={readOnly} onCheckedChange={setKillSwitch} />
-          <div>
-            <FieldLabel htmlFor={`${flag.key}-kill`}>Kill switch</FieldLabel>
-            <FieldDescription>Off for everyone immediately, whatever the targeting says.</FieldDescription>
-          </div>
-        </Field>
-        {!readOnly && (
-          <div className="flex justify-end">
-            <Button type="submit" size="sm" disabled={save.isLoading}>
-              {save.isLoading ? "Saving…" : "Save targeting"}
-            </Button>
-          </div>
-        )}
-      </FieldGroup>
-    </form>
   );
 }
 
@@ -318,5 +206,99 @@ function NewFlagDialog({ existing }: { existing: string[] }) {
         </form>
       </DialogContent>
     </Dialog>
+  );
+}
+
+// "Live", "Partly built" or "Not built yet", so nobody expects a placeholder flag to do anything
+function FlagStatus({ help }: { help: FlagHelp | undefined }) {
+  if (!help)
+    return (
+      <Badge variant="outline" className="h-5 px-1.5 text-[10px] font-normal">
+        Custom
+      </Badge>
+    );
+  if (help.status === "live")
+    return (
+      <Badge
+        variant="outline"
+        className="h-5 border-emerald-500/40 bg-emerald-500/10 px-1.5 text-[10px] font-normal text-emerald-700 dark:text-emerald-300"
+      >
+        Live
+      </Badge>
+    );
+  if (help.status === "partial")
+    return (
+      <Badge
+        variant="outline"
+        className="h-5 border-amber-500/40 bg-amber-500/10 px-1.5 text-[10px] font-normal text-amber-800 dark:text-amber-300"
+      >
+        Partly built
+      </Badge>
+    );
+  return (
+    <Badge variant="outline" className="h-5 px-1.5 text-[10px] font-normal text-muted-foreground">
+      Not built yet
+    </Badge>
+  );
+}
+
+// The flag's explanation in a popover: what it is, why, what it does, recommendation, pitfalls.
+function FlagInfo({
+  flagKey,
+  help,
+  description,
+}: {
+  flagKey: string;
+  help: FlagHelp | undefined;
+  description: string | null;
+}) {
+  const [open, setOpen] = useState(false);
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger
+        render={
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="size-6 text-muted-foreground"
+            aria-label={`About the ${flagKey} flag: what it does and recommended setting`}
+            title="What is this?"
+          >
+            {open ? <XIcon /> : <InfoIcon />}
+          </Button>
+        }
+      />
+      <PopoverContent align="start" className="max-h-[70vh] w-[28rem] max-w-[calc(100vw-2rem)] overflow-y-auto">
+        <PopoverTitle className="mb-2 font-mono text-sm">{flagKey}</PopoverTitle>
+        {help ? (
+          <HelpContent help={help} />
+        ) : (
+          <p className="text-sm">
+            {description || "A custom flag created in admin."} It only has an effect where your developers check it in
+            code.
+          </p>
+        )}
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+// A short explainer of how flags work, above the list.
+function FlagBasics() {
+  return (
+    <details className="mb-4 rounded-lg border bg-card p-4 text-sm [&_summary::-webkit-details-marker]:hidden">
+      <summary className="flex cursor-pointer list-none items-center gap-2 font-medium">
+        <InfoIcon className="size-4 text-muted-foreground" aria-hidden /> How feature flags work
+      </summary>
+      <dl className="mt-3 grid gap-3 md:grid-cols-2">
+        {FLAG_BASICS.map((b) => (
+          <div key={b.title}>
+            <dt className="font-medium">{b.title}</dt>
+            <dd className="text-muted-foreground">{b.text}</dd>
+          </div>
+        ))}
+      </dl>
+    </details>
   );
 }

@@ -22,6 +22,7 @@ import {
   type Stock,
   type VariantLike,
 } from "./variants";
+import { trackProductView } from "../analytics/track";
 
 type Price = { currency: string; amountMinor: number; compareAtMinor: number | null } | null;
 type Variant = VariantLike & { title: string; sku: string; price: Price };
@@ -76,6 +77,11 @@ export function ProductView({
   const [addToBag, { isLoading: pending }] = useAddToBagMutation();
   const bagErrorMessage = useBagErrorMessage();
   const [message, setMessage] = useState<{ error: boolean; text: string } | null>(null);
+
+  // counts as a product view in the admin's Product activity report (only while tracking is on)
+  useEffect(() => {
+    trackProductView(market, product.id);
+  }, [market, product.id]);
 
   useEffect(() => {
     const controller = new AbortController();

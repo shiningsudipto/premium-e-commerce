@@ -36,6 +36,7 @@ import {
   SignpostIcon,
   SlidersHorizontalIcon,
   TicketPercentIcon,
+  TrendingUpIcon,
   TruckIcon,
   Undo2Icon,
   UsersIcon,
@@ -73,6 +74,12 @@ export const NAV: { heading: string; items: NavItem[] }[] = [
       { href: "/admin/segments", label: "Segments", icon: UsersRoundIcon, permission: "customers.read" },
       { href: "/admin/returns", label: "Returns", icon: Undo2Icon, permission: "orders.read" },
       { href: "/admin/reports", label: "Reports", icon: ChartColumnIcon, permission: "analytics.read" },
+      {
+        href: "/admin/reports/activity",
+        label: "Product activity",
+        icon: TrendingUpIcon,
+        permission: ["analytics.read", "analytics.catalog.read"],
+      },
     ],
   },
   {
@@ -169,15 +176,23 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
       </div>
     );
   }
+  const sections = visibleNav(me.data?.permissions);
+  // the most specific match wins, so /admin/reports/activity doesn't also light up Reports
+  const activeHref = sections
+    .flatMap((s) => s.items.map((i) => i.href))
+    .filter((href) =>
+      href === "/admin" ? pathname === "/admin" : pathname === href || pathname.startsWith(`${href}/`),
+    )
+    .sort((a, b) => b.length - a.length)[0];
   return (
     <nav aria-label="Main" className="space-y-6 px-3">
-      {visibleNav(me.data?.permissions).map((section) => (
+      {sections.map((section) => (
         <div key={section.heading} className="space-y-1">
           <p className="text-sidebar-foreground/50 px-2 font-mono text-[10px] tracking-[0.2em] uppercase">
             {section.heading}
           </p>
           {section.items.map(({ href, label, icon: Icon }) => {
-            const active = href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);
+            const active = href === activeHref;
             return (
               <Link
                 key={href}

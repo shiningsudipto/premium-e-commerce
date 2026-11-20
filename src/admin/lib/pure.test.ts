@@ -25,6 +25,7 @@ describe("permission gating", () => {
       "/admin/segments",
       "/admin/returns",
       "/admin/reports",
+      "/admin/reports/activity",
       "/admin/products",
       "/admin/categories",
       "/admin/collections",

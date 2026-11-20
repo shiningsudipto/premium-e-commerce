@@ -9,6 +9,7 @@ import {
 import { useTranslations } from "next-intl";
 import type { paths } from "../../api/schema";
 import type { MarketRef } from "../../lib/market";
+import { trackAddToCart } from "../analytics/track";
 import type { Bag } from "./types";
 
 // The shopper's bag, managed in the browser with RTK Query. Calls go straight to the API with the
@@ -180,7 +181,11 @@ export const bagApi = createApi({
             keepalive: true,
           });
           if (updated.error) return fail(updated.error);
-          return { data: updated.data as Bag };
+          const bag = updated.data as Bag;
+          // Product activity report (sent only while tracking is on)
+          const line = bag.lines.find((l) => l.variantId === variant);
+          if (line) trackAddToCart((_api.extra as BagExtra).market, line.productId, variant, quantity);
+          return { data: bag };
         }),
       onQueryStarted: (_arg, api) => settle(api),
     }),

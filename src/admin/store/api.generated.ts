@@ -1758,6 +1758,48 @@ const injectedRtkApi = api
         }),
         providesTags: ["Promotions"],
       }),
+      getV1AdminReportsProductActivityProductIdCustomers: build.query<
+        GetV1AdminReportsProductActivityProductIdCustomersApiResponse,
+        GetV1AdminReportsProductActivityProductIdCustomersApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/v1/admin/reports/product-activity/${queryArg.productId}/customers`,
+          headers: {
+            "x-market": queryArg["x-market"],
+            "x-locale": queryArg["x-locale"],
+          },
+          params: {
+            from: queryArg["from"],
+            to: queryArg.to,
+          },
+        }),
+        providesTags: ["Reports"],
+      }),
+      getV1AdminReportsProductActivity: build.query<
+        GetV1AdminReportsProductActivityApiResponse,
+        GetV1AdminReportsProductActivityApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/v1/admin/reports/product-activity`,
+          headers: {
+            "x-market": queryArg["x-market"],
+            "x-locale": queryArg["x-locale"],
+          },
+          params: {
+            from: queryArg["from"],
+            to: queryArg.to,
+            q: queryArg.q,
+            categoryId: queryArg.categoryId,
+            collectionId: queryArg.collectionId,
+            signal: queryArg.signal,
+            minViews: queryArg.minViews,
+            sort: queryArg.sort,
+            limit: queryArg.limit,
+            format: queryArg.format,
+          },
+        }),
+        providesTags: ["Reports"],
+      }),
       getV1AdminReportsSales: build.query<
         GetV1AdminReportsSalesApiResponse,
         GetV1AdminReportsSalesApiArg
@@ -7145,6 +7187,75 @@ export type GetV1AdminPromotionsIdPerformanceApiArg = {
   id: string;
   from?: string;
   to?: string;
+  "x-market"?: string;
+  "x-locale"?: string;
+};
+export type GetV1AdminReportsProductActivityProductIdCustomersApiResponse =
+  /** status 200 OK */ {
+    available: boolean;
+    items: {
+      customerId: string;
+      name: string | null;
+      email: string | null;
+      phone: string | null;
+      deleted: boolean;
+      views: number;
+      adds: number;
+      addedUnits: number;
+      lastAt: string;
+    }[];
+  };
+export type GetV1AdminReportsProductActivityProductIdCustomersApiArg = {
+  productId: string;
+  from?: string;
+  to?: string;
+  "x-market"?: string;
+  "x-locale"?: string;
+};
+export type GetV1AdminReportsProductActivityApiResponse = /** status 200 OK */ {
+  enabled: boolean;
+  available: boolean;
+  totals: {
+    views: number;
+    viewers: number;
+    adds: number;
+    adders: number;
+    unitsSold: number;
+    addRate: number | null;
+  };
+  matched: number;
+  items: {
+    productId: string;
+    title: string;
+    handle: string;
+    status: string;
+    imageUrl: string | null;
+    views: number;
+    viewers: number;
+    adds: number;
+    adders: number;
+    addedUnits: number;
+    customers: number;
+    unitsSold: number;
+    available: number | null;
+    addRate: number | null;
+    signals: (
+      "popular" | "viewed_not_added" | "added_not_bought" | "popular_low_stock"
+    )[];
+  }[];
+};
+export type GetV1AdminReportsProductActivityApiArg = {
+  from?: string;
+  to?: string;
+  q?: string;
+  categoryId?: string;
+  collectionId?: string;
+  signal?:
+    "popular" | "viewed_not_added" | "added_not_bought" | "popular_low_stock";
+  minViews?: number;
+  sort?: "views" | "viewers" | "adds" | "addRate" | "unitsSold";
+  limit?: number;
+  format?: "json" | "csv";
   "x-market"?: string;
   "x-locale"?: string;
 };
@@ -14105,6 +14216,8 @@ export const {
   usePatchV1AdminPromotionsCodesIdMutation,
   usePostV1AdminPromotionsSimulateMutation,
   useGetV1AdminPromotionsIdPerformanceQuery,
+  useGetV1AdminReportsProductActivityProductIdCustomersQuery,
+  useGetV1AdminReportsProductActivityQuery,
   useGetV1AdminReportsSalesQuery,
   useGetV1AdminReportsProductsQuery,
   useGetV1AdminReportsCustomersQuery,

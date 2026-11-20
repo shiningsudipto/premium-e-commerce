@@ -2071,6 +2071,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/admin/reports/product-activity/{productId}/customers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Signed-in shoppers who viewed or added a product in the range, with contact details (needs customers.read) */
+        get: operations["get__v1_admin_reports_product_activity_productId_customers"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/admin/reports/product-activity": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Product views, add-to-bag and units sold per product, with filters and action hints (Catalog Managers too) */
+        get: operations["get__v1_admin_reports_product_activity"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/admin/reports/sales": {
         parameters: {
             query?: never;
@@ -7004,6 +7038,8 @@ export interface operations {
                         type: "page_view" | "product_view" | "add_to_cart" | "checkout_started" | "experiment_exposure" | "search" | "click";
                         path?: string;
                         productId?: string;
+                        variantId?: string;
+                        quantity?: number;
                         experiments?: {
                             [key: string]: string;
                         };
@@ -13230,6 +13266,129 @@ export interface operations {
                         discountMinor: number;
                         averageOrderMinor: number;
                         storeAverageOrderMinor: number;
+                    };
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    get__v1_admin_reports_product_activity_productId_customers: {
+        parameters: {
+            query?: {
+                from?: string;
+                to?: string;
+            };
+            header?: {
+                "x-market"?: string;
+                "x-locale"?: string;
+            };
+            path: {
+                productId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        available: boolean;
+                        items: {
+                            customerId: string;
+                            name: string | null;
+                            email: string | null;
+                            phone: string | null;
+                            deleted: boolean;
+                            views: number;
+                            adds: number;
+                            addedUnits: number;
+                            /** Format: date-time */
+                            lastAt: string;
+                        }[];
+                    };
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    get__v1_admin_reports_product_activity: {
+        parameters: {
+            query?: {
+                from?: string;
+                to?: string;
+                q?: string;
+                categoryId?: string;
+                collectionId?: string;
+                signal?: "popular" | "viewed_not_added" | "added_not_bought" | "popular_low_stock";
+                minViews?: number;
+                sort?: "views" | "viewers" | "adds" | "addRate" | "unitsSold";
+                limit?: number;
+                format?: "json" | "csv";
+            };
+            header?: {
+                "x-market"?: string;
+                "x-locale"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        enabled: boolean;
+                        available: boolean;
+                        totals: {
+                            views: number;
+                            viewers: number;
+                            adds: number;
+                            adders: number;
+                            unitsSold: number;
+                            addRate: number | null;
+                        };
+                        matched: number;
+                        items: {
+                            productId: string;
+                            title: string;
+                            handle: string;
+                            status: string;
+                            imageUrl: string | null;
+                            views: number;
+                            viewers: number;
+                            adds: number;
+                            adders: number;
+                            addedUnits: number;
+                            customers: number;
+                            unitsSold: number;
+                            available: number | null;
+                            addRate: number | null;
+                            signals: ("popular" | "viewed_not_added" | "added_not_bought" | "popular_low_stock")[];
+                        }[];
                     };
                 };
             };
@@ -26262,6 +26421,7 @@ export interface operations {
                         storeName: string;
                         supportEmail: string;
                         guestCheckout: boolean;
+                        productActivity: boolean;
                         market: {
                             handle: string;
                             currency: string;
