@@ -3647,6 +3647,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/admin/media/upload": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Upload a file (multipart field "file") and add it to the media library */
+        post: operations["post__v1_admin_media_upload"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/admin/media/upload-url": {
         parameters: {
             query?: never;
@@ -22463,6 +22480,60 @@ export interface operations {
                         locales: string[];
                         countries: string[];
                     }[];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    post__v1_admin_media_upload: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-market"?: string;
+                "x-locale"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    alt?: string;
+                    tags?: string;
+                    /** Format: binary */
+                    file: string;
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        id: string;
+                        key: string;
+                        url: string;
+                        mimeType: string;
+                        sizeBytes: number;
+                        width: number | null;
+                        height: number | null;
+                        alt: string | null;
+                        focalPoint: unknown;
+                        tags: string[];
+                        /** Format: date-time */
+                        createdAt: string;
+                    };
                 };
             };
             /** @description Error */

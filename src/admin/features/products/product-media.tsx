@@ -16,9 +16,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { errorCode } from "../../store/api-errors";
 import {
   useGetV1AdminMediaQuery,
-  usePostV1AdminMediaMutation,
-  usePostV1AdminMediaUploadUrlMutation,
+  usePostV1AdminMediaUploadMutation,
   usePutV1AdminProductsIdMediaMutation,
+  type PostV1AdminMediaUploadApiArg,
 } from "../../store/api.generated";
 import { useCan } from "../../components/can";
 import { useCursorPages } from "../../components/data-table/use-cursor-pages";
@@ -42,26 +42,8 @@ function Thumb({ url, alt, mimeType }: { url: string; alt: string | null; mimeTy
   return <img src={url} alt={alt ?? ""} className="size-full object-cover" />;
 }
 
-// Image dimensions for the media record, read in the browser before upload.
-function imageSize(file: File): Promise<{ width?: number; height?: number }> {
-  if (!file.type.startsWith("image/") || file.type === "image/svg+xml") return Promise.resolve({});
-  return new Promise((resolve) => {
-    const img = new Image();
-    const url = URL.createObjectURL(file);
-    img.onload = () => {
-      resolve({ width: img.naturalWidth, height: img.naturalHeight });
-      URL.revokeObjectURL(url);
-    };
-    img.onerror = () => {
-      resolve({});
-      URL.revokeObjectURL(url);
-    };
-    img.src = url;
-  });
-}
-
 // Product media (spec §3.9): ordered, the first one is the main image. Files upload straight to
-// storage through a signed URL; without storage configured, media already in the library can
+// the API, which stores them (Cloudinary or S3) and adds them to the library; without storage configured, media already in the library can
 // still be added and reordered.
 export function MediaCard({ product }: { product: Product }) {
   const canWrite = useCan("products.write");
@@ -83,8 +65,7 @@ export function MediaCard({ product }: { product: Product }) {
   const [storageMissing, setStorageMissing] = useState(false);
   const [uploading, setUploading] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
-  const [getUploadUrl] = usePostV1AdminMediaUploadUrlMutation();
-  const [recordMedia] = usePostV1AdminMediaMutation();
+  const [uploadMedia] = usePostV1AdminMediaUploadMutation();
   const [saveMedia, save] = usePutV1AdminProductsIdMediaMutation();
 
   const add = (item: Item) => {
@@ -94,15 +75,10 @@ export function MediaCard({ product }: { product: Product }) {
   async function upload(file: File) {
     setUploading(true);
     try {
-      const target = await getUploadUrl({
-        body: { filename: file.name, mimeType: file.type, sizeBytes: file.size },
-      }).unwrap();
-      // the file goes to storage, not to the API
-      const put = await fetch(target.uploadUrl, { method: "PUT", headers: target.headers, body: file });
-      if (!put.ok) throw new Error(`Upload failed (${put.status})`);
-      const media = await recordMedia({
-        body: { key: target.key, mimeType: file.type, sizeBytes: file.size, ...(await imageSize(file)) },
-      }).unwrap();
+      const form = new FormData();
+      form.append("file", file);
+      // a multipart request: the generated type lists its fields, but the body sent is FormData
+      const media = await uploadMedia({ body: form as unknown as PostV1AdminMediaUploadApiArg["body"] }).unwrap();
       add({ mediaId: media.id, url: media.url, alt: media.alt, mimeType: media.mimeType, variantIds: [] });
       notifySaved(`${file.name} uploaded. Save media to attach it.`);
     } catch (error) {

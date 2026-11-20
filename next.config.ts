@@ -8,6 +8,10 @@ const nextConfig: NextConfig = {
     agentFeedback: true,
   },
   cacheComponents: true,
+  // product and CMS images uploaded in admin are stored on Cloudinary
+  images: {
+    remotePatterns: [{ protocol: "https", hostname: "res.cloudinary.com", pathname: "/**" }],
+  },
   partialPrefetching: true,
   turbopack: {
     rules: {

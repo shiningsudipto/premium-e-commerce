@@ -3000,6 +3000,21 @@ const injectedRtkApi = api
         }),
         invalidatesTags: ["Markets, channels & locations"],
       }),
+      postV1AdminMediaUpload: build.mutation<
+        PostV1AdminMediaUploadApiResponse,
+        PostV1AdminMediaUploadApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/v1/admin/media/upload`,
+          method: "POST",
+          body: queryArg.body,
+          headers: {
+            "x-market": queryArg["x-market"],
+            "x-locale": queryArg["x-locale"],
+          },
+        }),
+        invalidatesTags: ["Media"],
+      }),
       postV1AdminMediaUploadUrl: build.mutation<
         PostV1AdminMediaUploadUrlApiResponse,
         PostV1AdminMediaUploadUrlApiArg
@@ -10496,6 +10511,28 @@ export type PutV1AdminLocationsIdApiArg = {
     isActive?: boolean;
   };
 };
+export type PostV1AdminMediaUploadApiResponse = /** status 201 OK */ {
+  id: string;
+  key: string;
+  url: string;
+  mimeType: string;
+  sizeBytes: number;
+  width: number | null;
+  height: number | null;
+  alt: string | null;
+  focalPoint: any;
+  tags: string[];
+  createdAt: string;
+};
+export type PostV1AdminMediaUploadApiArg = {
+  "x-market"?: string;
+  "x-locale"?: string;
+  body: {
+    alt?: string;
+    tags?: string;
+    file: Blob;
+  };
+};
 export type PostV1AdminMediaUploadUrlApiResponse = /** status 200 OK */ {
   key: string;
   uploadUrl: string;
@@ -14149,6 +14186,7 @@ export const {
   useGetV1AdminLocationsQuery,
   usePostV1AdminLocationsMutation,
   usePutV1AdminLocationsIdMutation,
+  usePostV1AdminMediaUploadMutation,
   usePostV1AdminMediaUploadUrlMutation,
   usePostV1AdminMediaMutation,
   useGetV1AdminMediaQuery,
