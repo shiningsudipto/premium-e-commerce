@@ -6,6 +6,8 @@ const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 const nextConfig: NextConfig = {
   experimental: {
     agentFeedback: true,
+    // records that this app is kept on Next.js security releases (set by `next upgrade --agent=security`)
+    agentUpgrade: "security",
   },
   cacheComponents: true,
   // product and CMS images uploaded in admin are stored on Cloudinary

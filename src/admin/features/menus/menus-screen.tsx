@@ -339,7 +339,7 @@ function ItemRow(props: ListProps & { item: MenuItem; path: Path; siblings: numb
             className="h-8"
             onChange={(e) => update({ label: e.target.value })}
           />
-          <Select value={item.type} onValueChange={(v) => v && update({ type: v as MenuItemType })}>
+          <Select value={item.type} onValueChange={(v) => v && v !== item.type && update({ type: v as MenuItemType, ref: "", url: "" })}>
             <SelectTrigger aria-label="Link type" className="h-8 w-full" size="sm">
               <SelectValue>{TYPE_LABELS[item.type]}</SelectValue>
             </SelectTrigger>
