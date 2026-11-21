@@ -8,6 +8,7 @@ import {
   refundTotalMinor,
   refundableMinor,
   remainingToFulfill,
+  statusEffects,
   type Order,
   type OrderLine,
   type Payment,
@@ -56,8 +57,12 @@ const order = (over: Partial<Order> = {}) =>
     taxInclusive: true,
     payments: [payment({ status: "CAPTURED", capturedMinor: 300_00 })],
     lines: [line()],
+    fulfillments: [],
     ...over,
   }) as Order;
+
+const shipment = (status: Order["fulfillments"][number]["status"], id = "f1") =>
+  ({ id, status }) as Order["fulfillments"][number];
 
 describe("refund math", () => {
   it("splits a line pro rata, adding tax only when prices exclude it", () => {
@@ -127,6 +132,41 @@ describe("order actions", () => {
     expect(nextFulfillmentStatuses("PENDING")).toEqual(["PICKING", "PACKED", "SHIPPED"]);
     expect(nextFulfillmentStatuses("FAILED_DELIVERY")).toEqual(["RETURNED_TO_SENDER", "SHIPPED"]);
     expect(nextFulfillmentStatuses("DELIVERED")).toEqual([]);
+  });
+});
+
+describe("setting a status by hand", () => {
+  const cod = (over: Partial<Order> = {}) =>
+    order({ status: "PENDING_PAYMENT", currency: "BDT", payments: [payment()], ...over } as Partial<Order>);
+
+  it("says what going forward records", () => {
+    const effects = statusEffects(cod(), "COMPLETED");
+    expect(effects).toHaveLength(2);
+    expect(effects[0]).toMatch(/payment is recorded as received/);
+    expect(effects[1]).toBe("The 3 items not shipped yet go into a new shipment, marked delivered.");
+    expect(statusEffects(cod(), "SHIPPING")).toEqual(["The 3 items not shipped yet go into a new shipment, marked shipped."]);
+    expect(statusEffects(cod(), "FULFILLED")).toEqual([
+      "The 3 items not shipped yet go into a new shipment, marked packed, not sent yet.",
+    ]);
+    expect(statusEffects(cod(), "PAID")[0]).toMatch(/payment is recorded as received/);
+  });
+
+  it("moves existing shipments along and skips what's already done", () => {
+    const packed = cod({
+      status: "FULFILLED",
+      lines: [line({ fulfilledQuantity: 3 })],
+      fulfillments: [shipment("PACKED"), shipment("DELIVERED", "f2")],
+    });
+    expect(statusEffects(packed, "SHIPPING")).toEqual(["1 existing shipment is marked shipped."]);
+    // already paid: nothing to record
+    expect(statusEffects(order({ status: "PAID" }), "PROCESSING")).toEqual([]);
+  });
+
+  it("going back only changes the status; hold and cancel explain themselves", () => {
+    const shipping = cod({ status: "SHIPPING", lines: [line({ fulfilledQuantity: 3 })], fulfillments: [shipment("SHIPPED")] });
+    expect(statusEffects(shipping, "PROCESSING")).toEqual([]);
+    expect(statusEffects(shipping, "ON_HOLD")).toEqual(["It goes back to shipping when you release the hold."]);
+    expect(statusEffects(shipping, "CANCELLED")[0]).toMatch(/payments not yet received are voided/);
   });
 });
 

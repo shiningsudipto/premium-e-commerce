@@ -5,7 +5,14 @@ import { useCallback, useMemo, useSyncExternalStore } from "react";
 
 export type FilterDef =
   | { key: string; label: string; type: "text"; placeholder?: string }
-  | { key: string; label: string; type: "select"; options: { value: string; label: string }[] };
+  | {
+      key: string;
+      label: string;
+      type: "select";
+      options: { value: string; label: string; description?: string }[];
+      /** Use the console Dropdown (with a search box) instead of the plain select. */
+      dropdown?: boolean;
+    };
 
 // Filter values live in the URL, so a filtered list can be bookmarked, shared and reloaded.
 export function useTableFilters(filters: FilterDef[]) {

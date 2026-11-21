@@ -4093,6 +4093,57 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/admin/orders/{id}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Set the order's status directly (staff override) */
+        post: operations["post__v1_admin_orders_id_status"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/admin/orders/{id}/processing": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Start processing the order (confirmed, being prepared) */
+        post: operations["post__v1_admin_orders_id_processing"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/admin/orders/{id}/shipping": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Mark a fulfilled order as shipping (unsent shipments are marked shipped) */
+        post: operations["post__v1_admin_orders_id_shipping"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/admin/orders/{id}/hold": {
         parameters: {
             query?: never;
@@ -4136,7 +4187,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Mark a delivered order completed */
+        /** Mark a delivered, paid order completed (shown as Fulfilled); happens automatically when both are true */
         post: operations["post__v1_admin_orders_id_complete"];
         delete?: never;
         options?: never;
@@ -23757,7 +23808,7 @@ export interface operations {
             query?: {
                 cursor?: string;
                 limit?: number;
-                status?: "DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED";
+                status?: "DRAFT" | "PENDING_PAYMENT" | "PAID" | "PROCESSING" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "SHIPPING" | "DELIVERED" | "COMPLETED" | "CANCELLED";
                 q?: string;
                 customerId?: string;
                 from?: string;
@@ -23784,7 +23835,7 @@ export interface operations {
                             number: number;
                             displayNumber: string;
                             /** @enum {string} */
-                            status: "DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED";
+                            status: "DRAFT" | "PENDING_PAYMENT" | "PAID" | "PROCESSING" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "SHIPPING" | "DELIVERED" | "COMPLETED" | "CANCELLED";
                             email: string;
                             currency: string;
                             totalMinor: number;
@@ -23836,8 +23887,8 @@ export interface operations {
                         number: number;
                         displayNumber: string;
                         /** @enum {string} */
-                        status: "DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED";
-                        holdPreviousStatus: ("DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED") | null;
+                        status: "DRAFT" | "PENDING_PAYMENT" | "PAID" | "PROCESSING" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "SHIPPING" | "DELIVERED" | "COMPLETED" | "CANCELLED";
+                        holdPreviousStatus: ("DRAFT" | "PENDING_PAYMENT" | "PAID" | "PROCESSING" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "SHIPPING" | "DELIVERED" | "COMPLETED" | "CANCELLED") | null;
                         customerId: string | null;
                         customer: {
                             id: string;
@@ -24039,8 +24090,8 @@ export interface operations {
                         number: number;
                         displayNumber: string;
                         /** @enum {string} */
-                        status: "DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED";
-                        holdPreviousStatus: ("DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED") | null;
+                        status: "DRAFT" | "PENDING_PAYMENT" | "PAID" | "PROCESSING" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "SHIPPING" | "DELIVERED" | "COMPLETED" | "CANCELLED";
+                        holdPreviousStatus: ("DRAFT" | "PENDING_PAYMENT" | "PAID" | "PROCESSING" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "SHIPPING" | "DELIVERED" | "COMPLETED" | "CANCELLED") | null;
                         customerId: string | null;
                         customer: {
                             id: string;
@@ -24250,8 +24301,8 @@ export interface operations {
                         number: number;
                         displayNumber: string;
                         /** @enum {string} */
-                        status: "DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED";
-                        holdPreviousStatus: ("DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED") | null;
+                        status: "DRAFT" | "PENDING_PAYMENT" | "PAID" | "PROCESSING" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "SHIPPING" | "DELIVERED" | "COMPLETED" | "CANCELLED";
+                        holdPreviousStatus: ("DRAFT" | "PENDING_PAYMENT" | "PAID" | "PROCESSING" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "SHIPPING" | "DELIVERED" | "COMPLETED" | "CANCELLED") | null;
                         customerId: string | null;
                         customer: {
                             id: string;
@@ -24456,8 +24507,8 @@ export interface operations {
                         number: number;
                         displayNumber: string;
                         /** @enum {string} */
-                        status: "DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED";
-                        holdPreviousStatus: ("DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED") | null;
+                        status: "DRAFT" | "PENDING_PAYMENT" | "PAID" | "PROCESSING" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "SHIPPING" | "DELIVERED" | "COMPLETED" | "CANCELLED";
+                        holdPreviousStatus: ("DRAFT" | "PENDING_PAYMENT" | "PAID" | "PROCESSING" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "SHIPPING" | "DELIVERED" | "COMPLETED" | "CANCELLED") | null;
                         customerId: string | null;
                         customer: {
                             id: string;
@@ -24668,8 +24719,8 @@ export interface operations {
                         number: number;
                         displayNumber: string;
                         /** @enum {string} */
-                        status: "DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED";
-                        holdPreviousStatus: ("DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED") | null;
+                        status: "DRAFT" | "PENDING_PAYMENT" | "PAID" | "PROCESSING" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "SHIPPING" | "DELIVERED" | "COMPLETED" | "CANCELLED";
+                        holdPreviousStatus: ("DRAFT" | "PENDING_PAYMENT" | "PAID" | "PROCESSING" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "SHIPPING" | "DELIVERED" | "COMPLETED" | "CANCELLED") | null;
                         customerId: string | null;
                         customer: {
                             id: string;
@@ -24887,8 +24938,603 @@ export interface operations {
                         number: number;
                         displayNumber: string;
                         /** @enum {string} */
-                        status: "DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED";
-                        holdPreviousStatus: ("DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED") | null;
+                        status: "DRAFT" | "PENDING_PAYMENT" | "PAID" | "PROCESSING" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "SHIPPING" | "DELIVERED" | "COMPLETED" | "CANCELLED";
+                        holdPreviousStatus: ("DRAFT" | "PENDING_PAYMENT" | "PAID" | "PROCESSING" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "SHIPPING" | "DELIVERED" | "COMPLETED" | "CANCELLED") | null;
+                        customerId: string | null;
+                        customer: {
+                            id: string;
+                            email: string | null;
+                            firstName: string | null;
+                            lastName: string | null;
+                        } | null;
+                        email: string;
+                        currency: string;
+                        taxInclusive: boolean;
+                        subtotalMinor: number;
+                        discountMinor: number;
+                        shippingMinor: number;
+                        taxMinor: number;
+                        totalMinor: number;
+                        marketId: string;
+                        channelId: string;
+                        locale: string | null;
+                        shippingAddress: {
+                            firstName: string;
+                            lastName: string;
+                            company?: string | null;
+                            line1: string;
+                            line2?: string | null;
+                            city: string;
+                            region?: string | null;
+                            postalCode?: string | null;
+                            country: string;
+                            phone?: string | null;
+                        };
+                        billingAddress: {
+                            firstName: string;
+                            lastName: string;
+                            company?: string | null;
+                            line1: string;
+                            line2?: string | null;
+                            city: string;
+                            region?: string | null;
+                            postalCode?: string | null;
+                            country: string;
+                            phone?: string | null;
+                        };
+                        shippingMethod: {
+                            rateId?: string | null;
+                            name: string;
+                            amountMinor: number;
+                        };
+                        notes: string | null;
+                        tags: string[];
+                        customFields: unknown;
+                        cancelReason: string | null;
+                        cancelledAt: string | null;
+                        placedAt: string | null;
+                        deliveredAt: string | null;
+                        affiliateId: string | null;
+                        promotions: unknown;
+                        version: number;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        lines: {
+                            id: string;
+                            productId: string;
+                            variantId: string;
+                            titleSnapshot: string;
+                            variantTitle: string;
+                            skuSnapshot: string;
+                            unitPriceMinor: number;
+                            compareAtMinor: number | null;
+                            quantity: number;
+                            discountMinor: number;
+                            taxMinor: number;
+                            totalMinor: number;
+                            costMinor: number | null;
+                            marginMinor: number | null;
+                            customizations: unknown;
+                            fulfilledQuantity: number;
+                            refundedQuantity: number;
+                        }[];
+                        events: {
+                            id: string;
+                            type: string;
+                            message: string;
+                            data: unknown;
+                            actorType: string;
+                            actorId: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                        }[];
+                        payments: {
+                            id: string;
+                            provider: string;
+                            /** @enum {string} */
+                            status: "PENDING" | "AUTHORIZED" | "CAPTURED" | "PARTIALLY_REFUNDED" | "REFUNDED" | "FAILED" | "VOIDED";
+                            amountMinor: number;
+                            currency: string;
+                            capturedMinor: number;
+                            refundedMinor: number;
+                            providerRef: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                            transactions: {
+                                id: string;
+                                /** @enum {string} */
+                                kind: "AUTHORIZE" | "CAPTURE" | "VOID" | "REFUND";
+                                /** @enum {string} */
+                                status: "SUCCESS" | "FAILED" | "PENDING";
+                                amountMinor: number;
+                                providerRef: string | null;
+                                /** Format: date-time */
+                                createdAt: string;
+                            }[];
+                        }[];
+                        fulfillments: {
+                            id: string;
+                            locationId: string;
+                            /** @enum {string} */
+                            status: "PENDING" | "PICKING" | "PACKED" | "SHIPPED" | "IN_TRANSIT" | "DELIVERED" | "FAILED_DELIVERY" | "RETURNED_TO_SENDER";
+                            carrier: string | null;
+                            trackingNumber: string | null;
+                            trackingUrl: string | null;
+                            shippedAt: string | null;
+                            deliveredAt: string | null;
+                            version: number;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                            lines: {
+                                id: string;
+                                orderLineId: string;
+                                quantity: number;
+                            }[];
+                        }[];
+                        refunds: {
+                            id: string;
+                            paymentId: string | null;
+                            amountMinor: number;
+                            currency: string;
+                            /** @enum {string} */
+                            method: "ORIGINAL" | "STORE_CREDIT" | "MANUAL";
+                            reason: string | null;
+                            lines: {
+                                orderLineId: string;
+                                quantity: number;
+                                restock: boolean;
+                            }[];
+                            createdById: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                        }[];
+                    };
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    post__v1_admin_orders_id_status: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-market"?: string;
+                "x-locale"?: string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @enum {string} */
+                    status: "PENDING_PAYMENT" | "PAID" | "PROCESSING" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "SHIPPING" | "DELIVERED" | "COMPLETED" | "CANCELLED";
+                    reason?: string;
+                    /** @default false */
+                    refund?: boolean;
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        id: string;
+                        number: number;
+                        displayNumber: string;
+                        /** @enum {string} */
+                        status: "DRAFT" | "PENDING_PAYMENT" | "PAID" | "PROCESSING" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "SHIPPING" | "DELIVERED" | "COMPLETED" | "CANCELLED";
+                        holdPreviousStatus: ("DRAFT" | "PENDING_PAYMENT" | "PAID" | "PROCESSING" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "SHIPPING" | "DELIVERED" | "COMPLETED" | "CANCELLED") | null;
+                        customerId: string | null;
+                        customer: {
+                            id: string;
+                            email: string | null;
+                            firstName: string | null;
+                            lastName: string | null;
+                        } | null;
+                        email: string;
+                        currency: string;
+                        taxInclusive: boolean;
+                        subtotalMinor: number;
+                        discountMinor: number;
+                        shippingMinor: number;
+                        taxMinor: number;
+                        totalMinor: number;
+                        marketId: string;
+                        channelId: string;
+                        locale: string | null;
+                        shippingAddress: {
+                            firstName: string;
+                            lastName: string;
+                            company?: string | null;
+                            line1: string;
+                            line2?: string | null;
+                            city: string;
+                            region?: string | null;
+                            postalCode?: string | null;
+                            country: string;
+                            phone?: string | null;
+                        };
+                        billingAddress: {
+                            firstName: string;
+                            lastName: string;
+                            company?: string | null;
+                            line1: string;
+                            line2?: string | null;
+                            city: string;
+                            region?: string | null;
+                            postalCode?: string | null;
+                            country: string;
+                            phone?: string | null;
+                        };
+                        shippingMethod: {
+                            rateId?: string | null;
+                            name: string;
+                            amountMinor: number;
+                        };
+                        notes: string | null;
+                        tags: string[];
+                        customFields: unknown;
+                        cancelReason: string | null;
+                        cancelledAt: string | null;
+                        placedAt: string | null;
+                        deliveredAt: string | null;
+                        affiliateId: string | null;
+                        promotions: unknown;
+                        version: number;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        lines: {
+                            id: string;
+                            productId: string;
+                            variantId: string;
+                            titleSnapshot: string;
+                            variantTitle: string;
+                            skuSnapshot: string;
+                            unitPriceMinor: number;
+                            compareAtMinor: number | null;
+                            quantity: number;
+                            discountMinor: number;
+                            taxMinor: number;
+                            totalMinor: number;
+                            costMinor: number | null;
+                            marginMinor: number | null;
+                            customizations: unknown;
+                            fulfilledQuantity: number;
+                            refundedQuantity: number;
+                        }[];
+                        events: {
+                            id: string;
+                            type: string;
+                            message: string;
+                            data: unknown;
+                            actorType: string;
+                            actorId: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                        }[];
+                        payments: {
+                            id: string;
+                            provider: string;
+                            /** @enum {string} */
+                            status: "PENDING" | "AUTHORIZED" | "CAPTURED" | "PARTIALLY_REFUNDED" | "REFUNDED" | "FAILED" | "VOIDED";
+                            amountMinor: number;
+                            currency: string;
+                            capturedMinor: number;
+                            refundedMinor: number;
+                            providerRef: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                            transactions: {
+                                id: string;
+                                /** @enum {string} */
+                                kind: "AUTHORIZE" | "CAPTURE" | "VOID" | "REFUND";
+                                /** @enum {string} */
+                                status: "SUCCESS" | "FAILED" | "PENDING";
+                                amountMinor: number;
+                                providerRef: string | null;
+                                /** Format: date-time */
+                                createdAt: string;
+                            }[];
+                        }[];
+                        fulfillments: {
+                            id: string;
+                            locationId: string;
+                            /** @enum {string} */
+                            status: "PENDING" | "PICKING" | "PACKED" | "SHIPPED" | "IN_TRANSIT" | "DELIVERED" | "FAILED_DELIVERY" | "RETURNED_TO_SENDER";
+                            carrier: string | null;
+                            trackingNumber: string | null;
+                            trackingUrl: string | null;
+                            shippedAt: string | null;
+                            deliveredAt: string | null;
+                            version: number;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                            lines: {
+                                id: string;
+                                orderLineId: string;
+                                quantity: number;
+                            }[];
+                        }[];
+                        refunds: {
+                            id: string;
+                            paymentId: string | null;
+                            amountMinor: number;
+                            currency: string;
+                            /** @enum {string} */
+                            method: "ORIGINAL" | "STORE_CREDIT" | "MANUAL";
+                            reason: string | null;
+                            lines: {
+                                orderLineId: string;
+                                quantity: number;
+                                restock: boolean;
+                            }[];
+                            createdById: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                        }[];
+                    };
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    post__v1_admin_orders_id_processing: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-market"?: string;
+                "x-locale"?: string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        id: string;
+                        number: number;
+                        displayNumber: string;
+                        /** @enum {string} */
+                        status: "DRAFT" | "PENDING_PAYMENT" | "PAID" | "PROCESSING" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "SHIPPING" | "DELIVERED" | "COMPLETED" | "CANCELLED";
+                        holdPreviousStatus: ("DRAFT" | "PENDING_PAYMENT" | "PAID" | "PROCESSING" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "SHIPPING" | "DELIVERED" | "COMPLETED" | "CANCELLED") | null;
+                        customerId: string | null;
+                        customer: {
+                            id: string;
+                            email: string | null;
+                            firstName: string | null;
+                            lastName: string | null;
+                        } | null;
+                        email: string;
+                        currency: string;
+                        taxInclusive: boolean;
+                        subtotalMinor: number;
+                        discountMinor: number;
+                        shippingMinor: number;
+                        taxMinor: number;
+                        totalMinor: number;
+                        marketId: string;
+                        channelId: string;
+                        locale: string | null;
+                        shippingAddress: {
+                            firstName: string;
+                            lastName: string;
+                            company?: string | null;
+                            line1: string;
+                            line2?: string | null;
+                            city: string;
+                            region?: string | null;
+                            postalCode?: string | null;
+                            country: string;
+                            phone?: string | null;
+                        };
+                        billingAddress: {
+                            firstName: string;
+                            lastName: string;
+                            company?: string | null;
+                            line1: string;
+                            line2?: string | null;
+                            city: string;
+                            region?: string | null;
+                            postalCode?: string | null;
+                            country: string;
+                            phone?: string | null;
+                        };
+                        shippingMethod: {
+                            rateId?: string | null;
+                            name: string;
+                            amountMinor: number;
+                        };
+                        notes: string | null;
+                        tags: string[];
+                        customFields: unknown;
+                        cancelReason: string | null;
+                        cancelledAt: string | null;
+                        placedAt: string | null;
+                        deliveredAt: string | null;
+                        affiliateId: string | null;
+                        promotions: unknown;
+                        version: number;
+                        /** Format: date-time */
+                        createdAt: string;
+                        /** Format: date-time */
+                        updatedAt: string;
+                        lines: {
+                            id: string;
+                            productId: string;
+                            variantId: string;
+                            titleSnapshot: string;
+                            variantTitle: string;
+                            skuSnapshot: string;
+                            unitPriceMinor: number;
+                            compareAtMinor: number | null;
+                            quantity: number;
+                            discountMinor: number;
+                            taxMinor: number;
+                            totalMinor: number;
+                            costMinor: number | null;
+                            marginMinor: number | null;
+                            customizations: unknown;
+                            fulfilledQuantity: number;
+                            refundedQuantity: number;
+                        }[];
+                        events: {
+                            id: string;
+                            type: string;
+                            message: string;
+                            data: unknown;
+                            actorType: string;
+                            actorId: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                        }[];
+                        payments: {
+                            id: string;
+                            provider: string;
+                            /** @enum {string} */
+                            status: "PENDING" | "AUTHORIZED" | "CAPTURED" | "PARTIALLY_REFUNDED" | "REFUNDED" | "FAILED" | "VOIDED";
+                            amountMinor: number;
+                            currency: string;
+                            capturedMinor: number;
+                            refundedMinor: number;
+                            providerRef: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                            transactions: {
+                                id: string;
+                                /** @enum {string} */
+                                kind: "AUTHORIZE" | "CAPTURE" | "VOID" | "REFUND";
+                                /** @enum {string} */
+                                status: "SUCCESS" | "FAILED" | "PENDING";
+                                amountMinor: number;
+                                providerRef: string | null;
+                                /** Format: date-time */
+                                createdAt: string;
+                            }[];
+                        }[];
+                        fulfillments: {
+                            id: string;
+                            locationId: string;
+                            /** @enum {string} */
+                            status: "PENDING" | "PICKING" | "PACKED" | "SHIPPED" | "IN_TRANSIT" | "DELIVERED" | "FAILED_DELIVERY" | "RETURNED_TO_SENDER";
+                            carrier: string | null;
+                            trackingNumber: string | null;
+                            trackingUrl: string | null;
+                            shippedAt: string | null;
+                            deliveredAt: string | null;
+                            version: number;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                            lines: {
+                                id: string;
+                                orderLineId: string;
+                                quantity: number;
+                            }[];
+                        }[];
+                        refunds: {
+                            id: string;
+                            paymentId: string | null;
+                            amountMinor: number;
+                            currency: string;
+                            /** @enum {string} */
+                            method: "ORIGINAL" | "STORE_CREDIT" | "MANUAL";
+                            reason: string | null;
+                            lines: {
+                                orderLineId: string;
+                                quantity: number;
+                                restock: boolean;
+                            }[];
+                            createdById: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                        }[];
+                    };
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    post__v1_admin_orders_id_shipping: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-market"?: string;
+                "x-locale"?: string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        id: string;
+                        number: number;
+                        displayNumber: string;
+                        /** @enum {string} */
+                        status: "DRAFT" | "PENDING_PAYMENT" | "PAID" | "PROCESSING" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "SHIPPING" | "DELIVERED" | "COMPLETED" | "CANCELLED";
+                        holdPreviousStatus: ("DRAFT" | "PENDING_PAYMENT" | "PAID" | "PROCESSING" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "SHIPPING" | "DELIVERED" | "COMPLETED" | "CANCELLED") | null;
                         customerId: string | null;
                         customer: {
                             id: string;
@@ -25088,8 +25734,8 @@ export interface operations {
                         number: number;
                         displayNumber: string;
                         /** @enum {string} */
-                        status: "DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED";
-                        holdPreviousStatus: ("DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED") | null;
+                        status: "DRAFT" | "PENDING_PAYMENT" | "PAID" | "PROCESSING" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "SHIPPING" | "DELIVERED" | "COMPLETED" | "CANCELLED";
+                        holdPreviousStatus: ("DRAFT" | "PENDING_PAYMENT" | "PAID" | "PROCESSING" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "SHIPPING" | "DELIVERED" | "COMPLETED" | "CANCELLED") | null;
                         customerId: string | null;
                         customer: {
                             id: string;
@@ -25283,8 +25929,8 @@ export interface operations {
                         number: number;
                         displayNumber: string;
                         /** @enum {string} */
-                        status: "DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED";
-                        holdPreviousStatus: ("DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED") | null;
+                        status: "DRAFT" | "PENDING_PAYMENT" | "PAID" | "PROCESSING" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "SHIPPING" | "DELIVERED" | "COMPLETED" | "CANCELLED";
+                        holdPreviousStatus: ("DRAFT" | "PENDING_PAYMENT" | "PAID" | "PROCESSING" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "SHIPPING" | "DELIVERED" | "COMPLETED" | "CANCELLED") | null;
                         customerId: string | null;
                         customer: {
                             id: string;
@@ -25478,8 +26124,8 @@ export interface operations {
                         number: number;
                         displayNumber: string;
                         /** @enum {string} */
-                        status: "DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED";
-                        holdPreviousStatus: ("DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED") | null;
+                        status: "DRAFT" | "PENDING_PAYMENT" | "PAID" | "PROCESSING" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "SHIPPING" | "DELIVERED" | "COMPLETED" | "CANCELLED";
+                        holdPreviousStatus: ("DRAFT" | "PENDING_PAYMENT" | "PAID" | "PROCESSING" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "SHIPPING" | "DELIVERED" | "COMPLETED" | "CANCELLED") | null;
                         customerId: string | null;
                         customer: {
                             id: string;
@@ -25679,8 +26325,8 @@ export interface operations {
                         number: number;
                         displayNumber: string;
                         /** @enum {string} */
-                        status: "DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED";
-                        holdPreviousStatus: ("DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED") | null;
+                        status: "DRAFT" | "PENDING_PAYMENT" | "PAID" | "PROCESSING" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "SHIPPING" | "DELIVERED" | "COMPLETED" | "CANCELLED";
+                        holdPreviousStatus: ("DRAFT" | "PENDING_PAYMENT" | "PAID" | "PROCESSING" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "SHIPPING" | "DELIVERED" | "COMPLETED" | "CANCELLED") | null;
                         customerId: string | null;
                         customer: {
                             id: string;
@@ -25880,8 +26526,8 @@ export interface operations {
                         number: number;
                         displayNumber: string;
                         /** @enum {string} */
-                        status: "DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED";
-                        holdPreviousStatus: ("DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED") | null;
+                        status: "DRAFT" | "PENDING_PAYMENT" | "PAID" | "PROCESSING" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "SHIPPING" | "DELIVERED" | "COMPLETED" | "CANCELLED";
+                        holdPreviousStatus: ("DRAFT" | "PENDING_PAYMENT" | "PAID" | "PROCESSING" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "SHIPPING" | "DELIVERED" | "COMPLETED" | "CANCELLED") | null;
                         customerId: string | null;
                         customer: {
                             id: string;
@@ -26076,7 +26722,7 @@ export interface operations {
                             id: string;
                             number: string;
                             /** @enum {string} */
-                            status: "DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED";
+                            status: "DRAFT" | "PENDING_PAYMENT" | "PAID" | "PROCESSING" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "SHIPPING" | "DELIVERED" | "COMPLETED" | "CANCELLED";
                             currency: string;
                             totalMinor: number;
                             placedAt: string | null;
@@ -26123,7 +26769,7 @@ export interface operations {
                         id: string;
                         number: string;
                         /** @enum {string} */
-                        status: "DRAFT" | "PENDING_PAYMENT" | "PAID" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "DELIVERED" | "COMPLETED" | "CANCELLED";
+                        status: "DRAFT" | "PENDING_PAYMENT" | "PAID" | "PROCESSING" | "ON_HOLD" | "PARTIALLY_FULFILLED" | "FULFILLED" | "SHIPPING" | "DELIVERED" | "COMPLETED" | "CANCELLED";
                         email: string | null;
                         currency: string;
                         taxInclusive: boolean;

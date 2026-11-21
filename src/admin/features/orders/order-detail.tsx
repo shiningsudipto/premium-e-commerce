@@ -14,13 +14,10 @@ import { cn } from "@/lib/utils";
 import { errorMessage } from "../../store/api-errors";
 import {
   useGetV1AdminOrdersIdQuery,
-  usePostV1AdminOrdersIdCompleteMutation,
   usePostV1AdminOrdersIdNotesMutation,
-  usePostV1AdminOrdersIdReleaseMutation,
   usePutV1AdminOrdersIdTagsMutation,
 } from "../../store/api.generated";
 import { useCan } from "../../components/can";
-import { ConfirmDialog } from "../../components/confirm-dialog";
 import { PageHeader } from "../../components/console-shell";
 import { SchemaField } from "../../components/json-schema-form/schema-field";
 import { formatDateTime, shortId } from "../../lib/format";
@@ -31,19 +28,11 @@ import {
   FULFILLMENT_STATUS_LABELS,
   ORDER_STATUS_LABELS,
   orderActions,
-  orderStatusVariant,
   PAYMENT_STATUS_LABELS,
   type Order,
 } from "./order-actions";
-import {
-  AdvanceFulfillment,
-  CancelDialog,
-  FulfillDialog,
-  HoldDialog,
-  MarkPaidDialog,
-  RefundDialog,
-  TrackingDialog,
-} from "./order-dialogs";
+import { AdvanceFulfillment, FulfillDialog, MarkPaidDialog, RefundDialog, TrackingDialog } from "./order-dialogs";
+import { OrderStatusControl } from "./order-status";
 
 function Section({ title, actions, children }: { title: string; actions?: ReactNode; children: ReactNode }) {
   return (
@@ -94,7 +83,8 @@ export function OrderDetailScreen({ id }: { id: string }) {
         actions={<OrderActionBar order={o} onApprovalRequested={setApprovalNotice} />}
       />
       <div className="mb-4 flex flex-wrap items-center gap-2">
-        <Badge variant={orderStatusVariant(o.status)}>{ORDER_STATUS_LABELS[o.status]}</Badge>
+        <span className="text-xs font-medium text-muted-foreground">Status</span>
+        <OrderStatusControl order={o} />
         {o.status === "ON_HOLD" && o.holdPreviousStatus && (
           <span className="text-xs text-muted-foreground">
             Returns to {ORDER_STATUS_LABELS[o.holdPreviousStatus].toLowerCase()} when released
@@ -130,48 +120,17 @@ export function OrderDetailScreen({ id }: { id: string }) {
   );
 }
 
+// Payment actions (with a reference / by line); the status itself is set from the dropdown
+// under the title.
 function OrderActionBar({ order, onApprovalRequested }: { order: Order; onApprovalRequested: (m: string) => void }) {
   const allowed = orderActions(order);
   const canWrite = useCan("orders.write");
-  const canFulfill = useCan("orders.fulfill");
   const canRefund = useCan("orders.refund");
-  const canCancel = useCan("orders.cancel");
-  const [release] = usePostV1AdminOrdersIdReleaseMutation();
-  const [complete] = usePostV1AdminOrdersIdCompleteMutation();
 
   return (
     <div className="flex flex-wrap justify-end gap-2">
       {canWrite && allowed.markPaid && <MarkPaidDialog order={order} />}
-      {canFulfill && allowed.fulfill && <FulfillDialog order={order} />}
-      {canWrite && allowed.complete && (
-        <ConfirmDialog
-          trigger={<Button size="sm">Complete</Button>}
-          title={`Complete ${order.displayNumber}?`}
-          description="Marks the delivered order as done. Returns can still be handled afterwards."
-          confirmLabel="Complete order"
-          onConfirm={() =>
-            complete({ id: order.id })
-              .unwrap()
-              .then(() => notifySaved(`${order.displayNumber} completed`), notifyError)
-          }
-        />
-      )}
       {canRefund && allowed.refund && <RefundDialog order={order} onApprovalRequested={onApprovalRequested} />}
-      {canWrite && allowed.hold && <HoldDialog order={order} />}
-      {canWrite && allowed.release && (
-        <Button
-          size="sm"
-          variant="outline"
-          onClick={() =>
-            release({ id: order.id })
-              .unwrap()
-              .then(() => notifySaved(`${order.displayNumber} released`), notifyError)
-          }
-        >
-          Release hold
-        </Button>
-      )}
-      {canCancel && allowed.cancel && <CancelDialog order={order} />}
     </div>
   );
 }
@@ -187,7 +146,7 @@ function LinesSection({ order }: { order: Order }) {
             <TableRow className="hover:bg-transparent">
               <TableHead>Item</TableHead>
               <TableHead className="text-right">Qty</TableHead>
-              <TableHead className="text-right">Fulfilled</TableHead>
+              <TableHead className="text-right">Packed</TableHead>
               <TableHead className="text-right">Refunded</TableHead>
               <TableHead className="text-right">Unit</TableHead>
               <TableHead className="text-right">Total</TableHead>
@@ -256,11 +215,13 @@ function LinesSection({ order }: { order: Order }) {
 
 function FulfillmentsSection({ order }: { order: Order }) {
   const canFulfill = useCan("orders.fulfill");
+  const canShip = canFulfill && orderActions(order).fulfill;
   const skuOf = (lineId: string) => order.lines.find((l) => l.id === lineId)?.skuSnapshot ?? shortId(lineId);
   return (
-    <Section title="Fulfillments">
+    // for part of the order or with tracking details; the status dropdown ships everything at once
+    <Section title="Shipments" actions={canShip ? <FulfillDialog order={order} /> : undefined}>
       {order.fulfillments.length === 0 ? (
-        <p className="text-sm text-muted-foreground">Nothing has been fulfilled yet.</p>
+        <p className="text-sm text-muted-foreground">No shipments yet.</p>
       ) : (
         <ul className="divide-y">
           {order.fulfillments.map((f) => (

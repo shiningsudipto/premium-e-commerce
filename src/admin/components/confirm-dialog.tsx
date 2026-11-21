@@ -21,19 +21,29 @@ export function ConfirmDialog({
   confirmLabel,
   destructive,
   onConfirm,
+  open: openProp,
+  onOpenChange,
 }: {
-  trigger: ReactElement;
+  /** Omit when the dialog is opened from elsewhere (open / onOpenChange). */
+  trigger?: ReactElement;
   title: string;
   description: string;
   confirmLabel: string;
   destructive?: boolean;
   onConfirm: () => Promise<unknown>;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }) {
-  const [open, setOpen] = useState(false);
+  const [openState, setOpenState] = useState(false);
+  const open = openProp ?? openState;
+  const setOpen = (next: boolean) => {
+    setOpenState(next);
+    onOpenChange?.(next);
+  };
   const [pending, setPending] = useState(false);
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={trigger} />
+      {trigger && <DialogTrigger render={trigger} />}
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>

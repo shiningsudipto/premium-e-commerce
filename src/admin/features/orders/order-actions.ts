@@ -1,4 +1,5 @@
 import type { GetV1AdminOrdersIdApiResponse } from "../../store/api.generated";
+import { formatMoney } from "../../lib/money";
 
 // Pure helpers for the order screens. They mirror the API's rules (orders.service.ts and
 // order.states.ts) so the UI only offers what the API will accept; the API still decides.
@@ -9,15 +10,19 @@ export type OrderLine = Order["lines"][number];
 export type Payment = Order["payments"][number];
 export type FulfillmentStatus = Order["fulfillments"][number]["status"];
 
+// Staff-facing names. The API's names are technical: FULFILLED means every item is in a
+// shipment ("Packed"), and COMPLETED means received and paid, which is what staff call "Fulfilled".
 export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
   DRAFT: "Draft",
   PENDING_PAYMENT: "Pending payment",
   PAID: "Paid",
+  PROCESSING: "Processing",
   ON_HOLD: "On hold",
-  PARTIALLY_FULFILLED: "Partially fulfilled",
-  FULFILLED: "Fulfilled",
+  PARTIALLY_FULFILLED: "Partly shipped",
+  FULFILLED: "Packed",
+  SHIPPING: "Shipping",
   DELIVERED: "Delivered",
-  COMPLETED: "Completed",
+  COMPLETED: "Fulfilled",
   CANCELLED: "Cancelled",
 };
 
@@ -67,6 +72,12 @@ export const nextFulfillmentStatuses = (status: FulfillmentStatus) => FULFILLMEN
 // Only the manual provider exists today; the API checks the provider's own payLater flag.
 const PAY_LATER_PROVIDERS = new Set(["manual"]);
 
+// Paid in full: nothing still waiting for its money and something captured (as the API checks
+// before an order counts as fulfilled).
+export const isSettled = (order: Pick<Order, "payments">) =>
+  !order.payments.some((p) => p.status === "PENDING" || p.status === "AUTHORIZED") &&
+  order.payments.some((p) => p.status === "CAPTURED" || p.status === "PARTIALLY_REFUNDED" || p.status === "REFUNDED");
+
 const isOpen = (p: Payment) => p.status !== "FAILED" && p.status !== "VOIDED";
 const isRefundable = (p: Payment) => p.status === "CAPTURED" || p.status === "PARTIALLY_REFUNDED";
 
@@ -112,7 +123,9 @@ export type OrderActions = {
 };
 
 // Which actions the order's state allows (permissions are checked separately).
-export function orderActions(order: Pick<Order, "status" | "payments" | "lines" | "holdPreviousStatus">): OrderActions {
+export function orderActions(
+  order: Pick<Order, "status" | "payments" | "lines" | "holdPreviousStatus" | "fulfillments">,
+): OrderActions {
   const { status } = order;
   const payLater = order.payments.some((p) => isOpen(p) && PAY_LATER_PROVIDERS.has(p.provider));
   const anythingToShip = order.lines.some((l) => remainingToFulfill(l) > 0);
@@ -121,13 +134,17 @@ export function orderActions(order: Pick<Order, "status" | "payments" | "lines" 
     markPaid: status !== "CANCELLED" && paymentAwaitingCapture(order) !== null,
     fulfill:
       anythingToShip &&
-      (status === "PAID" || status === "PARTIALLY_FULFILLED" || (status === "PENDING_PAYMENT" && payLater)),
+      (status === "PAID" ||
+        status === "PROCESSING" ||
+        status === "PARTIALLY_FULFILLED" ||
+        (status === "PENDING_PAYMENT" && payLater)),
     refund: capturedLeft,
     // the API asks for captured money to be refunded first; the dialog offers to do both
-    cancel: status === "DRAFT" || status === "PENDING_PAYMENT" || status === "PAID",
-    hold: status === "PAID" || status === "PARTIALLY_FULFILLED",
+    cancel: status === "DRAFT" || status === "PENDING_PAYMENT" || status === "PAID" || status === "PROCESSING",
+    hold: status === "PAID" || status === "PROCESSING" || status === "PARTIALLY_FULFILLED",
     release: status === "ON_HOLD" && order.holdPreviousStatus !== null,
-    complete: status === "DELIVERED",
+    // "Fulfilled": received and paid (the API also does this by itself)
+    complete: status === "DELIVERED" && isSettled(order),
   };
 }
 
@@ -139,4 +156,89 @@ export function dateFilter(value: string | undefined, endOfDay = false): string 
   const day = /^\d{4}-\d{2}-\d{2}$/.test(text);
   const date = new Date(day ? `${text}T${endOfDay ? "23:59:59.999" : "00:00:00.000"}` : text);
   return Number.isNaN(date.getTime()) ? undefined : date.toISOString();
+}
+
+// ── Setting a status by hand ──
+// Staff can set any status from the order page (POST /orders/:id/status). Going forward, the API
+// also records what the status implies; these helpers describe that before staff confirm, using
+// the same rules as orders.setStatus.
+
+export const SETTABLE_STATUSES = [
+  "PENDING_PAYMENT",
+  "PAID",
+  "PROCESSING",
+  "ON_HOLD",
+  "PARTIALLY_FULFILLED",
+  "FULFILLED",
+  "SHIPPING",
+  "DELIVERED",
+  "COMPLETED",
+  "CANCELLED",
+] as const satisfies readonly OrderStatus[];
+export type SettableStatus = (typeof SETTABLE_STATUSES)[number];
+
+export const STATUS_MEANING: Record<SettableStatus, string> = {
+  PENDING_PAYMENT: "Waiting for the payment",
+  PAID: "Payment received",
+  PROCESSING: "Confirmed, being prepared",
+  ON_HOLD: "Paused, with a reason",
+  PARTIALLY_FULFILLED: "Some items sent",
+  FULFILLED: "Everything packed, not sent yet",
+  SHIPPING: "On the way to the customer",
+  DELIVERED: "The customer has it",
+  COMPLETED: "Received and paid: done",
+  CANCELLED: "Called off; stock released",
+};
+
+const STAGE: Partial<Record<OrderStatus, number>> = {
+  PENDING_PAYMENT: 0,
+  PAID: 1,
+  PROCESSING: 2,
+  PARTIALLY_FULFILLED: 3,
+  FULFILLED: 4,
+  SHIPPING: 5,
+  DELIVERED: 6,
+  COMPLETED: 7,
+};
+const SHIPMENT_FOR: Partial<Record<OrderStatus, "PENDING" | "SHIPPED" | "DELIVERED">> = {
+  FULFILLED: "PENDING",
+  SHIPPING: "SHIPPED",
+  DELIVERED: "DELIVERED",
+  COMPLETED: "DELIVERED",
+};
+const NOT_SENT: FulfillmentStatus[] = ["PENDING", "PICKING", "PACKED"];
+const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
+
+// What else happens when staff set `to`, in plain words (empty: only the status changes).
+export function statusEffects(
+  order: Pick<Order, "status" | "payments" | "lines" | "fulfillments" | "currency">,
+  to: SettableStatus,
+): string[] {
+  const effects: string[] = [];
+  if (to === "CANCELLED") {
+    effects.push("Stock still reserved for it goes back on sale, and payments not yet received are voided.");
+    return effects;
+  }
+  if (to === "ON_HOLD") {
+    effects.push(`It goes back to ${ORDER_STATUS_LABELS[order.status].toLowerCase()} when you release the hold.`);
+    return effects;
+  }
+  if (to === "PAID" || to === "COMPLETED") {
+    const waiting = order.payments.filter((p) => p.status === "PENDING" || p.status === "AUTHORIZED");
+    const amount = waiting.reduce((sum, p) => sum + p.amountMinor, 0);
+    if (waiting.length) effects.push(`The ${formatMoney(amount, order.currency)} payment is recorded as received.`);
+  }
+  const shipment = SHIPMENT_FOR[to];
+  if (shipment && (STAGE[to] ?? -1) > (STAGE[order.status] ?? -1)) {
+    const left = order.lines.reduce((sum, l) => sum + Math.max(0, remainingToFulfill(l)), 0);
+    const state = shipment === "PENDING" ? "packed, not sent yet" : shipment === "SHIPPED" ? "shipped" : "delivered";
+    if (left > 0) effects.push(`The ${plural(left, "item")} not shipped yet go into a new shipment, marked ${state}.`);
+    if (shipment !== "PENDING") {
+      const behind = order.fulfillments.filter((f) =>
+        shipment === "SHIPPED" ? NOT_SENT.includes(f.status) : f.status !== "DELIVERED" && f.status !== "RETURNED_TO_SENDER",
+      ).length;
+      if (behind) effects.push(`${plural(behind, "existing shipment")} ${behind === 1 ? "is" : "are"} marked ${state}.`);
+    }
+  }
+  return effects;
 }

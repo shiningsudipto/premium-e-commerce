@@ -113,7 +113,7 @@ export const isOpenReturn = (r: Pick<ReturnView, "status">) =>
   !["REJECTED", "COMPLETED", "PARTIALLY_ACCEPTED"].includes(r.status);
 
 // Orders that have shipped can have returns (the API's RETURNABLE statuses).
-export const RETURNABLE_ORDER_STATUSES = ["PARTIALLY_FULFILLED", "FULFILLED", "DELIVERED", "COMPLETED"];
+export const RETURNABLE_ORDER_STATUSES = ["PARTIALLY_FULFILLED", "FULFILLED", "SHIPPING", "DELIVERED", "COMPLETED"];
 export const canHaveReturns = (orderStatus: string) => RETURNABLE_ORDER_STATUSES.includes(orderStatus);
 
 export type OrderLineLike = {

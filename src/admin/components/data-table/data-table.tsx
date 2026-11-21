@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dropdown } from "../dropdown";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { errorMessage } from "../../store/api-errors";
@@ -297,6 +298,19 @@ function FilterForm({
             className="h-8 w-44"
             value={draft[f.key] ?? ""}
             onChange={(e) => setDraft({ ...draft, [f.key]: e.target.value })}
+          />
+        ) : f.dropdown ? (
+          <Dropdown
+            key={f.key}
+            size="sm"
+            className="w-48"
+            aria-label={f.label}
+            placeholder={`${f.label}: all`}
+            value={values[f.key] ?? null}
+            items={f.options}
+            clearable
+            onChange={(v) => setValues({ ...draft, [f.key]: v } as Record<string, string>)}
+            onClear={() => setValues({ ...draft, [f.key]: undefined } as Record<string, string>)}
           />
         ) : (
           <Select

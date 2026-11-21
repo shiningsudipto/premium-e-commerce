@@ -27,6 +27,7 @@ const FILTERS: FilterDef[] = [
     label: "Status",
     type: "select",
     options: Object.entries(ORDER_STATUS_LABELS).map(([value, label]) => ({ value, label })),
+    dropdown: true,
   },
   { key: "from", label: "Placed from", type: "text", placeholder: "From (YYYY-MM-DD)" },
   { key: "to", label: "Placed to", type: "text", placeholder: "To (YYYY-MM-DD)" },

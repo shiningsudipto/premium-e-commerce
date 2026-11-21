@@ -82,8 +82,10 @@ Then   put the order on hold "Check large first order"
             rows: [
               ["`order.placed`", "A customer completes checkout", "order, customer, affiliate"],
               ["`order.paid`", "An order's payment is received", "order, customer, affiliate"],
+              ["`order.processing`", "Staff start preparing an order", "order, customer, affiliate"],
               ["`order.cancelled`", "An order is cancelled", "order, customer, affiliate"],
-              ["`order.fulfilled`", "All items are fulfilled", "order, customer, affiliate"],
+              ["`order.fulfilled`", "Every item is in a shipment (shown as Packed)", "order, customer, affiliate"],
+              ["`order.shipping`", "Every shipment is with the courier", "order, customer, affiliate"],
               ["`order.delivered`", "An order is marked delivered", "order, customer, affiliate"],
               ["`payment.failed`", "A payment fails", "order, customer"],
               ["`payment.refunded`", "A refund is issued", "order, customer"],

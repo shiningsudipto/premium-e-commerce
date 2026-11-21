@@ -16,7 +16,6 @@ import {
 } from "@/components/ui/dialog";
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -30,6 +29,7 @@ import {
   usePostV1AdminOrdersIdRefundsMutation,
 } from "../../store/api.generated";
 import { fieldErrors } from "../../store/api-errors";
+import { Dropdown } from "../../components/dropdown";
 import { shortId } from "../../lib/format";
 import { formatMoney, inputToMinor } from "../../lib/money";
 import { notifyError, notifySaved } from "../../lib/notify";
@@ -50,6 +50,10 @@ type Fulfillment = Order["fulfillments"][number];
 const text = (form: FormData, key: string) => String(form.get(key) ?? "").trim();
 const optional = (value: string) => (value ? value : undefined);
 
+// Dialogs opened by the order status dropdown are controlled from there; such a dialog is
+// mounted open, so its starting state must already be right without onOpen.
+export type Controlled = { open?: boolean; onOpenChange?: (open: boolean) => void };
+
 // A dialog with one form; stays open (and shows the API's field errors) until the action succeeds.
 function FormDialog({
   trigger,
@@ -60,8 +64,11 @@ function FormDialog({
   onOpen,
   onSubmit,
   children,
+  open: openProp,
+  onOpenChange,
 }: {
-  trigger: ReactElement;
+  /** Omit when the dialog is opened from elsewhere (open / onOpenChange). */
+  trigger?: ReactElement;
   title: string;
   description?: string;
   submitLabel: string;
@@ -69,8 +76,13 @@ function FormDialog({
   onOpen?: () => void;
   onSubmit: (form: FormData) => Promise<unknown> | null;
   children: (errors: Record<string, string[]>) => ReactNode;
-}) {
-  const [open, setOpen] = useState(false);
+} & Controlled) {
+  const [openState, setOpenState] = useState(false);
+  const open = openProp ?? openState;
+  const setOpen = (next: boolean) => {
+    setOpenState(next);
+    onOpenChange?.(next);
+  };
   const [pending, setPending] = useState(false);
   const [errors, setErrors] = useState<Record<string, string[]>>({});
 
@@ -102,7 +114,7 @@ function FormDialog({
         }
       }}
     >
-      <DialogTrigger render={trigger} />
+      {trigger && <DialogTrigger render={trigger} />}
       <DialogContent className="sm:max-w-xl">
         <form className="space-y-4" onSubmit={submit}>
           <DialogHeader>
@@ -134,19 +146,20 @@ function FormDialog({
 }
 
 // An Idempotency-Key per dialog opening: a double submit or a retry after a timeout can't
-// run the action twice.
+// run the action twice. It starts with one, for a dialog that's mounted already open.
 function useIdempotencyKey() {
-  const [key, setKey] = useState("");
+  const [key, setKey] = useState(() => crypto.randomUUID());
   return { key, renew: () => setKey(crypto.randomUUID()) };
 }
 
-export function MarkPaidDialog({ order }: { order: Order }) {
+export function MarkPaidDialog({ order, ...controlled }: { order: Order } & Controlled) {
   const [markPaid] = usePostV1AdminOrdersIdMarkPaidMutation();
   const idem = useIdempotencyKey();
   const payment = paymentAwaitingCapture(order);
   return (
     <FormDialog
-      trigger={<Button size="sm">Mark paid</Button>}
+      {...controlled}
+      trigger={controlled.open === undefined ? <Button size="sm">Mark paid</Button> : undefined}
       title="Record payment received"
       description={
         payment
@@ -201,7 +214,7 @@ function TrackingFields({ errors, fulfillment }: { errors: Record<string, string
   );
 }
 
-export function FulfillDialog({ order }: { order: Order }) {
+export function FulfillDialog({ order, ...controlled }: { order: Order } & Controlled) {
   const [fulfill] = usePostV1AdminOrdersIdFulfillmentsMutation();
   const idem = useIdempotencyKey();
   const open = order.lines.filter((l) => remainingToFulfill(l) > 0);
@@ -211,10 +224,11 @@ export function FulfillDialog({ order }: { order: Order }) {
 
   return (
     <FormDialog
-      trigger={<Button size="sm">Fulfill</Button>}
-      title={`Fulfill ${order.displayNumber}`}
+      {...controlled}
+      trigger={controlled.open === undefined ? <Button size="sm">Create shipment</Button> : undefined}
+      title={`Create a shipment for ${order.displayNumber}`}
       description="Ships what's left by default. Lower a quantity to ship part of the order now."
-      submitLabel="Create fulfillment"
+      submitLabel="Create shipment"
       onOpen={() => {
         idem.renew();
         setQuantities(Object.fromEntries(open.map((l) => [l.id, remainingToFulfill(l)])));
@@ -223,13 +237,13 @@ export function FulfillDialog({ order }: { order: Order }) {
       }}
       onSubmit={(form) => {
         const lines = open
-          .map((l) => ({ orderLineId: l.id, quantity: quantities[l.id] ?? 0 }))
+          .map((l) => ({ orderLineId: l.id, quantity: quantities[l.id] ?? remainingToFulfill(l) }))
           .filter((l) => l.quantity > 0);
         if (!lines.length) {
-          setProblem("Choose at least one item to fulfill.");
+          setProblem("Choose at least one item to ship.");
           return null;
         }
-        const all = lines.length === open.length && open.every((l) => quantities[l.id] === remainingToFulfill(l));
+        const all = lines.length === open.length && open.every((l) => (quantities[l.id] ?? remainingToFulfill(l)) === remainingToFulfill(l));
         return fulfill({
           id: order.id,
           "Idempotency-Key": idem.key,
@@ -243,7 +257,7 @@ export function FulfillDialog({ order }: { order: Order }) {
           },
         })
           .unwrap()
-          .then((o) => notifySaved(`${o.displayNumber}: fulfillment created`));
+          .then((o) => notifySaved(`${o.displayNumber}: shipment created`));
       }}
     >
       {(errors) => (
@@ -271,7 +285,7 @@ export function FulfillDialog({ order }: { order: Order }) {
                       max={remainingToFulfill(l)}
                       aria-label={`Quantity of ${l.skuSnapshot}`}
                       className="ml-auto h-8 w-20"
-                      value={quantities[l.id] ?? 0}
+                      value={quantities[l.id] ?? remainingToFulfill(l)}
                       onChange={(e) =>
                         setQuantities((q) => ({
                           ...q,
@@ -334,31 +348,21 @@ export function AdvanceFulfillment({ fulfillment }: { fulfillment: Fulfillment }
   const next = nextFulfillmentStatuses(fulfillment.status);
   if (!next.length) return null;
   return (
-    <Select
-      value=""
+    <Dropdown
+      size="sm"
+      className="w-40"
+      aria-label="Advance shipment"
+      placeholder="Advance to…"
+      value={null}
+      loading={state.isLoading}
       disabled={state.isLoading}
-      onValueChange={(status) => {
-        if (!status) return;
-        update({ id: fulfillment.id, body: { status: status as (typeof next)[number] } })
+      items={next.map((s) => ({ value: s, label: FULFILLMENT_STATUS_LABELS[s] }))}
+      onChange={(status) =>
+        update({ id: fulfillment.id, body: { status } })
           .unwrap()
-          .then(
-            () =>
-              notifySaved(`Fulfillment ${FULFILLMENT_STATUS_LABELS[status as (typeof next)[number]].toLowerCase()}`),
-            notifyError,
-          );
-      }}
-    >
-      <SelectTrigger size="sm" className="w-40" aria-label="Advance fulfillment">
-        <SelectValue placeholder="Advance to…" />
-      </SelectTrigger>
-      <SelectContent>
-        {next.map((s) => (
-          <SelectItem key={s} value={s}>
-            {FULFILLMENT_STATUS_LABELS[s]}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
+          .then(() => notifySaved(`Fulfillment ${FULFILLMENT_STATUS_LABELS[status].toLowerCase()}`), notifyError)
+      }
+    />
   );
 }
 
@@ -524,16 +528,16 @@ export function RefundDialog({
           {problem && <p className="text-sm text-destructive">{problem}</p>}
           <div className="grid gap-4 sm:grid-cols-2">
             <Field>
-              <FieldLabel htmlFor="refund-method">Method</FieldLabel>
-              <Select value={method} onValueChange={(v) => setMethod(v === "MANUAL" ? "MANUAL" : "ORIGINAL")}>
-                <SelectTrigger id="refund-method" className="w-full">
-                  <SelectValue>{method === "MANUAL" ? "Manual (outside the store)" : "Original payment"}</SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="ORIGINAL">Original payment</SelectItem>
-                  <SelectItem value="MANUAL">Manual (outside the store)</SelectItem>
-                </SelectContent>
-              </Select>
+              <FieldLabel>Method</FieldLabel>
+              <Dropdown
+                aria-label="Refund method"
+                value={method}
+                onChange={setMethod}
+                items={[
+                  { value: "ORIGINAL", label: "Original payment", description: "Back through the payment provider" },
+                  { value: "MANUAL", label: "Manual (outside the store)", description: "Cash or a transfer you send yourself" },
+                ]}
+              />
             </Field>
             <Field>
               <FieldLabel htmlFor="refund-reference">Reference (optional)</FieldLabel>
@@ -550,16 +554,19 @@ export function RefundDialog({
   );
 }
 
-export function CancelDialog({ order }: { order: Order }) {
+export function CancelDialog({ order, ...controlled }: { order: Order } & Controlled) {
   const [cancel] = usePostV1AdminOrdersIdCancelMutation();
   const captured = refundableMinor(order);
   const [refund, setRefund] = useState(true);
   return (
     <FormDialog
+      {...controlled}
       trigger={
-        <Button size="sm" variant="destructive">
-          Cancel order
-        </Button>
+        controlled.open === undefined ? (
+          <Button size="sm" variant="destructive">
+            Cancel order
+          </Button>
+        ) : undefined
       }
       title={`Cancel ${order.displayNumber}?`}
       description="Reserved stock is released and pending payments are voided. This can't be undone."
@@ -596,17 +603,20 @@ export function CancelDialog({ order }: { order: Order }) {
   );
 }
 
-export function HoldDialog({ order }: { order: Order }) {
+export function HoldDialog({ order, ...controlled }: { order: Order } & Controlled) {
   const [hold] = usePostV1AdminOrdersIdHoldMutation();
   return (
     <FormDialog
+      {...controlled}
       trigger={
-        <Button size="sm" variant="outline">
-          Hold
-        </Button>
+        controlled.open === undefined ? (
+          <Button size="sm" variant="outline">
+            Hold
+          </Button>
+        ) : undefined
       }
       title={`Hold ${order.displayNumber}`}
-      description="A held order can't be fulfilled until it's released."
+      description="A held order can't be shipped until it's released."
       submitLabel="Put on hold"
       onSubmit={(form) =>
         hold({ id: order.id, body: { reason: text(form, "reason") } })

@@ -34,9 +34,11 @@ export type Fact = { path: string; label: string; kind: ValueKind; hint?: string
 const ORDER_STATUSES = [
   "PENDING_PAYMENT",
   "PAID",
+  "PROCESSING",
   "ON_HOLD",
   "PARTIALLY_FULFILLED",
   "FULFILLED",
+  "SHIPPING",
   "DELIVERED",
   "COMPLETED",
   "CANCELLED",

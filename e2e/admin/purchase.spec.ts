@@ -72,8 +72,11 @@ test.describe("back office", () => {
     await page.getByRole("link", { name: orderNumber }).first().click();
     await expect(page.getByRole("heading", { name: new RegExp(orderNumber) })).toBeVisible();
 
-    await page.getByRole("button", { name: "Fulfill" }).click();
-    await page.getByRole("button", { name: "Create fulfillment" }).click();
-    await expect(page.getByText("Fulfilled", { exact: true }).first()).toBeVisible();
+    // staff set the status directly: Shipping ships everything that's left
+    const status = page.getByRole("group", { name: "Order status" });
+    await status.getByRole("button").first().click();
+    await status.getByRole("option", { name: /^Shipping/ }).click();
+    await page.getByRole("button", { name: "Set to Shipping" }).click();
+    await expect(status.getByText("Shipping", { exact: true })).toBeVisible();
   });
 });

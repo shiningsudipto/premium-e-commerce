@@ -339,9 +339,11 @@
     "draft": "Draft",
     "pending_payment": "Awaiting payment",
     "paid": "Confirmed",
+    "processing": "Processing",
     "on_hold": "On hold",
     "partially_fulfilled": "Partly shipped",
-    "fulfilled": "Shipped",
+    "fulfilled": "Packed",
+    "shipping": "On the way",
     "delivered": "Delivered",
     "completed": "Completed",
     "cancelled": "Cancelled"

@@ -3425,6 +3425,49 @@ const injectedRtkApi = api
         }),
         invalidatesTags: ["Orders"],
       }),
+      postV1AdminOrdersIdStatus: build.mutation<
+        PostV1AdminOrdersIdStatusApiResponse,
+        PostV1AdminOrdersIdStatusApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/v1/admin/orders/${queryArg.id}/status`,
+          method: "POST",
+          body: queryArg.body,
+          headers: {
+            "x-market": queryArg["x-market"],
+            "x-locale": queryArg["x-locale"],
+          },
+        }),
+        invalidatesTags: ["Orders"],
+      }),
+      postV1AdminOrdersIdProcessing: build.mutation<
+        PostV1AdminOrdersIdProcessingApiResponse,
+        PostV1AdminOrdersIdProcessingApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/v1/admin/orders/${queryArg.id}/processing`,
+          method: "POST",
+          headers: {
+            "x-market": queryArg["x-market"],
+            "x-locale": queryArg["x-locale"],
+          },
+        }),
+        invalidatesTags: ["Orders"],
+      }),
+      postV1AdminOrdersIdShipping: build.mutation<
+        PostV1AdminOrdersIdShippingApiResponse,
+        PostV1AdminOrdersIdShippingApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/v1/admin/orders/${queryArg.id}/shipping`,
+          method: "POST",
+          headers: {
+            "x-market": queryArg["x-market"],
+            "x-locale": queryArg["x-locale"],
+          },
+        }),
+        invalidatesTags: ["Orders"],
+      }),
       postV1AdminOrdersIdHold: build.mutation<
         PostV1AdminOrdersIdHoldApiResponse,
         PostV1AdminOrdersIdHoldApiArg
@@ -11030,9 +11073,11 @@ export type GetV1AdminOrdersApiResponse = /** status 200 OK */ {
       | "DRAFT"
       | "PENDING_PAYMENT"
       | "PAID"
+      | "PROCESSING"
       | "ON_HOLD"
       | "PARTIALLY_FULFILLED"
       | "FULFILLED"
+      | "SHIPPING"
       | "DELIVERED"
       | "COMPLETED"
       | "CANCELLED";
@@ -11065,9 +11110,11 @@ export type GetV1AdminOrdersApiArg = {
     | "DRAFT"
     | "PENDING_PAYMENT"
     | "PAID"
+    | "PROCESSING"
     | "ON_HOLD"
     | "PARTIALLY_FULFILLED"
     | "FULFILLED"
+    | "SHIPPING"
     | "DELIVERED"
     | "COMPLETED"
     | "CANCELLED";
@@ -11086,9 +11133,11 @@ export type GetV1AdminOrdersIdApiResponse = /** status 200 OK */ {
     | "DRAFT"
     | "PENDING_PAYMENT"
     | "PAID"
+    | "PROCESSING"
     | "ON_HOLD"
     | "PARTIALLY_FULFILLED"
     | "FULFILLED"
+    | "SHIPPING"
     | "DELIVERED"
     | "COMPLETED"
     | "CANCELLED";
@@ -11097,9 +11146,11 @@ export type GetV1AdminOrdersIdApiResponse = /** status 200 OK */ {
         | "DRAFT"
         | "PENDING_PAYMENT"
         | "PAID"
+        | "PROCESSING"
         | "ON_HOLD"
         | "PARTIALLY_FULFILLED"
         | "FULFILLED"
+        | "SHIPPING"
         | "DELIVERED"
         | "COMPLETED"
         | "CANCELLED"
@@ -11274,9 +11325,11 @@ export type PostV1AdminOrdersIdMarkPaidApiResponse = /** status 200 OK */ {
     | "DRAFT"
     | "PENDING_PAYMENT"
     | "PAID"
+    | "PROCESSING"
     | "ON_HOLD"
     | "PARTIALLY_FULFILLED"
     | "FULFILLED"
+    | "SHIPPING"
     | "DELIVERED"
     | "COMPLETED"
     | "CANCELLED";
@@ -11285,9 +11338,11 @@ export type PostV1AdminOrdersIdMarkPaidApiResponse = /** status 200 OK */ {
         | "DRAFT"
         | "PENDING_PAYMENT"
         | "PAID"
+        | "PROCESSING"
         | "ON_HOLD"
         | "PARTIALLY_FULFILLED"
         | "FULFILLED"
+        | "SHIPPING"
         | "DELIVERED"
         | "COMPLETED"
         | "CANCELLED"
@@ -11467,9 +11522,11 @@ export type PostV1AdminOrdersIdFulfillmentsApiResponse = /** status 201 OK */ {
     | "DRAFT"
     | "PENDING_PAYMENT"
     | "PAID"
+    | "PROCESSING"
     | "ON_HOLD"
     | "PARTIALLY_FULFILLED"
     | "FULFILLED"
+    | "SHIPPING"
     | "DELIVERED"
     | "COMPLETED"
     | "CANCELLED";
@@ -11478,9 +11535,11 @@ export type PostV1AdminOrdersIdFulfillmentsApiResponse = /** status 201 OK */ {
         | "DRAFT"
         | "PENDING_PAYMENT"
         | "PAID"
+        | "PROCESSING"
         | "ON_HOLD"
         | "PARTIALLY_FULFILLED"
         | "FULFILLED"
+        | "SHIPPING"
         | "DELIVERED"
         | "COMPLETED"
         | "CANCELLED"
@@ -11666,9 +11725,11 @@ export type PatchV1AdminOrdersFulfillmentsIdApiResponse = /** status 200 OK */ {
     | "DRAFT"
     | "PENDING_PAYMENT"
     | "PAID"
+    | "PROCESSING"
     | "ON_HOLD"
     | "PARTIALLY_FULFILLED"
     | "FULFILLED"
+    | "SHIPPING"
     | "DELIVERED"
     | "COMPLETED"
     | "CANCELLED";
@@ -11677,9 +11738,11 @@ export type PatchV1AdminOrdersFulfillmentsIdApiResponse = /** status 200 OK */ {
         | "DRAFT"
         | "PENDING_PAYMENT"
         | "PAID"
+        | "PROCESSING"
         | "ON_HOLD"
         | "PARTIALLY_FULFILLED"
         | "FULFILLED"
+        | "SHIPPING"
         | "DELIVERED"
         | "COMPLETED"
         | "CANCELLED"
@@ -11868,9 +11931,11 @@ export type PostV1AdminOrdersIdRefundsApiResponse =
         | "DRAFT"
         | "PENDING_PAYMENT"
         | "PAID"
+        | "PROCESSING"
         | "ON_HOLD"
         | "PARTIALLY_FULFILLED"
         | "FULFILLED"
+        | "SHIPPING"
         | "DELIVERED"
         | "COMPLETED"
         | "CANCELLED";
@@ -11879,9 +11944,11 @@ export type PostV1AdminOrdersIdRefundsApiResponse =
             | "DRAFT"
             | "PENDING_PAYMENT"
             | "PAID"
+            | "PROCESSING"
             | "ON_HOLD"
             | "PARTIALLY_FULFILLED"
             | "FULFILLED"
+            | "SHIPPING"
             | "DELIVERED"
             | "COMPLETED"
             | "CANCELLED"
@@ -12082,9 +12149,11 @@ export type PostV1AdminOrdersIdCancelApiResponse = /** status 200 OK */ {
     | "DRAFT"
     | "PENDING_PAYMENT"
     | "PAID"
+    | "PROCESSING"
     | "ON_HOLD"
     | "PARTIALLY_FULFILLED"
     | "FULFILLED"
+    | "SHIPPING"
     | "DELIVERED"
     | "COMPLETED"
     | "CANCELLED";
@@ -12093,9 +12162,11 @@ export type PostV1AdminOrdersIdCancelApiResponse = /** status 200 OK */ {
         | "DRAFT"
         | "PENDING_PAYMENT"
         | "PAID"
+        | "PROCESSING"
         | "ON_HOLD"
         | "PARTIALLY_FULFILLED"
         | "FULFILLED"
+        | "SHIPPING"
         | "DELIVERED"
         | "COMPLETED"
         | "CANCELLED"
@@ -12266,7 +12337,7 @@ export type PostV1AdminOrdersIdCancelApiArg = {
     refund?: boolean;
   };
 };
-export type PostV1AdminOrdersIdHoldApiResponse = /** status 200 OK */ {
+export type PostV1AdminOrdersIdStatusApiResponse = /** status 200 OK */ {
   id: string;
   number: number;
   displayNumber: string;
@@ -12274,9 +12345,11 @@ export type PostV1AdminOrdersIdHoldApiResponse = /** status 200 OK */ {
     | "DRAFT"
     | "PENDING_PAYMENT"
     | "PAID"
+    | "PROCESSING"
     | "ON_HOLD"
     | "PARTIALLY_FULFILLED"
     | "FULFILLED"
+    | "SHIPPING"
     | "DELIVERED"
     | "COMPLETED"
     | "CANCELLED";
@@ -12285,9 +12358,602 @@ export type PostV1AdminOrdersIdHoldApiResponse = /** status 200 OK */ {
         | "DRAFT"
         | "PENDING_PAYMENT"
         | "PAID"
+        | "PROCESSING"
         | "ON_HOLD"
         | "PARTIALLY_FULFILLED"
         | "FULFILLED"
+        | "SHIPPING"
+        | "DELIVERED"
+        | "COMPLETED"
+        | "CANCELLED"
+      )
+    | null;
+  customerId: string | null;
+  customer: {
+    id: string;
+    email: string | null;
+    firstName: string | null;
+    lastName: string | null;
+  } | null;
+  email: string;
+  currency: string;
+  taxInclusive: boolean;
+  subtotalMinor: number;
+  discountMinor: number;
+  shippingMinor: number;
+  taxMinor: number;
+  totalMinor: number;
+  marketId: string;
+  channelId: string;
+  locale: string | null;
+  shippingAddress: {
+    firstName: string;
+    lastName: string;
+    company?: string | null;
+    line1: string;
+    line2?: string | null;
+    city: string;
+    region?: string | null;
+    postalCode?: string | null;
+    country: string;
+    phone?: string | null;
+  };
+  billingAddress: {
+    firstName: string;
+    lastName: string;
+    company?: string | null;
+    line1: string;
+    line2?: string | null;
+    city: string;
+    region?: string | null;
+    postalCode?: string | null;
+    country: string;
+    phone?: string | null;
+  };
+  shippingMethod: {
+    rateId?: string | null;
+    name: string;
+    amountMinor: number;
+  };
+  notes: string | null;
+  tags: string[];
+  customFields: any;
+  cancelReason: string | null;
+  cancelledAt: string | null;
+  placedAt: string | null;
+  deliveredAt: string | null;
+  affiliateId: string | null;
+  promotions: any;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+  lines: {
+    id: string;
+    productId: string;
+    variantId: string;
+    titleSnapshot: string;
+    variantTitle: string;
+    skuSnapshot: string;
+    unitPriceMinor: number;
+    compareAtMinor: number | null;
+    quantity: number;
+    discountMinor: number;
+    taxMinor: number;
+    totalMinor: number;
+    costMinor: number | null;
+    marginMinor: number | null;
+    customizations: any;
+    fulfilledQuantity: number;
+    refundedQuantity: number;
+  }[];
+  events: {
+    id: string;
+    type: string;
+    message: string;
+    data: any;
+    actorType: string;
+    actorId: string | null;
+    createdAt: string;
+  }[];
+  payments: {
+    id: string;
+    provider: string;
+    status:
+      | "PENDING"
+      | "AUTHORIZED"
+      | "CAPTURED"
+      | "PARTIALLY_REFUNDED"
+      | "REFUNDED"
+      | "FAILED"
+      | "VOIDED";
+    amountMinor: number;
+    currency: string;
+    capturedMinor: number;
+    refundedMinor: number;
+    providerRef: string | null;
+    createdAt: string;
+    updatedAt: string;
+    transactions: {
+      id: string;
+      kind: "AUTHORIZE" | "CAPTURE" | "VOID" | "REFUND";
+      status: "SUCCESS" | "FAILED" | "PENDING";
+      amountMinor: number;
+      providerRef: string | null;
+      createdAt: string;
+    }[];
+  }[];
+  fulfillments: {
+    id: string;
+    locationId: string;
+    status:
+      | "PENDING"
+      | "PICKING"
+      | "PACKED"
+      | "SHIPPED"
+      | "IN_TRANSIT"
+      | "DELIVERED"
+      | "FAILED_DELIVERY"
+      | "RETURNED_TO_SENDER";
+    carrier: string | null;
+    trackingNumber: string | null;
+    trackingUrl: string | null;
+    shippedAt: string | null;
+    deliveredAt: string | null;
+    version: number;
+    createdAt: string;
+    updatedAt: string;
+    lines: {
+      id: string;
+      orderLineId: string;
+      quantity: number;
+    }[];
+  }[];
+  refunds: {
+    id: string;
+    paymentId: string | null;
+    amountMinor: number;
+    currency: string;
+    method: "ORIGINAL" | "STORE_CREDIT" | "MANUAL";
+    reason: string | null;
+    lines: {
+      orderLineId: string;
+      quantity: number;
+      restock: boolean;
+    }[];
+    createdById: string | null;
+    createdAt: string;
+  }[];
+};
+export type PostV1AdminOrdersIdStatusApiArg = {
+  id: string;
+  "x-market"?: string;
+  "x-locale"?: string;
+  body: {
+    status:
+      | "PENDING_PAYMENT"
+      | "PAID"
+      | "PROCESSING"
+      | "ON_HOLD"
+      | "PARTIALLY_FULFILLED"
+      | "FULFILLED"
+      | "SHIPPING"
+      | "DELIVERED"
+      | "COMPLETED"
+      | "CANCELLED";
+    reason?: string;
+    refund?: boolean;
+  };
+};
+export type PostV1AdminOrdersIdProcessingApiResponse = /** status 200 OK */ {
+  id: string;
+  number: number;
+  displayNumber: string;
+  status:
+    | "DRAFT"
+    | "PENDING_PAYMENT"
+    | "PAID"
+    | "PROCESSING"
+    | "ON_HOLD"
+    | "PARTIALLY_FULFILLED"
+    | "FULFILLED"
+    | "SHIPPING"
+    | "DELIVERED"
+    | "COMPLETED"
+    | "CANCELLED";
+  holdPreviousStatus:
+    | (
+        | "DRAFT"
+        | "PENDING_PAYMENT"
+        | "PAID"
+        | "PROCESSING"
+        | "ON_HOLD"
+        | "PARTIALLY_FULFILLED"
+        | "FULFILLED"
+        | "SHIPPING"
+        | "DELIVERED"
+        | "COMPLETED"
+        | "CANCELLED"
+      )
+    | null;
+  customerId: string | null;
+  customer: {
+    id: string;
+    email: string | null;
+    firstName: string | null;
+    lastName: string | null;
+  } | null;
+  email: string;
+  currency: string;
+  taxInclusive: boolean;
+  subtotalMinor: number;
+  discountMinor: number;
+  shippingMinor: number;
+  taxMinor: number;
+  totalMinor: number;
+  marketId: string;
+  channelId: string;
+  locale: string | null;
+  shippingAddress: {
+    firstName: string;
+    lastName: string;
+    company?: string | null;
+    line1: string;
+    line2?: string | null;
+    city: string;
+    region?: string | null;
+    postalCode?: string | null;
+    country: string;
+    phone?: string | null;
+  };
+  billingAddress: {
+    firstName: string;
+    lastName: string;
+    company?: string | null;
+    line1: string;
+    line2?: string | null;
+    city: string;
+    region?: string | null;
+    postalCode?: string | null;
+    country: string;
+    phone?: string | null;
+  };
+  shippingMethod: {
+    rateId?: string | null;
+    name: string;
+    amountMinor: number;
+  };
+  notes: string | null;
+  tags: string[];
+  customFields: any;
+  cancelReason: string | null;
+  cancelledAt: string | null;
+  placedAt: string | null;
+  deliveredAt: string | null;
+  affiliateId: string | null;
+  promotions: any;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+  lines: {
+    id: string;
+    productId: string;
+    variantId: string;
+    titleSnapshot: string;
+    variantTitle: string;
+    skuSnapshot: string;
+    unitPriceMinor: number;
+    compareAtMinor: number | null;
+    quantity: number;
+    discountMinor: number;
+    taxMinor: number;
+    totalMinor: number;
+    costMinor: number | null;
+    marginMinor: number | null;
+    customizations: any;
+    fulfilledQuantity: number;
+    refundedQuantity: number;
+  }[];
+  events: {
+    id: string;
+    type: string;
+    message: string;
+    data: any;
+    actorType: string;
+    actorId: string | null;
+    createdAt: string;
+  }[];
+  payments: {
+    id: string;
+    provider: string;
+    status:
+      | "PENDING"
+      | "AUTHORIZED"
+      | "CAPTURED"
+      | "PARTIALLY_REFUNDED"
+      | "REFUNDED"
+      | "FAILED"
+      | "VOIDED";
+    amountMinor: number;
+    currency: string;
+    capturedMinor: number;
+    refundedMinor: number;
+    providerRef: string | null;
+    createdAt: string;
+    updatedAt: string;
+    transactions: {
+      id: string;
+      kind: "AUTHORIZE" | "CAPTURE" | "VOID" | "REFUND";
+      status: "SUCCESS" | "FAILED" | "PENDING";
+      amountMinor: number;
+      providerRef: string | null;
+      createdAt: string;
+    }[];
+  }[];
+  fulfillments: {
+    id: string;
+    locationId: string;
+    status:
+      | "PENDING"
+      | "PICKING"
+      | "PACKED"
+      | "SHIPPED"
+      | "IN_TRANSIT"
+      | "DELIVERED"
+      | "FAILED_DELIVERY"
+      | "RETURNED_TO_SENDER";
+    carrier: string | null;
+    trackingNumber: string | null;
+    trackingUrl: string | null;
+    shippedAt: string | null;
+    deliveredAt: string | null;
+    version: number;
+    createdAt: string;
+    updatedAt: string;
+    lines: {
+      id: string;
+      orderLineId: string;
+      quantity: number;
+    }[];
+  }[];
+  refunds: {
+    id: string;
+    paymentId: string | null;
+    amountMinor: number;
+    currency: string;
+    method: "ORIGINAL" | "STORE_CREDIT" | "MANUAL";
+    reason: string | null;
+    lines: {
+      orderLineId: string;
+      quantity: number;
+      restock: boolean;
+    }[];
+    createdById: string | null;
+    createdAt: string;
+  }[];
+};
+export type PostV1AdminOrdersIdProcessingApiArg = {
+  id: string;
+  "x-market"?: string;
+  "x-locale"?: string;
+};
+export type PostV1AdminOrdersIdShippingApiResponse = /** status 200 OK */ {
+  id: string;
+  number: number;
+  displayNumber: string;
+  status:
+    | "DRAFT"
+    | "PENDING_PAYMENT"
+    | "PAID"
+    | "PROCESSING"
+    | "ON_HOLD"
+    | "PARTIALLY_FULFILLED"
+    | "FULFILLED"
+    | "SHIPPING"
+    | "DELIVERED"
+    | "COMPLETED"
+    | "CANCELLED";
+  holdPreviousStatus:
+    | (
+        | "DRAFT"
+        | "PENDING_PAYMENT"
+        | "PAID"
+        | "PROCESSING"
+        | "ON_HOLD"
+        | "PARTIALLY_FULFILLED"
+        | "FULFILLED"
+        | "SHIPPING"
+        | "DELIVERED"
+        | "COMPLETED"
+        | "CANCELLED"
+      )
+    | null;
+  customerId: string | null;
+  customer: {
+    id: string;
+    email: string | null;
+    firstName: string | null;
+    lastName: string | null;
+  } | null;
+  email: string;
+  currency: string;
+  taxInclusive: boolean;
+  subtotalMinor: number;
+  discountMinor: number;
+  shippingMinor: number;
+  taxMinor: number;
+  totalMinor: number;
+  marketId: string;
+  channelId: string;
+  locale: string | null;
+  shippingAddress: {
+    firstName: string;
+    lastName: string;
+    company?: string | null;
+    line1: string;
+    line2?: string | null;
+    city: string;
+    region?: string | null;
+    postalCode?: string | null;
+    country: string;
+    phone?: string | null;
+  };
+  billingAddress: {
+    firstName: string;
+    lastName: string;
+    company?: string | null;
+    line1: string;
+    line2?: string | null;
+    city: string;
+    region?: string | null;
+    postalCode?: string | null;
+    country: string;
+    phone?: string | null;
+  };
+  shippingMethod: {
+    rateId?: string | null;
+    name: string;
+    amountMinor: number;
+  };
+  notes: string | null;
+  tags: string[];
+  customFields: any;
+  cancelReason: string | null;
+  cancelledAt: string | null;
+  placedAt: string | null;
+  deliveredAt: string | null;
+  affiliateId: string | null;
+  promotions: any;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+  lines: {
+    id: string;
+    productId: string;
+    variantId: string;
+    titleSnapshot: string;
+    variantTitle: string;
+    skuSnapshot: string;
+    unitPriceMinor: number;
+    compareAtMinor: number | null;
+    quantity: number;
+    discountMinor: number;
+    taxMinor: number;
+    totalMinor: number;
+    costMinor: number | null;
+    marginMinor: number | null;
+    customizations: any;
+    fulfilledQuantity: number;
+    refundedQuantity: number;
+  }[];
+  events: {
+    id: string;
+    type: string;
+    message: string;
+    data: any;
+    actorType: string;
+    actorId: string | null;
+    createdAt: string;
+  }[];
+  payments: {
+    id: string;
+    provider: string;
+    status:
+      | "PENDING"
+      | "AUTHORIZED"
+      | "CAPTURED"
+      | "PARTIALLY_REFUNDED"
+      | "REFUNDED"
+      | "FAILED"
+      | "VOIDED";
+    amountMinor: number;
+    currency: string;
+    capturedMinor: number;
+    refundedMinor: number;
+    providerRef: string | null;
+    createdAt: string;
+    updatedAt: string;
+    transactions: {
+      id: string;
+      kind: "AUTHORIZE" | "CAPTURE" | "VOID" | "REFUND";
+      status: "SUCCESS" | "FAILED" | "PENDING";
+      amountMinor: number;
+      providerRef: string | null;
+      createdAt: string;
+    }[];
+  }[];
+  fulfillments: {
+    id: string;
+    locationId: string;
+    status:
+      | "PENDING"
+      | "PICKING"
+      | "PACKED"
+      | "SHIPPED"
+      | "IN_TRANSIT"
+      | "DELIVERED"
+      | "FAILED_DELIVERY"
+      | "RETURNED_TO_SENDER";
+    carrier: string | null;
+    trackingNumber: string | null;
+    trackingUrl: string | null;
+    shippedAt: string | null;
+    deliveredAt: string | null;
+    version: number;
+    createdAt: string;
+    updatedAt: string;
+    lines: {
+      id: string;
+      orderLineId: string;
+      quantity: number;
+    }[];
+  }[];
+  refunds: {
+    id: string;
+    paymentId: string | null;
+    amountMinor: number;
+    currency: string;
+    method: "ORIGINAL" | "STORE_CREDIT" | "MANUAL";
+    reason: string | null;
+    lines: {
+      orderLineId: string;
+      quantity: number;
+      restock: boolean;
+    }[];
+    createdById: string | null;
+    createdAt: string;
+  }[];
+};
+export type PostV1AdminOrdersIdShippingApiArg = {
+  id: string;
+  "x-market"?: string;
+  "x-locale"?: string;
+};
+export type PostV1AdminOrdersIdHoldApiResponse = /** status 200 OK */ {
+  id: string;
+  number: number;
+  displayNumber: string;
+  status:
+    | "DRAFT"
+    | "PENDING_PAYMENT"
+    | "PAID"
+    | "PROCESSING"
+    | "ON_HOLD"
+    | "PARTIALLY_FULFILLED"
+    | "FULFILLED"
+    | "SHIPPING"
+    | "DELIVERED"
+    | "COMPLETED"
+    | "CANCELLED";
+  holdPreviousStatus:
+    | (
+        | "DRAFT"
+        | "PENDING_PAYMENT"
+        | "PAID"
+        | "PROCESSING"
+        | "ON_HOLD"
+        | "PARTIALLY_FULFILLED"
+        | "FULFILLED"
+        | "SHIPPING"
         | "DELIVERED"
         | "COMPLETED"
         | "CANCELLED"
@@ -12465,9 +13131,11 @@ export type PostV1AdminOrdersIdReleaseApiResponse = /** status 200 OK */ {
     | "DRAFT"
     | "PENDING_PAYMENT"
     | "PAID"
+    | "PROCESSING"
     | "ON_HOLD"
     | "PARTIALLY_FULFILLED"
     | "FULFILLED"
+    | "SHIPPING"
     | "DELIVERED"
     | "COMPLETED"
     | "CANCELLED";
@@ -12476,9 +13144,11 @@ export type PostV1AdminOrdersIdReleaseApiResponse = /** status 200 OK */ {
         | "DRAFT"
         | "PENDING_PAYMENT"
         | "PAID"
+        | "PROCESSING"
         | "ON_HOLD"
         | "PARTIALLY_FULFILLED"
         | "FULFILLED"
+        | "SHIPPING"
         | "DELIVERED"
         | "COMPLETED"
         | "CANCELLED"
@@ -12653,9 +13323,11 @@ export type PostV1AdminOrdersIdCompleteApiResponse = /** status 200 OK */ {
     | "DRAFT"
     | "PENDING_PAYMENT"
     | "PAID"
+    | "PROCESSING"
     | "ON_HOLD"
     | "PARTIALLY_FULFILLED"
     | "FULFILLED"
+    | "SHIPPING"
     | "DELIVERED"
     | "COMPLETED"
     | "CANCELLED";
@@ -12664,9 +13336,11 @@ export type PostV1AdminOrdersIdCompleteApiResponse = /** status 200 OK */ {
         | "DRAFT"
         | "PENDING_PAYMENT"
         | "PAID"
+        | "PROCESSING"
         | "ON_HOLD"
         | "PARTIALLY_FULFILLED"
         | "FULFILLED"
+        | "SHIPPING"
         | "DELIVERED"
         | "COMPLETED"
         | "CANCELLED"
@@ -12841,9 +13515,11 @@ export type PostV1AdminOrdersIdNotesApiResponse = /** status 201 OK */ {
     | "DRAFT"
     | "PENDING_PAYMENT"
     | "PAID"
+    | "PROCESSING"
     | "ON_HOLD"
     | "PARTIALLY_FULFILLED"
     | "FULFILLED"
+    | "SHIPPING"
     | "DELIVERED"
     | "COMPLETED"
     | "CANCELLED";
@@ -12852,9 +13528,11 @@ export type PostV1AdminOrdersIdNotesApiResponse = /** status 201 OK */ {
         | "DRAFT"
         | "PENDING_PAYMENT"
         | "PAID"
+        | "PROCESSING"
         | "ON_HOLD"
         | "PARTIALLY_FULFILLED"
         | "FULFILLED"
+        | "SHIPPING"
         | "DELIVERED"
         | "COMPLETED"
         | "CANCELLED"
@@ -13032,9 +13710,11 @@ export type PutV1AdminOrdersIdTagsApiResponse = /** status 200 OK */ {
     | "DRAFT"
     | "PENDING_PAYMENT"
     | "PAID"
+    | "PROCESSING"
     | "ON_HOLD"
     | "PARTIALLY_FULFILLED"
     | "FULFILLED"
+    | "SHIPPING"
     | "DELIVERED"
     | "COMPLETED"
     | "CANCELLED";
@@ -13043,9 +13723,11 @@ export type PutV1AdminOrdersIdTagsApiResponse = /** status 200 OK */ {
         | "DRAFT"
         | "PENDING_PAYMENT"
         | "PAID"
+        | "PROCESSING"
         | "ON_HOLD"
         | "PARTIALLY_FULFILLED"
         | "FULFILLED"
+        | "SHIPPING"
         | "DELIVERED"
         | "COMPLETED"
         | "CANCELLED"
@@ -14506,6 +15188,9 @@ export const {
   usePatchV1AdminOrdersFulfillmentsIdMutation,
   usePostV1AdminOrdersIdRefundsMutation,
   usePostV1AdminOrdersIdCancelMutation,
+  usePostV1AdminOrdersIdStatusMutation,
+  usePostV1AdminOrdersIdProcessingMutation,
+  usePostV1AdminOrdersIdShippingMutation,
   usePostV1AdminOrdersIdHoldMutation,
   usePostV1AdminOrdersIdReleaseMutation,
   usePostV1AdminOrdersIdCompleteMutation,

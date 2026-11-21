@@ -106,3 +106,56 @@
     }
   }
 }
+
+/*
+ * Dropdown (src/admin/components/dropdown.tsx). The library styles inline; these rules cover
+ * what its theme can't reach: the closed border, the open ring, menu chrome and sublabels.
+ */
+.ui-dropdown__trigger {
+  border-color: var(--input) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: 0 1px 2px oklch(0 0 0 / 0.04);
+}
+.ui-dropdown__trigger:hover {
+  border-color: color-mix(in oklch, var(--ring) 45%, var(--input)) !important;
+}
+.ui-dropdown__trigger[aria-expanded="true"],
+.ui-dropdown__trigger:focus-visible {
+  border-color: var(--ring) !important;
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring) 22%, transparent);
+  outline: none;
+}
+.ui-dropdown__menu {
+  border-color: var(--border) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow:
+    0 12px 28px -8px oklch(0.2 0.02 160 / 0.18),
+    0 2px 6px oklch(0.2 0.02 160 / 0.06) !important;
+  min-width: 12rem;
+}
+.ui-dropdown__menu li[role="option"] {
+  padding: 0.4375rem 0.75rem !important;
+}
+.ui-dropdown__menu li[role="option"] + li[role="option"] {
+  border-top: 1px solid color-mix(in oklch, var(--border) 50%, transparent);
+}
+.ui-dropdown__sub {
+  color: var(--muted-foreground) !important;
+  font-size: 0.6875rem !important;
+  line-height: 1.35;
+}
+.ui-dropdown__trigger input::placeholder {
+  color: var(--muted-foreground);
+}
+.ui-dropdown:not(.ui-dropdown--clearable) [title="Clear selection"] {
+  display: none !important;
+}
+.ui-dropdown .ui-dropdown__trigger > div:first-child > span:only-child:is([style*="9ca3af"], [style*="156, 163, 175"]) {
+  color: var(--muted-foreground) !important;
+}
+.ui-dropdown__menu--tall {
+  max-height: min(30rem, 70vh) !important;
+}
+.ui-dropdown__menu ul {
+  min-height: 0;
+}
