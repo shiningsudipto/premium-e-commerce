@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Fragment, Suspense } from "react";
 import { getTranslations } from "next-intl/server";
 import { siteContent } from "../../content";
@@ -10,6 +9,7 @@ import type { StoreConfig } from "../../lib/store-data";
 import { Logo } from "../storefront/primitives";
 import { AccountButton, AccountButtonFallback, BagButton, BagButtonFallback } from "./header-actions";
 import { HeaderBar } from "./header-bar";
+import { DesktopNavItem } from "./nav-menu";
 import { LanguageSwitcher } from "./language-switcher";
 import { MobileMenu } from "./mobile-menu";
 import { SearchDialog } from "../../features/search/search-dialog";
@@ -60,7 +60,7 @@ export async function SiteHeader({ market, config }: { market: MarketRef; config
         <div className="site-header__start">
           <MobileMenu
             storeName={config.storeName}
-            links={menu}
+            links={menu.map((link) => ({ ...link, submenuLabel: t("submenu", { label: link.label }) }))}
             footerLinks={footerLinks}
             marketLabel={marketLabel(market, config)}
             labels={{ open: t("openMenu"), close: t("closeMenu"), menu: t("menu"), nav: t("mobileNav") }}
@@ -68,10 +68,9 @@ export async function SiteHeader({ market, config }: { market: MarketRef; config
           <Logo name={config.storeName} href={href(market)} />
         </div>
         <nav className="nav" aria-label={t("primaryNav")}>
-          {menu.map((link) => (
-            <Link key={link.href} href={link.href}>
-              {link.label}
-            </Link>
+          {menu.map((link, i) => (
+            // two items may point to the same page, so the position is part of the key
+            <DesktopNavItem key={`${i}-${link.href}`} link={link} submenuLabel={t("submenu", { label: link.label })} />
           ))}
         </nav>
         <div className="header-actions">

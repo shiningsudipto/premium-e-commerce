@@ -128,6 +128,104 @@
   }
 }
 
+/* Desktop dropdown for menu items with sub-items */
+.nav {
+  align-items: center;
+}
+.nav-item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+.nav-item__toggle {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-muted-foreground);
+  cursor: pointer;
+  transition:
+    transform var(--dur-base) var(--ease-out),
+    color var(--dur-fast),
+    background-color var(--dur-fast);
+}
+.nav-item__toggle:hover {
+  color: var(--color-foreground);
+  background: var(--color-secondary);
+}
+.nav-item[data-open] .nav-item__toggle {
+  transform: rotate(180deg);
+  color: var(--color-foreground);
+}
+.nav-item__panel {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  z-index: 60;
+  min-width: 220px;
+  /* the gap above the panel still counts as hovering the item */
+  padding-top: var(--space-3);
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-50%, -6px);
+  transition:
+    opacity var(--dur-fast) var(--ease-out),
+    transform var(--dur-base) var(--ease-out),
+    visibility 0s linear var(--dur-base);
+}
+.nav-item[data-open] .nav-item__panel {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, 0);
+  transition:
+    opacity var(--dur-fast) var(--ease-out),
+    transform var(--dur-base) var(--ease-out),
+    visibility 0s;
+}
+.nav-item__panel > .nav-sub {
+  margin: 0;
+  padding: var(--space-2);
+  list-style: none;
+  background: var(--color-surface);
+  border: var(--hairline);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lift);
+}
+.nav-sub {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.nav .nav-sub a {
+  display: block;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  background-image: none;
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+  transition: background-color var(--dur-fast);
+}
+.nav .nav-sub a:hover,
+.nav .nav-sub a:focus-visible {
+  background: var(--color-secondary);
+}
+.nav .nav-sub--nested a {
+  padding-left: var(--space-6);
+  font-weight: var(--weight-regular);
+  color: var(--color-muted-foreground) !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .nav-item__panel,
+  .nav-item[data-open] .nav-item__panel {
+    transform: translate(-50%, 0);
+  }
+}
+
 /* Drawer */
 .drawer {
   position: fixed;
@@ -164,7 +262,8 @@
   justify-content: space-between;
   align-items: center;
 }
-.drawer__nav a {
+.drawer__nav > a,
+.drawer__group-row > a {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -175,6 +274,56 @@
   color: var(--color-foreground) !important;
   text-decoration: none;
   min-height: 44px;
+}
+/* a top item with sub-items: its link plus a chevron that expands them in place */
+.drawer__group-row {
+  display: flex;
+  align-items: stretch;
+  border-bottom: var(--hairline);
+}
+.drawer__group-row > a {
+  flex: 1;
+  border-bottom: 0 !important;
+}
+.drawer__expand {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  border: 0;
+  background: transparent;
+  color: var(--color-foreground);
+  cursor: pointer;
+}
+.drawer__expand svg {
+  transition: transform var(--dur-base) var(--ease-out);
+}
+.drawer__group[data-open] .drawer__expand svg {
+  transform: rotate(180deg);
+}
+.drawer__sub {
+  padding: var(--space-2) 0 var(--space-3) var(--space-3);
+  border-bottom: var(--hairline);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .drawer__sub:not([hidden]) {
+    animation: pt-rise var(--dur-base) var(--ease-out) both;
+  }
+}
+.drawer__sub a {
+  display: block;
+  padding: var(--space-2) 0;
+  font-size: var(--text-lg);
+  color: var(--color-foreground) !important;
+  text-decoration: none;
+  min-height: 44px;
+}
+.drawer__sub .nav-sub--nested {
+  padding-left: var(--space-4);
+}
+.drawer__sub .nav-sub--nested a {
+  font-size: var(--text-base);
+  color: var(--color-muted-foreground) !important;
 }
 .drawer__foot {
   margin-top: auto;

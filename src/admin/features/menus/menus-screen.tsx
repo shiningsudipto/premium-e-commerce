@@ -32,9 +32,12 @@ import {
   useGetV1AdminCategoriesQuery,
   useGetV1AdminCollectionsQuery,
   useGetV1AdminMenusQuery,
+  useGetV1AdminPagesQuery,
+  useGetV1AdminProductsQuery,
   usePutV1AdminMenusHandleMutation,
 } from "../../store/api.generated";
 import { PageHeader } from "../../components/console-shell";
+import { Dropdown } from "../../components/dropdown";
 import { formatDateTime } from "../../lib/format";
 import { notifyError, notifySaved } from "../../lib/notify";
 import {
@@ -56,7 +59,8 @@ import {
 } from "./menu-tree";
 
 type MenuDraft = { handle: string; name: string; items: MenuItem[]; version?: number; updatedAt?: string };
-type Option = { value: string; label: string };
+type Option = { value: string; label: string; description?: string };
+const STATUS_NOTE = { DRAFT: "Draft: not live yet", ARCHIVED: "Archived: not live", ACTIVE: undefined } as const;
 
 const TYPE_LABELS: Record<MenuItemType, string> = {
   category: "Category",
@@ -140,6 +144,9 @@ export function MenusScreen() {
 function MenuEditor({ menu, onSaved }: { menu: MenuDraft; onSaved: () => void }) {
   const categories = useGetV1AdminCategoriesQuery({});
   const collections = useGetV1AdminCollectionsQuery({});
+  // pages (not reusable sections) and products to link to; the picker searches them by name
+  const pages = useGetV1AdminPagesQuery({ kind: "PAGE", limit: 100 });
+  const products = useGetV1AdminProductsQuery({ limit: 100 });
   const [name, setName] = useState(menu.name);
   const [items, setItems] = useState<MenuItem[]>(menu.items);
   const [dragging, setDragging] = useState<Path | null>(null);
@@ -151,6 +158,15 @@ function MenuEditor({ menu, onSaved }: { menu: MenuDraft; onSaved: () => void })
   const options: Partial<Record<MenuItemType, Option[]>> = {
     category: categories.data?.map((c) => ({ value: c.handle, label: c.name })),
     collection: collections.data?.map((c) => ({ value: c.handle, label: c.title })),
+    // archived pages and products aren't offered; live ones come first, then drafts
+    page: pages.data?.items
+      .filter((p) => p.status !== "ARCHIVED")
+      .sort((a, b) => Number(b.status === "ACTIVE") - Number(a.status === "ACTIVE") || a.title.localeCompare(b.title))
+      .map((p) => ({ value: p.handle, label: p.title, description: STATUS_NOTE[p.status] ?? `/pages/${p.handle}` })),
+    product: products.data?.items
+      .filter((p) => p.status !== "ARCHIVED")
+      .sort((a, b) => Number(b.status === "ACTIVE") - Number(a.status === "ACTIVE") || a.title.localeCompare(b.title))
+      .map((p) => ({ value: p.handle, label: p.title, description: STATUS_NOTE[p.status] })),
   };
 
   const drop = (parent: Path, index: number) => {
@@ -343,28 +359,24 @@ function ItemRow(props: ListProps & { item: MenuItem; path: Path; siblings: numb
               className="h-8 font-mono text-xs"
               onChange={(e) => update({ url: e.target.value })}
             />
-          ) : choices ? (
-            <Select value={item.ref ?? ""} onValueChange={(v) => update({ ref: v ?? "" })}>
-              <SelectTrigger aria-label={TYPE_LABELS[item.type]} className="h-8 w-full" size="sm">
-                <SelectValue placeholder={`Choose a ${item.type}`}>
-                  {choices.find((c) => c.value === item.ref)?.label ?? item.ref}
-                </SelectValue>
-              </SelectTrigger>
-              <SelectContent>
-                {choices.map((c) => (
-                  <SelectItem key={c.value} value={c.value}>
-                    {c.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
           ) : (
-            <Input
-              aria-label={`${TYPE_LABELS[item.type]} handle`}
-              placeholder={`${item.type} handle`}
-              value={item.ref ?? ""}
-              className="h-8 font-mono text-xs"
-              onChange={(e) => update({ ref: e.target.value })}
+            <Dropdown
+              // a fresh picker per type, so search text doesn't carry over
+              key={item.type}
+              size="sm"
+              searchable
+              aria-label={TYPE_LABELS[item.type]}
+              placeholder={choices ? `Choose a ${item.type}` : "Loading…"}
+              loading={!choices}
+              value={item.ref || null}
+              items={[
+                ...(choices ?? []),
+                // a saved link to something no longer in the list (deleted, or beyond the first 100)
+                ...(item.ref && choices && !choices.some((c) => c.value === item.ref)
+                  ? [{ value: item.ref, label: item.ref, description: "Not found: choose another" }]
+                  : []),
+              ]}
+              onChange={(ref) => update({ ref })}
             />
           )}
         </div>

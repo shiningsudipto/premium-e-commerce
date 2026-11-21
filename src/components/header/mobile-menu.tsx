@@ -4,6 +4,7 @@ import { Dialog } from "@base-ui/react/dialog";
 import Link from "next/link";
 import { useState } from "react";
 import { Icon } from "../storefront/icon";
+import { MobileNavItem, type NavLink } from "./nav-menu";
 
 type MenuLink = { label: string; href: string };
 
@@ -17,7 +18,7 @@ export function MobileMenu({
   labels,
 }: {
   storeName: string;
-  links: MenuLink[];
+  links: (NavLink & { submenuLabel: string })[];
   footerLinks: MenuLink[];
   marketLabel: string;
   labels: { open: string; close: string; menu: string; nav: string };
@@ -43,10 +44,8 @@ export function MobileMenu({
               </Dialog.Close>
             </div>
             <nav className="drawer__nav" aria-label={labels.nav}>
-              {links.map((link) => (
-                <Link key={link.href} href={link.href} onClick={close}>
-                  {link.label} <Icon name="arrow" />
-                </Link>
+              {links.map((link, i) => (
+                <MobileNavItem key={`${i}-${link.href}`} link={link} submenuLabel={link.submenuLabel} onNavigate={close} />
               ))}
             </nav>
             <div className="drawer__foot">

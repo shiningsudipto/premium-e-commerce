@@ -172,48 +172,64 @@ export function SearchDialog({ market, label }: { market: MarketRef; label: stri
         <div className="search-dialog">
           <Dialog.Backdrop className="search-dialog__scrim" />
           <Dialog.Popup className="search-dialog__panel" aria-label={t("title")} initialFocus={inputRef}>
-            <form
-              role="search"
-              className="search-dialog__field"
-              action={searchHref}
-              onSubmit={(e) => {
-                e.preventDefault();
-                if (q) go(`${searchHref}?q=${encodeURIComponent(q)}`);
-              }}
-            >
-              <Icon name="search" />
-              <input
-                ref={inputRef}
-                type="search"
-                name="q"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                onKeyDown={onKeyDown}
-                placeholder={t("placeholder")}
-                aria-label={t("label")}
-                role="combobox"
-                aria-expanded={options.length > 0}
-                aria-controls={listId}
-                aria-autocomplete="list"
-                aria-activedescendant={activeOption?.id}
-                autoComplete="off"
-                enterKeyHint="search"
-                data-testid="search-input"
-              />
-              <Dialog.Close className="icon-btn" aria-label={t("close")}>
+            <div className="search-dialog__bar">
+              <form
+                role="search"
+                className="search-pill"
+                action={searchHref}
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (q) go(`${searchHref}?q=${encodeURIComponent(q)}`);
+                }}
+              >
+                <input
+                  ref={inputRef}
+                  type="search"
+                  name="q"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  onKeyDown={onKeyDown}
+                  placeholder={t("placeholder")}
+                  aria-label={t("label")}
+                  role="combobox"
+                  aria-expanded={options.length > 0}
+                  aria-controls={listId}
+                  aria-autocomplete="list"
+                  aria-activedescendant={activeOption?.id}
+                  autoComplete="off"
+                  enterKeyHint="search"
+                  data-testid="search-input"
+                />
+                <button type="submit" className="search-pill__submit" disabled={!q}>
+                  {t("submit")}
+                </button>
+              </form>
+              <Dialog.Close className="search-dialog__close" aria-label={t("close")}>
                 <Icon name="close" />
               </Dialog.Close>
-            </form>
-            <div className="search-dialog__results">
-              <p className="sr-only" role="status" aria-live="polite">
-                {loading ? t("searching") : shown ? t("suggestionCount", { count: options.length - 1 }) : ""}
-              </p>
-              <div id={listId} role="listbox" aria-label={t("label")}>
-                {groups.map((g) => (
-                  <div className="suggest-group" role="group" aria-label={g.label} key={g.key}>
-                    <div className="suggest-group__label" aria-hidden="true">
-                      {g.label}
-                    </div>
+            </div>
+            <p className="sr-only" role="status" aria-live="polite">
+              {loading ? t("searching") : shown ? t("suggestionCount", { count: options.length - 1 }) : ""}
+            </p>
+            <div
+              id={listId}
+              role="listbox"
+              aria-label={t("label")}
+              className="search-dialog__results"
+              hidden={q.length < 2}
+              aria-busy={loading || undefined}
+            >
+              {groups.map((g) => (
+                <div
+                  className={`suggest-group suggest-group--${g.key}`}
+                  role="group"
+                  aria-label={g.label}
+                  key={g.key}
+                >
+                  <div className="suggest-group__label" aria-hidden="true">
+                    {g.label}
+                  </div>
+                  <div className="suggest-group__items">
                     {g.options.map((o) => {
                       const product = o.kind === "product" ? productByHref.get(o.href) : undefined;
                       return (
@@ -222,53 +238,55 @@ export function SearchDialog({ market, label }: { market: MarketRef; label: stri
                           id={o.id}
                           role="option"
                           aria-selected={activeOption?.id === o.id}
-                          className="suggest-item"
+                          className={product ? "suggest-card" : "suggest-chip"}
                           href={o.href}
                           onClick={() => setOpen(false)}
                           tabIndex={-1}
                         >
-                          {product && (
-                            <span className="suggest-item__media">
-                              <Media
-                                image={product.image}
-                                art={artFor(product.title)}
-                                tone="mid"
-                                alt=""
-                                decorative
-                                sizes="40px"
-                              />
-                            </span>
-                          )}
-                          <span>{o.label}</span>
-                          {product?.price && (
-                            <span className="suggest-item__price">
-                              {formatMoney(product.price.minMinor, product.price.currency, market.locale)}
-                            </span>
+                          {product ? (
+                            <>
+                              <span className="suggest-card__media">
+                                <Media
+                                  image={product.image}
+                                  art={artFor(product.title)}
+                                  tone="light"
+                                  alt=""
+                                  decorative
+                                  sizes="(min-width: 768px) 160px, 45vw"
+                                />
+                              </span>
+                              <span className="suggest-card__body">
+                                {product.price && (
+                                  <span className="suggest-card__price">
+                                    {formatMoney(product.price.minMinor, product.price.currency, market.locale)}
+                                  </span>
+                                )}
+                                <span className="suggest-card__title">{o.label}</span>
+                              </span>
+                            </>
+                          ) : (
+                            <span>{o.label}</span>
                           )}
                         </Link>
                       );
                     })}
                   </div>
-                ))}
-                {q.length >= 2 && (
-                  <Link
-                    id={`${listId}-all`}
-                    role="option"
-                    aria-selected={activeOption?.kind === "all"}
-                    className="suggest-item"
-                    href={`${searchHref}?q=${encodeURIComponent(q)}`}
-                    onClick={() => setOpen(false)}
-                    tabIndex={-1}
-                  >
-                    <Icon name="search" size="sm" />
-                    <span>{t("viewAll", { q })}</span>
-                  </Link>
-                )}
-              </div>
-              {shown && groups.length === 0 && !loading && (
-                <p className="muted" style={{ padding: "var(--space-3)" }}>
-                  {t("nothing")}
-                </p>
+                </div>
+              ))}
+              {shown && groups.length === 0 && !loading && <p className="search-dialog__empty">{t("nothing")}</p>}
+              {q.length >= 2 && (
+                <Link
+                  id={`${listId}-all`}
+                  role="option"
+                  aria-selected={activeOption?.kind === "all"}
+                  className="search-dialog__all"
+                  href={`${searchHref}?q=${encodeURIComponent(q)}`}
+                  onClick={() => setOpen(false)}
+                  tabIndex={-1}
+                >
+                  <span>{t("viewAll", { q })}</span>
+                  <Icon name="arrow" size="sm" />
+                </Link>
               )}
             </div>
           </Dialog.Popup>

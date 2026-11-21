@@ -128,16 +128,6 @@ export async function getCollection(market: MarketRef, handle: string): Promise<
   );
 }
 
-// The child categories of a category (for "Shop by" links on its listing page).
-export function childrenOf(tree: CategoryNode[], handle: string): CategoryNode[] {
-  for (const node of tree) {
-    if (node.handle === handle) return node.children;
-    const found = childrenOf(node.children, handle);
-    if (found.length) return found;
-  }
-  return [];
-}
-
 export type Recommendations =
   paths["/v1/store/recommendations"]["get"]["responses"]["200"]["content"]["application/json"];
 export type RecommendationPlacement = paths["/v1/store/recommendations"]["get"]["parameters"]["query"]["placement"];
